@@ -1,0 +1,11 @@
+{
+  "extends": "@examedge/tsconfig/base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "declaration": true,
+    "outDir": "./dist"
+  },
+  "include": ["prisma/seed.ts", "index.ts"]
+}
