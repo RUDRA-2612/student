@@ -1,5 +1,5 @@
 import '@/app/globals.css'
-import { Inter, Syne, JetBrains_Mono } from 'next/font/google'
+import { Inter, Instrument_Serif } from 'next/font/google'
 import { Providers } from '@/components/providers'
 
 const inter = Inter({
@@ -7,19 +7,16 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-const syne = Syne({
+const instrumentSerif = Instrument_Serif({
   subsets: ['latin'],
-  variable: '--font-syne',
-})
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
+  weight: '400',
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
 })
 
 export const metadata = {
-  title: 'ExamEdge — World-Class Preparation Platform',
-  description: 'Globally scalable, AI-powered prep portal for regional competitive examinations.',
+  title: 'ExamEdge — Your College Exam Companion',
+  description: 'A curated academic platform for mastering college exams. Access past papers, study roadmaps, and comprehensive curriculum guides.',
 }
 
 export default function RootLayout({
@@ -28,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${syne.variable} ${jetbrainsMono.variable}`}>
-      <body className="antialiased min-h-screen">
+    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
+      <body className="antialiased min-h-screen" style={{ fontFamily: 'var(--font-inter), ui-sans-serif, sans-serif' }}>
         <Providers>
           {children}
         </Providers>

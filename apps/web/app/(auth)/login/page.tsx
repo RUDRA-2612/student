@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Link from 'next/link'
-import { Eye, EyeOff, LogIn, Sparkles, ArrowRight, Mail, Lock } from 'lucide-react'
+import { Eye, EyeOff, LogIn, ArrowRight, Mail, Lock, Zap } from 'lucide-react'
 
 const LoginSchema = z.object({
   email:    z.string().email('Enter a valid email'),
@@ -72,19 +72,16 @@ export default function LoginPage() {
     <>
       {/* Logo */}
       <div className="flex items-center justify-center gap-3 mb-8">
-        <div
-          className="w-11 h-11 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-glow"
-          style={{ background: 'linear-gradient(135deg, hsl(327 100% 62%), hsl(280 100% 65%))' }}
-        >
+        <div className="w-10 h-10 rounded-full flex items-center justify-center font-serif text-sm font-bold text-black bg-white">
           EE
         </div>
         <div>
-          <p className="font-display font-bold text-base leading-none tracking-tight">ExamEdge</p>
-          <p className="text-[10px] text-white/40 mt-0.5">Exam Prep Platform</p>
+          <p className="font-semibold text-base leading-none tracking-tight">ExamEdge</p>
+          <p className="text-[10px] text-white/40 mt-0.5">College Exam Platform</p>
         </div>
       </div>
 
-      <h1 className="font-display text-2xl font-bold text-center mb-1">Welcome back</h1>
+      <h1 className="text-2xl font-semibold text-center mb-1">Welcome back</h1>
       <p className="text-sm text-white/40 text-center mb-8">Sign in to continue your preparation</p>
 
       {/* Error banner */}
@@ -108,7 +105,7 @@ export default function LoginPage() {
               {...register('email')}
               type="email"
               autoComplete="email"
-              placeholder="admin@examedge.com"
+              placeholder="you@university.edu"
               className="form-input pl-10"
             />
           </div>
@@ -149,12 +146,6 @@ export default function LoginPage() {
           id="login-submit"
           disabled={loading || guestLoading}
           className="btn-primary w-full mt-2 py-3.5 text-base tracking-wide"
-          style={{
-            background: loading
-              ? 'hsl(327 100% 62% / 0.5)'
-              : 'linear-gradient(135deg, hsl(327 100% 62%), hsl(280 100% 65%))',
-            boxShadow: loading ? 'none' : '0 0 24px hsl(327 100% 62% / 0.4), 0 4px 16px rgba(0,0,0,0.3)',
-          }}
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
@@ -177,24 +168,20 @@ export default function LoginPage() {
           type="button"
           onClick={handleGuestLogin}
           disabled={loading || guestLoading}
-          className="w-full mt-3 py-3.5 rounded-xl text-sm font-semibold text-white/90 border border-brand-mint/30 hover:border-brand-mint/60 transition-all flex items-center justify-center gap-2"
-          style={{
-            background: 'linear-gradient(135deg, rgba(0,212,160,0.06), rgba(34,211,238,0.06))',
-            boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
-          }}
+          className="w-full mt-3 py-3.5 rounded-xl text-sm font-semibold text-white/80 border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all flex items-center justify-center gap-2"
         >
           {guestLoading ? (
             <span className="flex items-center justify-center gap-2">
-              <svg className="animate-spin w-4 h-4 text-brand-mint" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
               </svg>
               Accessing Dashboard…
             </span>
           ) : (
-            <span className="flex items-center justify-center gap-2 text-brand-mint">
-              <Sparkles size={16} className="animate-pulse" />
-              Explore as Guest (Instant Access)
+            <span className="flex items-center justify-center gap-2">
+              <Zap size={14} />
+              Explore as Guest — Instant Access
             </span>
           )}
         </button>
@@ -206,7 +193,7 @@ export default function LoginPage() {
           <div className="w-full border-t border-white/[0.06]" />
         </div>
         <div className="relative flex justify-center">
-          <span className="text-[10px] uppercase tracking-widest text-white/30 px-3" style={{ background: 'hsl(220 14% 9%)' }}>
+          <span className="text-[10px] uppercase tracking-widest text-white/30 px-3 bg-[hsl(0,0%,6%)]">
             or continue with
           </span>
         </div>
@@ -246,14 +233,6 @@ export default function LoginPage() {
           Create account <ArrowRight className="inline" size={10} />
         </Link>
       </p>
-
-      {/* Admin hint */}
-      <div className="mt-4 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] text-center">
-        <div className="flex items-center justify-center gap-1.5 text-[10px] text-white/30">
-          <Sparkles size={9} />
-          Admin demo: <span className="text-white/50 font-mono">admin@examedge.com</span> / <span className="text-white/50 font-mono">YourSecureAdminPasswordHere</span>
-        </div>
-      </div>
     </>
   )
 }

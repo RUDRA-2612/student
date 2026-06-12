@@ -73,8 +73,8 @@ export default function LandingPage() {
             <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-white/70">A New Standard</span>
           </motion.div>
 
-          <motion.h1 variants={itemVariants} className="font-display font-light tracking-tight leading-[1.1] mb-8 text-5xl md:text-7xl lg:text-8xl">
-            Master your <span className="font-serif italic text-white/60">college exams</span><br className="hidden md:block" />
+          <motion.h1 variants={itemVariants} className="font-light tracking-tight leading-[1.1] mb-8 text-5xl md:text-7xl lg:text-8xl">
+            Master your <span className="italic text-white/60" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>college exams</span><br className="hidden md:block" />
             with absolute clarity.
           </motion.h1>
 

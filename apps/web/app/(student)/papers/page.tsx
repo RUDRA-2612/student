@@ -68,7 +68,7 @@ export default function PapersCatalog() {
       <div className="space-y-1">
         <h1 className="font-display text-2xl md:text-3xl font-bold tracking-tight">Syllabus & Practice Papers</h1>
         <p className="text-white/40 text-sm font-light">
-          Search and download previous years question papers, mock tests, and official Rajasthan exam syllabi.
+          Browse and download previous years question papers, mock tests, and official college exam syllabi.
         </p>
       </div>
 
@@ -177,8 +177,8 @@ export default function PapersCatalog() {
               const isBookmarked = bookmarkedIds.has(paper.id)
               const diffColor = 
                 paper.difficulty === 'HARD' ? 'text-red-400 bg-red-400/10' :
-                paper.difficulty === 'MEDIUM' ? 'text-brand-amber bg-brand-amber/10' :
-                'text-brand-mint bg-brand-mint/10'
+                paper.difficulty === 'MEDIUM' ? 'text-amber-400 bg-amber-400/10' :
+                'text-emerald-400 bg-emerald-400/10'
 
               return (
                 <div 

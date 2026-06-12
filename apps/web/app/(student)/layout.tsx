@@ -29,14 +29,6 @@ const navItems = [
   { name: 'My Requests',        href: '/requests',  icon: Send },
 ]
 
-const S = {
-  base:    'hsl(220 16% 6%)',
-  surface: 'hsl(220 14% 9%)',
-  card:    'hsl(220 14% 11%)',
-  accent:  'hsl(327 100% 62%)',
-  border:  'rgba(255,255,255,0.06)',
-}
-
 export default function StudentLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const router   = useRouter()
@@ -50,14 +42,10 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: S.base }}>
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl animate-spin" style={{
-            border: '2px solid transparent',
-            borderTopColor: S.accent,
-            background: 'hsl(327 100% 62% / 0.1)',
-          }} />
-          <p className="text-sm text-white/40">Loading your prep space…</p>
+          <div className="w-10 h-10 rounded-full border-2 border-white/10 border-t-white/60 animate-spin" />
+          <p className="text-sm text-white/40">Loading your workspace…</p>
         </div>
       </div>
     )
@@ -71,23 +59,18 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     return (
       <Link href={item.href} onClick={onClick}>
         <span
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative group"
-          style={isActive ? {
-            background: 'hsl(327 100% 62% / 0.12)',
-            color: S.accent,
-          } : {
-            color: 'rgba(255,255,255,0.55)',
-          }}
-          onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)' }}
-          onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '' }}
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative group ${
+            isActive 
+              ? 'bg-white/[0.08] text-white' 
+              : 'text-white/50 hover:bg-white/[0.04] hover:text-white/80'
+          }`}
         >
-          <Icon size={17} style={isActive ? { color: S.accent } : {}} />
+          <Icon size={17} className={isActive ? 'text-white' : ''} />
           {!collapsed && <span className="whitespace-nowrap">{item.name}</span>}
           {isActive && (
             <motion.div
               layoutId="studentActiveIndicator"
-              className="absolute right-3 w-1.5 h-1.5 rounded-full"
-              style={{ background: S.accent }}
+              className="absolute right-3 w-1.5 h-1.5 rounded-full bg-white"
             />
           )}
         </span>
@@ -96,31 +79,25 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="min-h-screen text-white flex overflow-hidden" style={{ background: S.base }}>
+    <div className="min-h-screen text-white flex overflow-hidden bg-black">
       {/* ─── Desktop Sidebar ─── */}
       <aside
-        className="hidden md:flex flex-col shrink-0 h-screen relative z-20 transition-all duration-300"
-        style={{
-          width: collapsed ? 72 : 248,
-          background: S.surface,
-          borderRight: `1px solid ${S.border}`,
-        }}
+        className="hidden md:flex flex-col shrink-0 h-screen relative z-20 transition-all duration-300 border-r border-white/[0.06]"
+        style={{ width: collapsed ? 72 : 248, background: 'hsl(0 0% 4%)' }}
       >
         {/* Logo */}
-        <div className="h-16 px-4 flex items-center justify-between" style={{ borderBottom: `1px solid ${S.border}` }}>
+        <div className="h-16 px-4 flex items-center justify-between border-b border-white/[0.06]">
           {!collapsed && (
             <Link href="/dashboard" className="flex items-center gap-2.5 overflow-hidden">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-white text-sm shrink-0"
-                style={{ background: 'linear-gradient(135deg, hsl(327 100% 62%), hsl(280 100% 65%))' }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center font-serif text-xs font-bold text-black bg-white shrink-0">
                 EE
               </div>
-              <span className="font-display font-bold text-base tracking-tight whitespace-nowrap">ExamEdge</span>
+              <span className="font-semibold text-base tracking-tight whitespace-nowrap">ExamEdge</span>
             </Link>
           )}
           {collapsed && (
             <Link href="/dashboard" className="mx-auto">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-white text-sm"
-                style={{ background: 'linear-gradient(135deg, hsl(327 100% 62%), hsl(280 100% 65%))' }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center font-serif text-xs font-bold text-black bg-white">
                 EE
               </div>
             </Link>
@@ -140,11 +117,10 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         </nav>
 
         {/* User Footer */}
-        <div className="p-3 space-y-2" style={{ borderTop: `1px solid ${S.border}` }}>
+        <div className="p-3 space-y-2 border-t border-white/[0.06]">
           {!collapsed && (
             <div className="flex items-center gap-2.5 px-2 py-1.5">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-white/[0.06] border border-white/[0.08]">
                 <User size={14} className="text-white/60" />
               </div>
               <div className="overflow-hidden min-w-0">
@@ -155,7 +131,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
           )}
           <button
             onClick={() => signOut({ callbackUrl: '/login' })}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all text-red-400 hover:bg-red-500/10"
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all text-white/50 hover:text-white hover:bg-white/[0.04]"
           >
             <LogOut size={14} />
             {!collapsed && <span>Sign Out</span>}
@@ -166,21 +142,16 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       {/* ─── Main Content ─── */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Mobile header */}
-        <header
-          className="md:hidden h-14 px-4 flex items-center justify-between shrink-0 z-10"
-          style={{ background: S.surface, borderBottom: `1px solid ${S.border}` }}
-        >
+        <header className="md:hidden h-14 px-4 flex items-center justify-between shrink-0 z-10 bg-[hsl(0,0%,4%)] border-b border-white/[0.06]">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-white text-xs"
-              style={{ background: 'linear-gradient(135deg, hsl(327 100% 62%), hsl(280 100% 65%))' }}>
+            <div className="w-7 h-7 rounded-full flex items-center justify-center font-serif text-xs font-bold text-black bg-white">
               EE
             </div>
-            <span className="font-display font-bold text-sm">ExamEdge</span>
+            <span className="font-semibold text-sm">ExamEdge</span>
           </Link>
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-white/60 hover:text-white"
-            style={{ background: 'rgba(255,255,255,0.04)' }}
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-white/60 hover:text-white bg-white/[0.04]"
           >
             {mobileOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -198,11 +169,10 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
               <motion.div
                 initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
                 transition={{ type: 'spring', bounce: 0.1, duration: 0.35 }}
-                className="fixed top-0 bottom-0 left-0 w-64 flex flex-col z-40 md:hidden"
-                style={{ background: S.surface, borderRight: `1px solid ${S.border}` }}
+                className="fixed top-0 bottom-0 left-0 w-64 flex flex-col z-40 md:hidden bg-[hsl(0,0%,4%)] border-r border-white/[0.06]"
               >
-                <div className="h-14 px-4 flex items-center justify-between" style={{ borderBottom: `1px solid ${S.border}` }}>
-                  <span className="font-display font-bold text-base">ExamEdge</span>
+                <div className="h-14 px-4 flex items-center justify-between border-b border-white/[0.06]">
+                  <span className="font-semibold text-base">ExamEdge</span>
                   <button onClick={() => setMobileOpen(false)} className="text-white/40 hover:text-white">
                     <X size={18} />
                   </button>
@@ -210,10 +180,9 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                 <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
                   {navItems.map(item => <NavLink key={item.href} item={item} onClick={() => setMobileOpen(false)} />)}
                 </nav>
-                <div className="p-3 space-y-2" style={{ borderTop: `1px solid ${S.border}` }}>
+                <div className="p-3 space-y-2 border-t border-white/[0.06]">
                   <div className="flex items-center gap-2.5 px-2 py-1.5">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                      style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-white/[0.06] border border-white/[0.08]">
                       <User size={14} className="text-white/60" />
                     </div>
                     <div>
@@ -223,7 +192,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                   </div>
                   <button
                     onClick={() => signOut({ callbackUrl: '/login' })}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-red-400 hover:bg-red-500/10 transition-all"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-white/50 hover:text-white hover:bg-white/[0.04] transition-all"
                   >
                     <LogOut size={14} /><span>Sign Out</span>
                   </button>
@@ -234,7 +203,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         </AnimatePresence>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-5 md:p-8" style={{ background: S.base }}>
+        <main className="flex-1 overflow-y-auto p-5 md:p-8 bg-black">
           <div className="max-w-6xl mx-auto w-full">
             {children}
           </div>

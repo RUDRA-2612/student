@@ -51,13 +51,10 @@ export default function SignupPage() {
   if (success) {
     return (
       <div className="text-center py-6">
-        <div
-          className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5"
-          style={{ background: 'hsl(160 84% 39% / 0.15)', border: '1px solid hsl(160 84% 39% / 0.3)' }}
-        >
-          <CheckCircle2 className="text-brand-mint" size={32} />
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 bg-green-500/10 border border-green-500/20">
+          <CheckCircle2 className="text-green-400" size={32} />
         </div>
-        <h2 className="font-display font-bold text-2xl mb-2" style={{ color: '#00D4A0' }}>Account Created!</h2>
+        <h2 className="font-semibold text-2xl mb-2 text-green-400">Account Created!</h2>
         <p className="text-white/50 text-sm">Your ExamEdge account is ready. Redirecting to sign in…</p>
       </div>
     )
@@ -67,23 +64,20 @@ export default function SignupPage() {
     <>
       {/* Logo */}
       <div className="flex items-center justify-center gap-3 mb-8">
-        <div
-          className="w-11 h-11 rounded-2xl flex items-center justify-center text-white font-bold text-lg"
-          style={{ background: 'linear-gradient(135deg, hsl(327 100% 62%), hsl(280 100% 65%))' }}
-        >
+        <div className="w-10 h-10 rounded-full flex items-center justify-center font-serif text-sm font-bold text-black bg-white">
           EE
         </div>
         <div>
-          <p className="font-display font-bold text-base leading-none tracking-tight">ExamEdge</p>
-          <p className="text-[10px] text-white/40 mt-0.5">Exam Prep Platform</p>
+          <p className="font-semibold text-base leading-none tracking-tight">ExamEdge</p>
+          <p className="text-[10px] text-white/40 mt-0.5">College Exam Platform</p>
         </div>
       </div>
 
-      <h1 className="font-display text-2xl font-bold text-center mb-1">Create your account</h1>
+      <h1 className="text-2xl font-semibold text-center mb-1">Create your account</h1>
       <p className="text-sm text-white/40 text-center mb-8">Start your exam preparation journey today</p>
 
       {error && (
-        <div className="mb-5 p-3.5 rounded-xl text-xs text-red-400 bg-red-500/10 border border-red-500/20 flex items-start gap-2.5">
+        <div className="mb-5 p-3.5 rounded-xl text-xs text-red-400 bg-red-500/10 border border-red-500/20 flex items-start gap-2.5 animate-fade-up">
           <svg className="w-3.5 h-3.5 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
           </svg>
@@ -117,7 +111,7 @@ export default function SignupPage() {
               {...register('email')}
               type="email"
               autoComplete="email"
-              placeholder="you@example.com"
+              placeholder="you@university.edu"
               className="form-input pl-10"
             />
           </div>
@@ -153,12 +147,6 @@ export default function SignupPage() {
           id="signup-submit"
           disabled={loading}
           className="btn-primary w-full mt-2 py-3.5 text-base tracking-wide"
-          style={{
-            background: loading
-              ? 'hsl(327 100% 62% / 0.5)'
-              : 'linear-gradient(135deg, hsl(327 100% 62%), hsl(280 100% 65%))',
-            boxShadow: loading ? 'none' : '0 0 24px hsl(327 100% 62% / 0.4), 0 4px 16px rgba(0,0,0,0.3)',
-          }}
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">

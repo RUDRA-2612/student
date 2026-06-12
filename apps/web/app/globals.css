@@ -5,14 +5,14 @@
 /* ─── Color Tokens ───────────────────────────────────────────────────────── */
 @layer base {
   :root {
-    --bg-base:     220 16% 6%;
-    --bg-surface:  220 14% 9%;
-    --bg-card:     220 14% 11%;
-    --bg-input:    220 14% 14%;
+    --bg-base:     0 0% 2%;
+    --bg-surface:  0 0% 5%;
+    --bg-card:     0 0% 7%;
+    --bg-input:    0 0% 9%;
 
-    --accent:        327 100% 62%;
-    --accent-hover:  327 100% 70%;
-    --accent-muted:  327 40% 20%;
+    --accent:        30 100% 60%;
+    --accent-hover:  30 100% 68%;
+    --accent-muted:  30 40% 18%;
 
     --border-subtle: rgba(255,255,255,0.06);
     --border-light:  rgba(255,255,255,0.10);
@@ -29,7 +29,7 @@
   body {
     background-color: hsl(var(--bg-base));
     color: #fff;
-    font-family: 'Inter', 'Syne', sans-serif;
+    font-family: var(--font-inter, 'Inter'), sans-serif;
     margin: 0;
   }
 
@@ -40,24 +40,17 @@
 
   ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: hsl(var(--bg-base)); }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 9999px; }
-  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--accent) / 0.4); }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); }
 
-  /* ── Make select/option dark ── */
   select option {
     background: hsl(var(--bg-input));
     color: #fff;
   }
 }
 
-/* ─── Utility Overrides (fix broken Tailwind CSS-var classes) ─────────────
-   Because Tailwind generates bg-bg-base as `background-color: hsl(220 16% 6%)`
-   (a static hsl string), it DOES render — but opacity modifiers like bg-accent/10
-   FAIL because Tailwind can't inject opacity into a plain hsl() string.
-   We patch this with explicit utility classes for all used combinations.
-─────────────────────────────────────────────────────────────────────────── */
+/* ─── Utility Overrides ──────────────────────────────────────────────────── */
 @layer utilities {
-  /* Background solids */
   .bg-bg-base    { background-color: hsl(var(--bg-base)); }
   .bg-bg-surface { background-color: hsl(var(--bg-surface)); }
   .bg-bg-card    { background-color: hsl(var(--bg-card)); }
@@ -66,7 +59,6 @@
   .bg-accent-hover { background-color: hsl(var(--accent-hover)); }
   .hover\:bg-accent-hover:hover { background-color: hsl(var(--accent-hover)); }
 
-  /* Accent opacity tiers */
   .bg-accent\/5  { background-color: hsl(var(--accent) / 0.05); }
   .bg-accent\/8  { background-color: hsl(var(--accent) / 0.08); }
   .bg-accent\/10 { background-color: hsl(var(--accent) / 0.10); }
@@ -79,13 +71,11 @@
   .hover\:bg-accent\/10:hover { background-color: hsl(var(--accent) / 0.10); }
   .hover\:bg-accent\/15:hover { background-color: hsl(var(--accent) / 0.15); }
 
-  /* Text colors */
   .text-accent       { color: hsl(var(--accent)); }
   .text-accent\/80   { color: hsl(var(--accent) / 0.80); }
   .text-accent\/60   { color: hsl(var(--accent) / 0.60); }
   .hover\:text-accent:hover { color: hsl(var(--accent)); }
 
-  /* Border colors */
   .border-accent    { border-color: hsl(var(--accent)); }
   .border-accent\/10 { border-color: hsl(var(--accent) / 0.10); }
   .border-accent\/15 { border-color: hsl(var(--accent) / 0.15); }
@@ -95,40 +85,23 @@
   .focus\:border-accent\/40:focus { border-color: hsl(var(--accent) / 0.40); }
   .focus\:ring-accent\/15:focus   { --tw-ring-color: hsl(var(--accent) / 0.15); }
 
-  /* bg-bg-base opacity combinations */
   .bg-bg-base\/20 { background-color: hsl(var(--bg-base) / 0.20); }
   .bg-bg-base\/30 { background-color: hsl(var(--bg-base) / 0.30); }
   .bg-bg-base\/50 { background-color: hsl(var(--bg-base) / 0.50); }
   .bg-bg-base\/80 { background-color: hsl(var(--bg-base) / 0.80); }
   .hover\:bg-bg-base\/20:hover { background-color: hsl(var(--bg-base) / 0.20); }
 
-  /* bg-bg-surface opacity combinations */
   .bg-bg-surface\/50 { background-color: hsl(var(--bg-surface) / 0.50); }
   .bg-bg-surface\/80 { background-color: hsl(var(--bg-surface) / 0.80); }
 
-  /* bg-grid-pattern */
-  .bg-grid-pattern {
-    background-size: 60px 60px;
-    background-image:
-      linear-gradient(to right, rgba(255,255,255,0.022) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.022) 1px, transparent 1px);
-  }
+  .shadow-glow     { box-shadow: 0 0 40px hsl(var(--accent) / 0.2), 0 0 80px hsl(var(--accent) / 0.08); }
+  .shadow-glow-sm  { box-shadow: 0 0 20px hsl(var(--accent) / 0.15); }
 
-  /* Shadow glow */
-  .shadow-glow     { box-shadow: 0 0 40px hsl(var(--accent) / 0.3), 0 0 80px hsl(var(--accent) / 0.1); }
-  .shadow-glow-sm  { box-shadow: 0 0 20px hsl(var(--accent) / 0.25); }
-
-  /* Gradient text */
   .text-gradient-accent {
-    background: linear-gradient(135deg, hsl(var(--accent)), hsl(35 100% 65%));
+    background: linear-gradient(135deg, hsl(var(--accent)), hsl(45 100% 70%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-  }
-
-  /* Gradient bg */
-  .bg-gradient-cta {
-    background: linear-gradient(135deg, hsl(var(--accent)), hsl(280 100% 65%));
   }
 }
 
@@ -136,12 +109,13 @@
 @layer components {
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200;
-    background: linear-gradient(135deg, hsl(var(--accent)), hsl(280 100% 65%));
-    box-shadow: 0 0 24px hsl(var(--accent) / 0.35), 0 4px 14px rgba(0,0,0,0.25);
+    background: hsl(var(--accent));
+    box-shadow: 0 4px 14px hsl(var(--accent) / 0.25);
   }
   .btn-primary:hover {
+    background: hsl(var(--accent-hover));
     transform: translateY(-1px);
-    box-shadow: 0 0 36px hsl(var(--accent) / 0.5), 0 6px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 20px hsl(var(--accent) / 0.35);
   }
   .btn-primary:active  { transform: translateY(0); }
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
@@ -164,7 +138,7 @@
   }
   .form-input:focus {
     border-color: hsl(var(--accent) / 0.45);
-    box-shadow: 0 0 0 3px hsl(var(--accent) / 0.1);
+    box-shadow: 0 0 0 3px hsl(var(--accent) / 0.08);
   }
 
   .form-label {
