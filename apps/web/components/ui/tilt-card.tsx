@@ -8,6 +8,7 @@ interface TiltCardProps {
   glareOpacity?: number
   className?: string
   style?: React.CSSProperties
+  onClick?: React.MouseEventHandler<HTMLDivElement>
 }
 
 export function TiltCard({
@@ -16,6 +17,7 @@ export function TiltCard({
   maxTilt = 12,
   glareOpacity = 0.1,
   style = {},
+  onClick,
 }: TiltCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const glareRef = useRef<HTMLDivElement>(null)
@@ -48,6 +50,7 @@ export function TiltCard({
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onClick={onClick}
       className={`relative overflow-hidden transition-transform duration-300 ease-out ${className}`}
       style={{ ...style, willChange: 'transform' }}
     >
