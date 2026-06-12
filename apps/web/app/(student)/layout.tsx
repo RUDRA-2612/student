@@ -134,16 +134,35 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       {/* Premium Texture & Overlays */}
       <NoiseOverlay />
       
-      {/* Ambient Radial Lights */}
-      <div className="fixed -top-40 -right-40 w-96 h-96 bg-accent/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen" />
-      <div className="fixed -bottom-40 -left-40 w-96 h-96 bg-brand-mint/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen" />
-
-      {/* Grid Pattern Background */}
+      {/* Ambient Orbs (Optimized via pure radial gradients) */}
       <div 
-        className="fixed inset-0 pointer-events-none opacity-[0.07]"
+        className="fixed -top-[20%] -right-[10%] w-[50vw] h-[50vw] rounded-full pointer-events-none opacity-20"
+        style={{ background: 'radial-gradient(circle, hsl(327 100% 62% / 0.5) 0%, transparent 70%)' }}
+      />
+      <div 
+        className="fixed -bottom-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full pointer-events-none opacity-20"
+        style={{ background: 'radial-gradient(circle, hsl(165 100% 41% / 0.5) 0%, transparent 70%)' }}
+      />
+
+      {/* Architectural Blueprint Grid Pattern */}
+      <div 
+        className="fixed inset-0 pointer-events-none opacity-[0.04]"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-          backgroundSize: '32px 32px'
+          backgroundImage: `
+            linear-gradient(to right, white 1px, transparent 1px),
+            linear-gradient(to bottom, white 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px'
+        }}
+      />
+      <div 
+        className="fixed inset-0 pointer-events-none opacity-[0.02]"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, white 2px, transparent 2px),
+            linear-gradient(to bottom, white 2px, transparent 2px)
+          `,
+          backgroundSize: '200px 200px'
         }}
       />
 

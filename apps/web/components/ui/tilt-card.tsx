@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useRef, useState } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, HTMLMotionProps } from 'framer-motion'
+import React, { useRef } from 'react'
+import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate, HTMLMotionProps } from 'framer-motion'
 
 interface TiltCardProps extends HTMLMotionProps<'div'> {
   children: React.ReactNode
@@ -23,6 +23,10 @@ export function TiltCard({
   const x = useMotionValue(0)
   const y = useMotionValue(0)
 
+  // Track absolute pixel coordinates for the glare
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+
   // Smooth springs for tilt rotation
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [maxTilt, -maxTilt]), {
     stiffness: 250,
@@ -33,36 +37,29 @@ export function TiltCard({
     damping: 25,
   })
 
-  // Glare position coordinates
-  const [glarePos, setGlarePos] = useState({ x: 0, y: 0 })
-  const [isHovered, setIsHovered] = useState(false)
+  // Offload glare to GPU entirely
+  const opacity = useSpring(0, { stiffness: 300, damping: 30 })
+  const background = useMotionTemplate`radial-gradient(circle 240px at ${mouseX}px ${mouseY}px, hsl(327 100% 62% / ${glareOpacity * 1.5}), transparent 80%)`
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!ref.current) return
     const rect = ref.current.getBoundingClientRect()
-    const width = rect.width
-    const height = rect.height
     
     // Normalized mouse values (-0.5 to 0.5)
-    const relativeX = (e.clientX - rect.left) / width - 0.5
-    const relativeY = (e.clientY - rect.top) / height - 0.5
-    
-    x.set(relativeX)
-    y.set(relativeY)
+    x.set((e.clientX - rect.left) / rect.width - 0.5)
+    y.set((e.clientY - rect.top) / rect.height - 0.5)
 
     // Set pixel coordinates for glare source
-    setGlarePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    })
+    mouseX.set(e.clientX - rect.left)
+    mouseY.set(e.clientY - rect.top)
   }
 
   const handleMouseEnter = () => {
-    setIsHovered(true)
+    opacity.set(1)
   }
 
   const handleMouseLeave = () => {
-    setIsHovered(false)
+    opacity.set(0)
     x.set(0)
     y.set(0)
   }
@@ -82,15 +79,14 @@ export function TiltCard({
       className={`relative overflow-hidden transition-all duration-200 ${className}`}
       {...props}
     >
-      {/* Dynamic light reflection (glare overlay) */}
-      {isHovered && (
-        <div
-          className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-300"
-          style={{
-            background: `radial-gradient(circle 240px at ${glarePos.x}px ${glarePos.y}px, hsl(327 100% 62% / ${glareOpacity * 1.5}), transparent 80%)`,
-          }}
-        />
-      )}
+      {/* Dynamic light reflection (glare overlay) offloaded to motion template */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-30"
+        style={{
+          background,
+          opacity,
+        }}
+      />
       
       {/* Wrapper to allow children to use preserve-3d context */}
       <div className="w-full h-full" style={{ transformStyle: 'preserve-3d' }}>
