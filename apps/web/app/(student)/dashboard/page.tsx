@@ -56,7 +56,7 @@ export default function StudentDashboard() {
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-4">
                   <Sparkles size={14} className="text-accent" />
-                  <p className="text-[10px] font-bold tracking-[0.3em] uppercase text-accent">{greeting}</p>
+                  <p suppressHydrationWarning className="text-[10px] font-bold tracking-[0.3em] uppercase text-accent">{greeting}</p>
                 </div>
                 <h1 className="text-5xl md:text-7xl font-light tracking-[-0.04em] bg-clip-text text-transparent bg-gradient-to-br from-white to-white/60 mb-2">
                   {firstName}<span className="italic bg-clip-text text-transparent bg-gradient-accent font-serif" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>.</span>
@@ -213,7 +213,7 @@ export default function StudentDashboard() {
                         <span className="px-2 py-0.5 rounded-md bg-accent/10 border border-accent/20 text-[9px] font-medium tracking-wider uppercase text-accent">
                           {ann.type}
                         </span>
-                        <span className="text-[9px] text-white/20 font-mono flex items-center gap-1">
+                        <span suppressHydrationWarning className="text-[9px] text-white/20 font-mono flex items-center gap-1">
                           <Clock size={8} />{new Date(ann.createdAt).toLocaleDateString()}
                         </span>
                       </div>

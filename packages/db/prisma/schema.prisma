@@ -1,18 +1,316 @@
-// packages/db/prisma/schema.prisma
-
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions", "fullTextSearch"]
+  previewFeatures = ["fullTextSearch", "postgresqlExtensions"]
 }
 
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
   directUrl  = env("DIRECT_DATABASE_URL")
-  extensions = [pgvector(map: "vector", schema: "public")]
+  extensions = [vector(schema: "public")]
 }
 
-// ─── ENUMS ───────────────────────────────────────────────────────────────────
+model User {
+  id            String             @id @default(cuid())
+  name          String?
+  email         String             @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role               @default(STUDENT)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  passwordHash  String?
+  accounts      Account[]
+  activityLogs  ActivityLog[]
+  bookmarks     Bookmark[]
+  roadmaps      GeneratedRoadmap[]
+  predictions   SavedPrediction[]
+  sessions      Session[]
+  requests      StudentRequest[]
+  profile       UserProfile?
+
+  @@index([email])
+  @@index([role])
+}
+
+model UserProfile {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  university  String?
+  year        Int?
+  subjects    String[]
+  examDate    DateTime?
+  targetScore Int?
+  bio         String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Subject {
+  id          String           @id @default(cuid())
+  name        String
+  code        String           @unique
+  description String?
+  category    String
+  thumbnail   String?
+  isActive    Boolean          @default(true)
+  sortOrder   Int              @default(0)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  faqs        FAQ[]
+  papers      Paper[]
+  questions   Question[]
+  requests    StudentRequest[]
+  tags        Tag[]
+
+  @@index([category])
+  @@index([isActive])
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  name      String
+  subjectId String?
+  subject   Subject?   @relation(fields: [subjectId], references: [id])
+  papers    Paper[]    @relation("PaperToTag")
+  questions Question[] @relation("QuestionToTag")
+}
+
+model Paper {
+  id            String     @id @default(cuid())
+  title         String
+  subjectId     String
+  year          Int
+  examType      ExamType
+  university    String
+  difficulty    Difficulty @default(MEDIUM)
+  pdfUrl        String?
+  pdfKey        String?
+  videoUrl      String?
+  thumbnailUrl  String?
+  isPublished   Boolean    @default(false)
+  downloadCount Int        @default(0)
+  viewCount     Int        @default(0)
+  algoliaId     String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  createdBy     String
+  bookmarks     Bookmark[]
+  subject       Subject    @relation(fields: [subjectId], references: [id])
+  solution      Solution?
+  tags          Tag[]      @relation("PaperToTag")
+
+  @@index([subjectId])
+  @@index([year])
+  @@index([examType])
+  @@index([isPublished])
+  @@index([university])
+}
+
+model Solution {
+  id          String   @id @default(cuid())
+  paperId     String   @unique
+  content     String
+  videoUrl    String?
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String
+  paper       Paper    @relation(fields: [paperId], references: [id], onDelete: Cascade)
+}
+
+model Question {
+  id             String                 @id @default(cuid())
+  subjectId      String
+  text           String
+  topic          String
+  chapter        String?
+  type           QuestionType
+  marks          Int
+  importance     ImportanceLevel
+  yearLastAsked  Int?
+  modelAnswer    String?
+  isPublished    Boolean                @default(false)
+  predictedScore Float?
+  embedding      Unsupported("vector")?
+  algoliaId      String?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  createdBy      String
+  bookmarks      Bookmark[]
+  subject        Subject                @relation(fields: [subjectId], references: [id])
+  tags           Tag[]                  @relation("QuestionToTag")
+
+  @@index([subjectId])
+  @@index([importance])
+  @@index([isPublished])
+}
+
+model FAQ {
+  id          String   @id @default(cuid())
+  question    String
+  answer      String
+  category    String
+  subjectId   String?
+  isPublished Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  viewCount   Int      @default(0)
+  helpful     Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String
+  subject     Subject? @relation(fields: [subjectId], references: [id])
+
+  @@index([category])
+  @@index([isPublished])
+}
+
+model Announcement {
+  id        String           @id @default(cuid())
+  title     String
+  message   String
+  type      AnnouncementType @default(INFO)
+  isActive  Boolean          @default(true)
+  targetAll Boolean          @default(true)
+  subjects  String[]
+  expiresAt DateTime?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  createdBy String
+
+  @@index([isActive])
+  @@index([expiresAt])
+}
+
+model StudentRequest {
+  id         String        @id @default(cuid())
+  userId     String
+  subjectId  String?
+  type       RequestType
+  title      String
+  message    String
+  status     RequestStatus @default(PENDING)
+  adminReply String?
+  repliedAt  DateTime?
+  repliedBy  String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  subject    Subject?      @relation(fields: [subjectId], references: [id])
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Bookmark {
+  id         String    @id @default(cuid())
+  userId     String
+  paperId    String?
+  questionId String?
+  createdAt  DateTime  @default(now())
+  paper      Paper?    @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  question   Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, paperId])
+  @@unique([userId, questionId])
+  @@index([userId])
+}
+
+model GeneratedRoadmap {
+  id        String   @id @default(cuid())
+  userId    String
+  subject   String
+  days      Int
+  content   Json
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model SavedPrediction {
+  id        String   @id @default(cuid())
+  userId    String
+  subject   String
+  examType  String
+  content   Json
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model PlatformStats {
+  id             String   @id @default(cuid())
+  date           DateTime @unique @db.Date
+  totalUsers     Int      @default(0)
+  newUsers       Int      @default(0)
+  paperViews     Int      @default(0)
+  paperDownloads Int      @default(0)
+  aiPredictions  Int      @default(0)
+  aiRoadmaps     Int      @default(0)
+  requestsNew    Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  @@index([date])
+}
 
 enum Role {
   STUDENT
@@ -70,328 +368,4 @@ enum AnnouncementType {
   WARNING
   IMPORTANT
   MAINTENANCE
-}
-
-// ─── AUTH MODELS ─────────────────────────────────────────────────────────────
-
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  role          Role      @default(STUDENT)
-  passwordHash  String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  accounts      Account[]
-  sessions      Session[]
-  requests      StudentRequest[]
-  bookmarks     Bookmark[]
-  roadmaps      GeneratedRoadmap[]
-  predictions   SavedPrediction[]
-  activityLogs  ActivityLog[]
-  profile       UserProfile?
-
-  @@index([email])
-  @@index([role])
-}
-
-model UserProfile {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  university   String?
-  year         Int?
-  subjects     String[] // subscribed subject IDs
-  examDate     DateTime?
-  targetScore  Int?
-  bio          String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-// ─── CONTENT MODELS ──────────────────────────────────────────────────────────
-
-model Subject {
-  id          String   @id @default(cuid())
-  name        String
-  code        String   @unique
-  description String?  @db.Text
-  category    String   // Engineering, Medical, Commerce, Arts, Competitive
-  thumbnail   String?
-  isActive    Boolean  @default(true)
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  papers      Paper[]
-  questions   Question[]
-  faqs        FAQ[]
-  requests    StudentRequest[]
-  tags        Tag[]
-
-  @@index([category])
-  @@index([isActive])
-}
-
-model Tag {
-  id        String   @id @default(cuid())
-  name      String
-  subjectId String?
-  papers    Paper[]
-  questions Question[]
-  subject   Subject? @relation(fields: [subjectId], references: [id])
-}
-
-model Paper {
-  id           String     @id @default(cuid())
-  title        String
-  subjectId    String
-  year         Int
-  examType     ExamType
-  university   String
-  difficulty   Difficulty @default(MEDIUM)
-  pdfUrl       String?    // S3 URL via UploadThing
-  pdfKey       String?    // UploadThing file key for deletion
-  videoUrl     String?    // YouTube or direct video URL
-  thumbnailUrl String?
-  isPublished  Boolean    @default(false)
-  downloadCount Int       @default(0)
-  viewCount    Int        @default(0)
-  algoliaId    String?    // Algolia object ID for search
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  createdBy    String
-
-  subject   Subject   @relation(fields: [subjectId], references: [id])
-  solution  Solution?
-  tags      Tag[]
-  bookmarks Bookmark[]
-
-  @@index([subjectId])
-  @@index([year])
-  @@index([examType])
-  @@index([isPublished])
-  @@index([university])
-}
-
-model Solution {
-  id          String   @id @default(cuid())
-  paperId     String   @unique
-  content     String   @db.Text   // Rich text (Tiptap JSON as string)
-  videoUrl    String?
-  isPublished Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  createdBy   String
-
-  paper Paper @relation(fields: [paperId], references: [id], onDelete: Cascade)
-}
-
-model Question {
-  id             String          @id @default(cuid())
-  subjectId      String
-  text           String          @db.Text
-  topic          String
-  chapter        String?
-  type           QuestionType
-  marks          Int
-  importance     ImportanceLevel
-  yearLastAsked  Int?
-  modelAnswer    String?         @db.Text
-  isPublished    Boolean         @default(false)
-  predictedScore Float?          // AI-assigned probability 0-1
-  embedding      Unsupported("vector(1536)")? // pgvector for semantic search
-  algoliaId      String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  createdBy      String
-
-  subject      Subject          @relation(fields: [subjectId], references: [id])
-  tags         Tag[]
-  bookmarks    Bookmark[]
-
-  @@index([subjectId])
-  @@index([importance])
-  @@index([isPublished])
-}
-
-model FAQ {
-  id          String   @id @default(cuid())
-  question    String   @db.Text
-  answer      String   @db.Text
-  category    String   // General, Exam, Platform, Results
-  subjectId   String?
-  isPublished Boolean  @default(false)
-  sortOrder   Int      @default(0)
-  viewCount   Int      @default(0)
-  helpful     Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  createdBy   String
-
-  subject Subject? @relation(fields: [subjectId], references: [id])
-
-  @@index([category])
-  @@index([isPublished])
-}
-
-model Announcement {
-  id        String           @id @default(cuid())
-  title     String
-  message   String           @db.Text
-  type      AnnouncementType @default(INFO)
-  isActive  Boolean          @default(true)
-  targetAll Boolean          @default(true)
-  subjects  String[]         // subject IDs if not targetAll
-  expiresAt DateTime?
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  createdBy String
-
-  @@index([isActive])
-  @@index([expiresAt])
-}
-
-// ─── USER-GENERATED MODELS ───────────────────────────────────────────────────
-
-model StudentRequest {
-  id         String        @id @default(cuid())
-  userId     String
-  subjectId  String?
-  type       RequestType
-  title      String
-  message    String        @db.Text
-  status     RequestStatus @default(PENDING)
-  adminReply String?       @db.Text
-  repliedAt  DateTime?
-  repliedBy  String?
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject Subject? @relation(fields: [subjectId], references: [id])
-
-  @@index([userId])
-  @@index([status])
-  @@index([createdAt])
-}
-
-model Bookmark {
-  id         String    @id @default(cuid())
-  userId     String
-  paperId    String?
-  questionId String?
-  createdAt  DateTime  @default(now())
-
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  paper    Paper?    @relation(fields: [paperId], references: [id], onDelete: Cascade)
-  question Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, paperId])
-  @@unique([userId, questionId])
-  @@index([userId])
-}
-
-model GeneratedRoadmap {
-  id        String   @id @default(cuid())
-  userId    String
-  subject   String
-  days      Int
-  content   Json     // Structured roadmap JSON
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model SavedPrediction {
-  id        String   @id @default(cuid())
-  userId    String
-  subject   String
-  examType  String
-  content   Json     // Array of predicted questions
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-// ─── ANALYTICS & AUDIT ───────────────────────────────────────────────────────
-
-model ActivityLog {
-  id        String   @id @default(cuid())
-  userId    String?
-  action    String
-  entity    String
-  entityId  String?
-  metadata  Json?
-  ip        String?
-  userAgent String?
-  createdAt DateTime @default(now())
-
-  user User? @relation(fields: [userId], references: [id])
-
-  @@index([userId])
-  @@index([action])
-  @@index([createdAt])
-}
-
-model PlatformStats {
-  id            String   @id @default(cuid())
-  date          DateTime @unique @db.Date
-  totalUsers    Int      @default(0)
-  newUsers      Int      @default(0)
-  paperViews    Int      @default(0)
-  paperDownloads Int     @default(0)
-  aiPredictions Int      @default(0)
-  aiRoadmaps    Int      @default(0)
-  requestsNew   Int      @default(0)
-  createdAt     DateTime @default(now())
-
-  @@index([date])
 }
