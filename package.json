@@ -18,5 +18,8 @@
     "turbo": "^2.0.0",
     "typescript": "^5.0.0"
   },
-  "packageManager": "pnpm@9.12.3"
+  "packageManager": "pnpm@9.12.3",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.1"
+  }
 }
