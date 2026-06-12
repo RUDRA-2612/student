@@ -220,6 +220,9 @@ importers:
 
   packages/types:
     devDependencies:
+      '@examedge/tsconfig':
+        specifier: workspace:*
+        version: link:../config/tsconfig
       typescript:
         specifier: ^5.3.3
         version: 5.9.3
@@ -230,6 +233,9 @@ importers:
         specifier: ^3.22.4
         version: 3.25.76
     devDependencies:
+      '@examedge/tsconfig':
+        specifier: workspace:*
+        version: link:../config/tsconfig
       typescript:
         specifier: ^5.3.3
         version: 5.9.3
