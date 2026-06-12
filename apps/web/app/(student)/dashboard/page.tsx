@@ -1,32 +1,59 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { api } from '@/lib/trpc/react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { BookOpen, Map, Bookmark, Clock, Bell, ArrowUpRight, Send, Compass, Sparkles, Activity } from 'lucide-react'
-import { TiltCard } from '@/components/ui/tilt-card'
+import { BookOpen, Map, Bookmark, Clock, Bell, ArrowUpRight, Send, Compass, Activity, Zap } from 'lucide-react'
 
-/* ───── Reveal Card ───── */
-function RevealCard({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+/* IO Reveal */
+function Reveal({ children, className = '', d = 0 }: { children: React.ReactNode; className?: string; d?: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [v, setV] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setV(true); obs.disconnect() } }, { threshold: 0.1 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
-      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-      transition={{ duration: 0.8, delay, ease: [0.25, 1, 0.5, 1] }}
-      className={`h-full ${className}`}
-    >
+    <div ref={ref} className={`transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${v ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} h-full ${className}`} style={{ transitionDelay: `${d}ms` }}>
       {children}
-    </motion.div>
+    </div>
   )
 }
 
-/* ───── Shimmer Skeleton ───── */
+/* CountUp */
+function CountUp({ target }: { target: number }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const [v, setV] = useState(0)
+  const [go, setGo] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setGo(true); obs.disconnect() } }, { threshold: 0.5 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  useEffect(() => {
+    if (!go) return
+    let f: number
+    const dur = 1200, start = performance.now()
+    const tick = (now: number) => {
+      const p = Math.min((now - start) / dur, 1)
+      setV(Math.round((1 - Math.pow(1 - p, 3)) * target))
+      if (p < 1) f = requestAnimationFrame(tick)
+    }
+    f = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(f)
+  }, [go, target])
+  return <span ref={ref}>{v}</span>
+}
+
+/* Shimmer */
 function Shimmer() {
-  return (
-    <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.05),transparent)] bg-[length:200%_100%] animate-shimmer z-10" />
-  )
+  return <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent,rgba(255,240,230,0.04),transparent)] bg-[length:200%_100%] animate-shimmer z-10" />
 }
 
 export default function StudentDashboard() {
@@ -42,191 +69,169 @@ export default function StudentDashboard() {
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
 
   return (
-    <div className="w-full text-white">
+    <div className="w-full">
       {/* ─── BENTO GRID ─── */}
       <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-4 auto-rows-min">
 
-        {/* 1. Hero Block (Spans 8 cols) */}
-        <div className="md:col-span-4 lg:col-span-8 row-span-1">
-          <RevealCard>
-            <div className="relative h-full p-8 rounded-3xl border border-white/[0.04] bg-bg-surface/40 backdrop-blur-md overflow-hidden flex flex-col justify-end group">
-              {/* Background gradient orb */}
-              <div className="absolute -top-32 -right-32 w-96 h-96 bg-brand-mint/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-brand-mint/20 transition-colors duration-700" />
-              
+        {/* Hero Block */}
+        <div className="md:col-span-4 lg:col-span-8">
+          <Reveal>
+            <div className="relative p-8 rounded-2xl border border-white/[0.04] bg-white/[0.015] overflow-hidden">
+              <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full opacity-[0.04] pointer-events-none"
+                style={{ background: 'radial-gradient(circle, hsl(340 82% 62%), transparent 55%)' }} />
               <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-4">
-                  <Sparkles size={14} className="text-accent" />
-                  <p suppressHydrationWarning className="text-[10px] font-bold tracking-[0.3em] uppercase text-accent">{greeting}</p>
-                </div>
-                <h1 className="text-5xl md:text-7xl font-light tracking-[-0.04em] bg-clip-text text-transparent bg-gradient-to-br from-white to-white/60 mb-2">
-                  {firstName}<span className="italic bg-clip-text text-transparent bg-gradient-accent font-serif" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>.</span>
+                <p suppressHydrationWarning className="text-[10px] font-bold tracking-[0.3em] uppercase text-[hsl(340,82%,62%)]/60 mb-3">{greeting}</p>
+                <h1 className="text-5xl md:text-6xl font-bold tracking-[-0.04em] mb-2">
+                  {firstName}<span className="italic text-[hsl(340,82%,62%)]/60" style={{ fontFamily: 'var(--font-serif)' }}>.</span>
                 </h1>
-                <p className="text-white/40 text-sm max-w-md">Your personalized command center. Resume your active papers or explore new roadmap objectives.</p>
+                <p className="text-white/30 text-sm max-w-md">Your command center. Pick up where you left off.</p>
               </div>
             </div>
-          </RevealCard>
+          </Reveal>
         </div>
 
-        {/* 2. Primary Stat Block (Spans 4 cols) */}
-        <div className="md:col-span-2 lg:col-span-4 row-span-1">
-          <RevealCard delay={0.1}>
-            <TiltCard 
-              maxTilt={4}
-              glareOpacity={0.06}
-              className="h-full rounded-3xl border border-white/[0.04] bg-bg-surface/40 backdrop-blur-md p-6 flex flex-col justify-between group"
-            >
-              <div className="flex items-center justify-between" style={{ transform: 'translateZ(20px)' }}>
-                <div className="p-2.5 rounded-xl bg-accent/10 border border-accent/20">
-                  <Activity size={18} className="text-accent" />
+        {/* Activity stat */}
+        <div className="md:col-span-2 lg:col-span-4">
+          <Reveal d={80}>
+            <div className="h-full rounded-2xl border border-white/[0.04] bg-white/[0.015] p-6 flex flex-col justify-between group hover:border-[hsl(340,82%,62%)]/12 transition-colors duration-500">
+              <div className="flex items-center justify-between">
+                <div className="p-2 rounded-lg bg-[hsl(340,82%,62%)]/8 border border-[hsl(340,82%,62%)]/15">
+                  <Activity size={16} className="text-[hsl(340,82%,62%)]/70" />
                 </div>
-                <ArrowUpRight size={16} className="text-white/20 group-hover:text-accent transition-colors" />
+                <ArrowUpRight size={14} className="text-white/15 group-hover:text-[hsl(340,82%,62%)]/50 transition-colors" />
               </div>
-              <div className="mt-8" style={{ transform: 'translateZ(30px)' }}>
-                <p className="text-[10px] font-mono tracking-widest uppercase text-white/30 mb-2">Total Activity</p>
+              <div className="mt-6">
+                <p className="text-[10px] font-mono tracking-widest uppercase text-white/25 mb-1.5">Activity</p>
                 {statsLoading ? (
-                  <div className="h-12 w-24 bg-white/5 rounded-lg relative overflow-hidden"><Shimmer /></div>
+                  <div className="h-10 w-20 bg-white/[0.03] rounded relative overflow-hidden"><Shimmer /></div>
                 ) : (
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-6xl font-light font-serif text-white/90" style={{ fontFamily: 'var(--font-serif)' }}>
-                      {(stats?.roadmapsCount ?? 0) + (stats?.requestsCount ?? 0) + (stats?.bookmarksCount ?? 0)}
-                    </span>
-                    <span className="text-xs text-accent font-medium">+12%</span>
-                  </div>
+                  <span className="text-5xl font-bold tracking-tight text-gradient-accent" style={{ fontFamily: 'var(--font-serif)' }}>
+                    <CountUp target={(stats?.roadmapsCount ?? 0) + (stats?.requestsCount ?? 0) + (stats?.bookmarksCount ?? 0)} />
+                  </span>
                 )}
               </div>
-            </TiltCard>
-          </RevealCard>
+            </div>
+          </Reveal>
         </div>
 
-        {/* 3. Minor Stat Blocks (Span 2 cols each) */}
+        {/* Small stats */}
         {[
-          { label: 'Bookmarks', value: stats?.bookmarksCount, icon: Bookmark, color: 'text-brand-amber', bg: 'bg-brand-amber/10', border: 'border-brand-amber/20' },
-          { label: 'Requests', value: stats?.requestsCount, icon: Send, color: 'text-brand-coral', bg: 'bg-brand-coral/10', border: 'border-brand-coral/20' },
+          { label: 'Bookmarks', value: stats?.bookmarksCount, icon: Bookmark, hue: '38' },
+          { label: 'Requests', value: stats?.requestsCount, icon: Send, hue: '340' },
         ].map((stat, i) => (
-          <div key={stat.label} className="md:col-span-2 lg:col-span-2 row-span-1">
-            <RevealCard delay={0.15 + i * 0.05}>
-              <TiltCard maxTilt={8} glareOpacity={0.05} className="h-40 rounded-3xl border border-white/[0.04] bg-bg-surface/40 backdrop-blur-md p-5 flex flex-col justify-between hover:border-white/[0.1] transition-all">
-                <div className="flex items-center justify-between" style={{ transform: 'translateZ(10px)' }}>
-                  <div className={`p-2 rounded-lg ${stat.bg} ${stat.border} border`}>
-                    <stat.icon size={14} className={stat.color} />
-                  </div>
+          <div key={stat.label} className="md:col-span-2 lg:col-span-2">
+            <Reveal d={120 + i * 40}>
+              <div className="h-36 rounded-2xl border border-white/[0.04] bg-white/[0.015] p-5 flex flex-col justify-between hover:border-white/[0.08] transition-colors duration-500">
+                <div className="p-1.5 rounded-lg bg-white/[0.03] w-fit">
+                  <stat.icon size={13} className="text-white/35" style={{ color: `hsl(${stat.hue} 70% 60% / 0.6)` }} />
                 </div>
-                <div style={{ transform: 'translateZ(20px)' }}>
+                <div>
                   {statsLoading ? (
-                     <div className="h-8 w-12 bg-white/5 rounded relative overflow-hidden"><Shimmer /></div>
+                    <div className="h-7 w-10 bg-white/[0.03] rounded relative overflow-hidden"><Shimmer /></div>
                   ) : (
-                    <span className="text-4xl font-light font-serif text-white/90" style={{ fontFamily: 'var(--font-serif)' }}>{stat.value ?? 0}</span>
+                    <span className="text-3xl font-bold text-white/80" style={{ fontFamily: 'var(--font-serif)' }}>
+                      <CountUp target={stat.value ?? 0} />
+                    </span>
                   )}
-                  <p className="text-[9px] font-mono tracking-wider uppercase text-white/40 mt-1">{stat.label}</p>
+                  <p className="text-[9px] font-mono tracking-wider uppercase text-white/25 mt-1">{stat.label}</p>
                 </div>
-              </TiltCard>
-            </RevealCard>
+              </div>
+            </Reveal>
           </div>
         ))}
 
-        {/* 4. Quick Actions Bento (Spans 4 cols) */}
-        <div className="md:col-span-4 lg:col-span-4 row-span-1">
-          <RevealCard delay={0.25}>
-            <div className="h-full rounded-3xl border border-white/[0.04] bg-bg-surface/40 backdrop-blur-md p-6">
-              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/40 mb-4 flex items-center gap-2">
-                <Compass size={12} className="text-brand-mint" /> Quick Launch
+        {/* Quick Launch */}
+        <div className="md:col-span-4 lg:col-span-4">
+          <Reveal d={200}>
+            <div className="h-full rounded-2xl border border-white/[0.04] bg-white/[0.015] p-5">
+              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/30 mb-4 flex items-center gap-2">
+                <Zap size={11} className="text-[hsl(340,82%,62%)]/50" /> Quick Launch
               </p>
-              <div className="grid grid-cols-2 gap-3 h-[calc(100%-36px)]">
+              <div className="grid grid-cols-2 gap-2.5 h-[calc(100%-32px)]">
                 {[
                   { href: '/curriculum', icon: Compass, label: 'Curriculum' },
                   { href: '/roadmap', icon: Map, label: 'Roadmap' },
                   { href: '/papers', icon: BookOpen, label: 'Papers' },
                   { href: '/requests', icon: Send, label: 'Requests' },
                 ].map((item) => (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className="group flex flex-col items-start justify-center gap-2 p-4 rounded-2xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.03] hover:border-white/[0.1] transition-all relative overflow-hidden"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <item.icon size={18} className="text-white/30 group-hover:text-white transition-colors" />
-                    <span className="text-xs font-medium text-white/60 group-hover:text-white transition-colors">{item.label}</span>
+                  <Link key={item.label} href={item.href}
+                    className="group flex flex-col items-start justify-center gap-1.5 p-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.03] hover:border-white/[0.07] transition-all duration-300">
+                    <item.icon size={16} className="text-white/25 group-hover:text-white/70 transition-colors" />
+                    <span className="text-[11px] font-medium text-white/45 group-hover:text-white/80 transition-colors">{item.label}</span>
                   </Link>
                 ))}
               </div>
             </div>
-          </RevealCard>
+          </Reveal>
         </div>
 
-        {/* 5. Subjects List (Spans 4 cols, tall) */}
+        {/* Subjects */}
         <div className="md:col-span-4 lg:col-span-4 row-span-2">
-          <RevealCard delay={0.3}>
-            <div className="h-full rounded-3xl border border-white/[0.04] bg-bg-surface/40 backdrop-blur-md p-6 flex flex-col">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-white/90 flex items-center gap-2">
-                  <BookOpen size={14} className="text-brand-mint" /> Syllabus
+          <Reveal d={250}>
+            <div className="h-full rounded-2xl border border-white/[0.04] bg-white/[0.015] p-5 flex flex-col">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-xs font-semibold tracking-[0.12em] uppercase text-white/70 flex items-center gap-2">
+                  <BookOpen size={13} className="text-[hsl(340,82%,62%)]/50" /> Syllabus
                 </h2>
-                <Link href="/papers" className="text-[10px] font-semibold tracking-[0.15em] uppercase text-brand-mint/60 hover:text-brand-mint transition-colors flex items-center gap-1 group">
-                  View All <ArrowUpRight size={10} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <Link href="/papers" className="text-[10px] font-semibold tracking-wider uppercase text-white/25 hover:text-[hsl(340,82%,62%)]/60 transition-colors flex items-center gap-1 group">
+                  All <ArrowUpRight size={9} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </Link>
               </div>
-
-              <div className="flex-1 flex flex-col gap-2">
+              <div className="flex-1 flex flex-col gap-1">
                 {subjectsLoading ? (
-                  [1,2,3,4,5].map(i => <div key={i} className="h-14 rounded-xl bg-white/[0.02] relative overflow-hidden"><Shimmer /></div>)
+                  [1,2,3,4,5].map(i => <div key={i} className="h-12 rounded-lg bg-white/[0.02] relative overflow-hidden"><Shimmer /></div>)
                 ) : !subjects?.length ? (
-                  <div className="py-16 text-center text-white/30 text-xs flex-1 flex items-center justify-center">No active subjects</div>
+                  <div className="py-14 text-center text-white/20 text-xs flex-1 flex items-center justify-center">No active subjects</div>
                 ) : (
                   subjects.slice(0, 5).map((sub) => (
-                    <Link
-                      key={sub.id}
-                      href={`/papers?subjectId=${sub.id}`}
-                      className="group flex items-center justify-between p-3 rounded-xl border border-white/0 hover:border-white/[0.04] bg-transparent hover:bg-white/[0.02] transition-all"
-                    >
+                    <Link key={sub.id} href={`/papers?subjectId=${sub.id}`}
+                      className="group flex items-center justify-between p-3 rounded-lg hover:bg-white/[0.02] transition-colors">
                       <div>
-                        <h3 className="text-xs font-medium text-white/80 group-hover:text-white transition-colors">{sub.name}</h3>
-                        <p className="text-[10px] text-white/30 mt-0.5">{sub.code}</p>
+                        <h3 className="text-[11px] font-medium text-white/70 group-hover:text-white/90 transition-colors">{sub.name}</h3>
+                        <p className="text-[9px] text-white/20 mt-0.5">{sub.code}</p>
                       </div>
-                      <div className="w-6 h-6 rounded-full bg-white/[0.03] group-hover:bg-brand-mint/10 flex items-center justify-center transition-colors">
-                        <ArrowUpRight size={10} className="text-white/30 group-hover:text-brand-mint transition-colors" />
-                      </div>
+                      <ArrowUpRight size={10} className="text-white/15 group-hover:text-[hsl(340,82%,62%)]/50 transition-colors" />
                     </Link>
                   ))
                 )}
               </div>
             </div>
-          </RevealCard>
+          </Reveal>
         </div>
 
-        {/* 6. Announcements (Spans 8 cols) */}
-        <div className="md:col-span-4 lg:col-span-8 row-span-1">
-          <RevealCard delay={0.35}>
-            <div className="h-full rounded-3xl border border-white/[0.04] bg-bg-surface/40 backdrop-blur-md p-6">
-              <div className="flex items-center gap-2 mb-5">
-                <Bell size={13} className="text-accent" />
-                <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/40">Academic Bulletins</p>
+        {/* Announcements */}
+        <div className="md:col-span-4 lg:col-span-8">
+          <Reveal d={300}>
+            <div className="rounded-2xl border border-white/[0.04] bg-white/[0.015] p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <Bell size={12} className="text-[hsl(340,82%,62%)]/50" />
+                <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/30">Bulletins</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {announcementsLoading ? (
-                  [1,2].map(i => <div key={i} className="h-24 rounded-2xl bg-white/[0.02] relative overflow-hidden"><Shimmer /></div>)
+                  [1,2].map(i => <div key={i} className="h-20 rounded-xl bg-white/[0.02] relative overflow-hidden"><Shimmer /></div>)
                 ) : !announcements?.length ? (
-                  <div className="col-span-2 py-8 text-center text-white/20 text-xs">No announcements at this time</div>
+                  <div className="col-span-2 py-6 text-center text-white/15 text-xs">No announcements</div>
                 ) : (
                   announcements.slice(0, 2).map((ann) => (
-                    <div key={ann.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.03] hover:border-white/[0.08] transition-colors group">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="px-2 py-0.5 rounded-md bg-accent/10 border border-accent/20 text-[9px] font-medium tracking-wider uppercase text-accent">
+                    <div key={ann.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.03] hover:border-white/[0.06] transition-colors group">
+                      <div className="flex items-center justify-between mb-2.5">
+                        <span className="px-2 py-0.5 rounded text-[8px] font-bold tracking-wider uppercase bg-[hsl(340,82%,62%)]/8 border border-[hsl(340,82%,62%)]/15 text-[hsl(340,82%,62%)]/70">
                           {ann.type}
                         </span>
-                        <span suppressHydrationWarning className="text-[9px] text-white/20 font-mono flex items-center gap-1">
+                        <span suppressHydrationWarning className="text-[9px] text-white/15 font-mono flex items-center gap-1">
                           <Clock size={8} />{new Date(ann.createdAt).toLocaleDateString()}
                         </span>
                       </div>
-                      <h4 className="text-xs font-semibold text-white/90 mb-1.5 group-hover:text-white">{ann.title}</h4>
-                      <p className="text-[11px] text-white/40 leading-relaxed line-clamp-2">{ann.message}</p>
+                      <h4 className="text-xs font-semibold text-white/80 mb-1 group-hover:text-white/95 transition-colors">{ann.title}</h4>
+                      <p className="text-[10px] text-white/30 leading-relaxed line-clamp-2">{ann.message}</p>
                     </div>
                   ))
                 )}
               </div>
             </div>
-          </RevealCard>
+          </Reveal>
         </div>
-
       </div>
     </div>
   )

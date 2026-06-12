@@ -1,97 +1,63 @@
 'use client'
 
-import React, { useRef } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate, HTMLMotionProps } from 'framer-motion'
+import React, { useRef, useCallback } from 'react'
 
-interface TiltCardProps extends HTMLMotionProps<'div'> {
+interface TiltCardProps {
   children: React.ReactNode
   maxTilt?: number
   glareOpacity?: number
+  className?: string
+  style?: React.CSSProperties
 }
 
 export function TiltCard({
   children,
   className = '',
-  maxTilt = 15,
-  glareOpacity = 0.12,
+  maxTilt = 12,
+  glareOpacity = 0.1,
   style = {},
-  ...props
 }: TiltCardProps) {
-  const ref = useRef<HTMLDivElement>(null)
-  
-  // Track relative mouse position inside the card (-0.5 to 0.5)
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
+  const cardRef = useRef<HTMLDivElement>(null)
+  const glareRef = useRef<HTMLDivElement>(null)
 
-  // Track absolute pixel coordinates for the glare
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current
+    const glare = glareRef.current
+    if (!card || !glare) return
 
-  // Smooth springs for tilt rotation
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [maxTilt, -maxTilt]), {
-    stiffness: 250,
-    damping: 25,
-  })
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-maxTilt, maxTilt]), {
-    stiffness: 250,
-    damping: 25,
-  })
+    const rect = card.getBoundingClientRect()
+    const x = (e.clientX - rect.left) / rect.width - 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5
 
-  // Offload glare to GPU entirely
-  const opacity = useSpring(0, { stiffness: 300, damping: 30 })
-  const background = useMotionTemplate`radial-gradient(circle 240px at ${mouseX}px ${mouseY}px, hsl(327 100% 62% / ${glareOpacity * 1.5}), transparent 80%)`
+    card.style.transform = `perspective(800px) rotateX(${-y * maxTilt}deg) rotateY(${x * maxTilt}deg) scale3d(1.02, 1.02, 1.02)`
+    glare.style.opacity = String(glareOpacity)
+    glare.style.background = `radial-gradient(circle 200px at ${e.clientX - rect.left}px ${e.clientY - rect.top}px, hsl(263 70% 58% / ${glareOpacity * 1.5}), transparent 80%)`
+  }, [maxTilt, glareOpacity])
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return
-    const rect = ref.current.getBoundingClientRect()
-    
-    // Normalized mouse values (-0.5 to 0.5)
-    x.set((e.clientX - rect.left) / rect.width - 0.5)
-    y.set((e.clientY - rect.top) / rect.height - 0.5)
+  const handleMouseLeave = useCallback(() => {
+    const card = cardRef.current
+    const glare = glareRef.current
+    if (!card || !glare) return
 
-    // Set pixel coordinates for glare source
-    mouseX.set(e.clientX - rect.left)
-    mouseY.set(e.clientY - rect.top)
-  }
-
-  const handleMouseEnter = () => {
-    opacity.set(1)
-  }
-
-  const handleMouseLeave = () => {
-    opacity.set(0)
-    x.set(0)
-    y.set(0)
-  }
+    card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)'
+    glare.style.opacity = '0'
+  }, [])
 
   return (
-    <motion.div
-      ref={ref}
+    <div
+      ref={cardRef}
       onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      style={{
-        ...style,
-        rotateX,
-        rotateY,
-        transformStyle: 'preserve-3d',
-      }}
-      className={`relative overflow-hidden transition-all duration-200 ${className}`}
-      {...props}
+      className={`relative overflow-hidden transition-transform duration-300 ease-out ${className}`}
+      style={{ ...style, willChange: 'transform' }}
     >
-      {/* Dynamic light reflection (glare overlay) offloaded to motion template */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 z-30"
-        style={{
-          background,
-          opacity,
-        }}
+      {/* Glare overlay — GPU-composited, no React re-renders */}
+      <div
+        ref={glareRef}
+        className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-500"
+        style={{ opacity: 0 }}
       />
-      
-      {/* Wrapper to allow children to use preserve-3d context */}
-      <div className="w-full h-full" style={{ transformStyle: 'preserve-3d' }}>
-        {children}
-      </div>
-    </motion.div>
+      {children}
+    </div>
   )
 }

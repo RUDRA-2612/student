@@ -2,295 +2,333 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion'
-import { ArrowRight, ArrowUpRight } from 'lucide-react'
-import { NoiseOverlay } from '@/components/ui/noise-overlay'
+import { ArrowRight, ArrowUpRight, Star } from 'lucide-react'
 
-/* ───── Magnetic Button ───── */
-function MagneticButton({ children, href, className = '' }: { children: React.ReactNode; href: string; className?: string }) {
-  const ref = useRef<HTMLAnchorElement>(null)
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-  const springX = useSpring(x, { stiffness: 150, damping: 15 })
-  const springY = useSpring(y, { stiffness: 150, damping: 15 })
-
-  const handleMouse = (e: React.MouseEvent) => {
+/* ───── IO Reveal (no framer) ───── */
+function R({ children, className = '', d = 0 }: { children: React.ReactNode; className?: string; d?: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [v, setV] = useState(false)
+  useEffect(() => {
     const el = ref.current
     if (!el) return
-    const rect = el.getBoundingClientRect()
-    x.set((e.clientX - rect.left - rect.width / 2) * 0.3)
-    y.set((e.clientY - rect.top - rect.height / 2) * 0.3)
-  }
-
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setV(true); obs.disconnect() } }, { threshold: 0.12 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
   return (
-    <motion.a
-      ref={ref}
-      href={href}
-      style={{ x: springX, y: springY }}
-      onMouseMove={handleMouse}
-      onMouseLeave={() => { x.set(0); y.set(0) }}
-      className={className}
-    >
+    <div ref={ref} className={`transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${v ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} ${className}`} style={{ transitionDelay: `${d}ms` }}>
       {children}
-    </motion.a>
-  )
-}
-
-/* ───── Infinite Marquee ───── */
-function Marquee({ children, speed = 30 }: { children: React.ReactNode; speed?: number }) {
-  return (
-    <div className="overflow-hidden whitespace-nowrap">
-      <motion.div
-        className="inline-flex gap-8"
-        animate={{ x: ['0%', '-50%'] }}
-        transition={{ duration: speed, repeat: Infinity, ease: 'linear' }}
-      >
-        {children}
-        {children}
-      </motion.div>
     </div>
   )
 }
 
-/* ───── Parallax Image Block ───── */
-function ParallaxBlock({ children, offset = 80 }: { children: React.ReactNode; offset?: number }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], [offset, -offset])
-
-  return (
-    <div ref={ref} className="overflow-hidden">
-      <motion.div style={{ y }}>{children}</motion.div>
-    </div>
-  )
+/* ───── CountUp ───── */
+function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const [v, setV] = useState(0)
+  const [go, setGo] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setGo(true); obs.disconnect() } }, { threshold: 0.5 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  useEffect(() => {
+    if (!go) return
+    let f: number
+    const dur = 1800, start = performance.now()
+    const tick = (now: number) => {
+      const p = Math.min((now - start) / dur, 1)
+      setV(Math.round((1 - Math.pow(1 - p, 4)) * target))
+      if (p < 1) f = requestAnimationFrame(tick)
+    }
+    f = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(f)
+  }, [go, target])
+  return <span ref={ref}>{v.toLocaleString()}{suffix}</span>
 }
 
-/* ───── Subjects Data ───── */
+/* ───── Data ───── */
 const subjects = [
-  { code: 'CSE101', name: 'Programming-I', tag: 'CORE' },
-  { code: 'EEE101', name: 'Electrical & Electronics', tag: 'ENGINEERING' },
-  { code: 'DES101', name: 'Design Creativity', tag: 'DESIGN' },
-  { code: 'MTH101', name: 'Calculus', tag: 'MATHEMATICS' },
-  { code: 'ENV101', name: 'Environment & Sustainability', tag: 'HUMANITIES' },
-  { code: 'COM101', name: 'Communication', tag: 'SKILLS' },
+  { code: 'CSE101', name: 'Programming-I', tag: 'Core' },
+  { code: 'EEE101', name: 'Electrical & Electronics', tag: 'Engineering' },
+  { code: 'DES101', name: 'Design Creativity', tag: 'Design' },
+  { code: 'MTH101', name: 'Calculus', tag: 'Math' },
+  { code: 'ENV101', name: 'Environment & Sustainability', tag: 'Humanities' },
+  { code: 'COM101', name: 'Communication', tag: 'Skills' },
 ]
 
-const marqueeWords = ['PAST PAPERS', 'STUDY ROADMAPS', 'CURATED SYLLABI', 'EXAM PATTERNS', 'QUESTION BANKS', 'DEEP ANALYSIS', 'COLLEGE EXAMS', 'SEMESTER PREP']
-
 export default function LandingPage() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll()
-  const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.92])
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
-  const heroBlur = useTransform(scrollYProgress, [0, 0.15], [0, 10])
-
-  const [time, setTime] = useState('')
-  useEffect(() => {
-    const update = () => setTime(new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }))
-    update()
-    const interval = setInterval(update, 60000)
-    return () => clearInterval(interval)
-  }, [])
-
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#030303] text-white overflow-x-hidden selection:bg-white/20">
-      <NoiseOverlay />
+    <div className="min-h-screen bg-[hsl(20,8%,5%)] text-[#f5ede6] overflow-x-hidden selection:bg-[hsl(340,82%,62%)]/30">
 
-      {/* ─── Minimal Top Bar ─── */}
+      {/* ─── Atmosphere ─── */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {/* Main warm blob — off-center, organic */}
+        <div className="absolute -top-[30%] right-[-5%] w-[70vw] h-[70vw] rounded-full opacity-[0.07] animate-drift"
+          style={{ background: 'radial-gradient(circle, hsl(340 82% 62%) 0%, transparent 55%)' }} />
+        {/* Smaller peach blob — bottom left */}
+        <div className="absolute bottom-[-15%] left-[-10%] w-[50vw] h-[50vw] rounded-full opacity-[0.05] animate-drift-slow"
+          style={{ background: 'radial-gradient(circle, hsl(20 90% 68%) 0%, transparent 55%)' }} />
+      </div>
+
+      {/* ─── Nav ─── */}
       <header className="fixed top-0 w-full z-50 mix-blend-difference">
-        <div className="max-w-[1800px] mx-auto px-8 h-20 flex items-center justify-between">
-          <Link href="/" className="text-sm font-medium tracking-[0.3em] uppercase">ExamEdge</Link>
-          <div className="flex items-center gap-8">
-            <span className="text-xs text-white/50 font-mono hidden md:block">{time}</span>
-            <Link href="/login" className="text-xs tracking-[0.15em] uppercase text-white/60 hover:text-white transition-colors">Enter</Link>
+        <div className="max-w-[1600px] mx-auto px-6 lg:px-10">
+          <div className="flex items-center justify-between h-20">
+            <Link href="/" className="text-[13px] font-semibold tracking-[0.25em] uppercase">Exam<span className="text-[hsl(340,82%,62%)]">Edge</span></Link>
+            <div className="flex items-center gap-8">
+              <Link href="/dashboard" className="text-[11px] tracking-[0.15em] uppercase text-white/40 hover:text-white transition-colors hidden md:block">Browse</Link>
+              <Link href="/login" className="text-[11px] tracking-[0.15em] uppercase text-white/50 hover:text-white transition-colors">Enter →</Link>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* ─── HERO: Full-bleed editorial ─── */}
-      <motion.section
-        style={{ scale: heroScale, opacity: heroOpacity, filter: `blur(${heroBlur}px)` } as any}
-        className="relative h-screen flex flex-col justify-end px-8 pb-16 origin-center"
-      >
-        {/* Giant background letter */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-          <span
-            className="text-[40vw] font-serif italic leading-none text-white/[0.015] tracking-tighter"
-            style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}
-          >
-            E
-          </span>
-        </div>
-
-        <div className="relative z-10 max-w-[1800px] mx-auto w-full">
-          {/* Oversized headline */}
-          <div className="mb-12">
-            <motion.h1
-              initial={{ y: 120, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[clamp(3rem,11vw,11rem)] font-light leading-[0.85] tracking-[-0.04em]"
-            >
-              Master your
-            </motion.h1>
-            <motion.h1
-              initial={{ y: 120, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-              className="text-[clamp(3rem,11vw,11rem)] leading-[0.85] tracking-[-0.04em] italic text-white/40"
-              style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}
-            >
-              semester.
-            </motion.h1>
+      {/* ━━━ HERO — centered 3D editorial ━━━ */}
+      <section className="relative min-h-screen flex items-center justify-center pt-20 pb-16 lg:pb-20 text-center">
+        <div className="max-w-[1600px] mx-auto px-6 lg:px-10 w-full flex flex-col items-center">
+          {/* Centered headline with 3D text shadow and padding to prevent cutoffs */}
+          <div className="mb-10 lg:mb-14">
+            <div className="overflow-hidden pb-10">
+              <h1 className="animate-text-reveal text-[clamp(3.5rem,10vw,9.5rem)] font-bold leading-[0.9] tracking-[-0.04em]"
+                style={{
+                  animationDelay: '0.2s',
+                  textShadow: '1px 1px 0px hsl(340 82% 40%), 2px 2px 0px hsl(340 82% 40%), 3px 3px 0px hsl(340 82% 40%), 4px 4px 0px hsl(340 82% 40%), 5px 5px 0px hsl(340 82% 40%), 6px 6px 0px hsl(340 82% 40%)'
+                }}>
+                Stop guessing.
+              </h1>
+            </div>
+            <div className="overflow-hidden mt-2 pb-10">
+              <p className="animate-text-reveal text-[clamp(3.5rem,10vw,9.5rem)] leading-[0.9] tracking-[-0.04em] italic text-[hsl(340,82%,62%)]"
+                style={{
+                  fontFamily: 'var(--font-serif), Georgia, serif',
+                  animationDelay: '0.5s',
+                  textShadow: '1px 1px 0px hsl(340 82% 30%), 2px 2px 0px hsl(340 82% 30%), 3px 3px 0px hsl(340 82% 30%), 4px 4px 0px hsl(340 82% 30%), 5px 5px 0px hsl(340 82% 30%), 6px 6px 0px hsl(340 82% 30%)'
+                }}>
+                Start knowing.
+              </p>
+            </div>
           </div>
 
-          {/* Bottom row: tagline + CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="flex flex-col md:flex-row md:items-end justify-between gap-8"
-          >
-            <p className="text-white/35 text-base md:text-lg max-w-md leading-relaxed font-light">
-              A curated platform that decodes years of past examination 
-              patterns to give you an unfair academic advantage.
-            </p>
-
-            <div className="flex items-center gap-6">
-              <MagneticButton
-                href="/login"
-                className="group flex items-center gap-4 px-8 py-5 rounded-full bg-white text-black font-medium text-sm transition-transform"
-              >
-                Start Preparing
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-              </MagneticButton>
-              <MagneticButton
-                href="/dashboard"
-                className="group flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors"
-              >
-                Preview
-                <ArrowUpRight size={14} />
-              </MagneticButton>
+          {/* Bottom row — tagline + CTA, centered alignment */}
+          <div className="flex flex-col items-center gap-8">
+            <div className="animate-fade-up max-w-xl text-center" style={{ animationDelay: '0.8s' }}>
+              <p className="text-base lg:text-xl text-white/30 leading-relaxed font-light">
+                We analyzed thousands of past papers so you don't have to.
+                <br className="hidden md:block" />
+                <span className="text-white/50"> Know exactly what's coming.</span>
+              </p>
             </div>
-          </motion.div>
+
+            <div className="animate-fade-up flex items-center justify-center gap-5" style={{ animationDelay: '1s' }}>
+              <Link
+                href="/login"
+                className="group relative px-10 py-5 rounded-full text-sm font-semibold text-white overflow-hidden transition-transform hover:scale-[1.03] active:scale-100"
+              >
+                <span className="absolute inset-0 bg-[hsl(340,82%,62%)] rounded-full" />
+                <span className="absolute inset-0 bg-[hsl(340,82%,62%)] rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity" />
+                <span className="relative flex items-center gap-3">
+                  Start Free <ArrowRight size={15} />
+                </span>
+              </Link>
+              <Link href="/dashboard" className="group text-[13px] font-medium tracking-wide text-white/40 hover:text-white transition-colors flex items-center gap-1.5 px-4 py-2">
+                Preview <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+            </div>
+          </div>
         </div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-px h-12 bg-gradient-to-b from-white/30 to-transparent"
-          />
-        </motion.div>
-      </motion.section>
-
-      {/* ─── Marquee Strip ─── */}
-      <section className="py-6 border-y border-white/[0.04] bg-white/[0.01]">
-        <Marquee speed={40}>
-          {marqueeWords.map((word) => (
-            <span key={word} className="text-[10px] font-medium tracking-[0.3em] uppercase text-white/25 flex items-center gap-8">
-              {word} <span className="w-1 h-1 rounded-full bg-white/20" />
-            </span>
-          ))}
-        </Marquee>
+        {/* Scroll line */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-fade-in" style={{ animationDelay: '2.5s' }}>
+          <span className="text-[8px] tracking-[0.3em] uppercase text-white/20">Scroll</span>
+          <div className="w-px h-10 bg-gradient-to-b from-[hsl(340,82%,62%)]/30 to-transparent animate-float" />
+        </div>
       </section>
 
-      {/* ─── Subjects: Editorial Grid ─── */}
-      <section className="py-32 px-8">
-        <div className="max-w-[1800px] mx-auto">
-          <div className="flex items-end justify-between mb-20">
-            <ParallaxBlock offset={40}>
-              <h2 className="text-5xl md:text-7xl font-light tracking-[-0.03em]">
-                The <span className="italic text-white/40" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>curriculum</span>
-              </h2>
-            </ParallaxBlock>
-            <span className="text-[10px] text-white/30 font-mono tracking-wider hidden md:block">SEM 01 / 02</span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/[0.04]">
-            {subjects.map((sub, i) => (
-              <motion.div
-                key={sub.code}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.8, delay: i * 0.08, ease: [0.25, 1, 0.5, 1] }}
-              >
-                <Link
-                  href={`/papers?subjectId=${sub.code}`}
-                  className="group block p-8 md:p-10 bg-[#030303] hover:bg-white/[0.02] transition-colors duration-500 h-full"
-                >
-                  <div className="flex items-center justify-between mb-12">
-                    <span className="text-[9px] font-medium tracking-[0.25em] uppercase text-white/25">{sub.tag}</span>
-                    <span className="text-[10px] font-mono text-white/20">{sub.code}</span>
+      {/* ━━━ PROOF BAR — horizontal stats strip ━━━ */}
+      <section className="border-y border-white/[0.04]">
+        <div className="max-w-[1600px] mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4">
+            {[
+              { n: 10000, s: '+', l: 'Students' },
+              { n: 500, s: '+', l: 'Papers' },
+              { n: 12, s: '', l: 'Subjects' },
+              { n: 98, s: '%', l: 'Pass Rate' },
+            ].map((s, i) => (
+              <R key={s.l} d={i * 80}>
+                <div className={`py-8 px-6 lg:px-10 ${i > 0 ? 'border-l border-white/[0.04]' : ''}`}>
+                  <div className="text-3xl lg:text-4xl font-bold tracking-tight text-white/80 mb-1" style={{ fontFamily: 'var(--font-serif)' }}>
+                    <CountUp target={s.n} suffix={s.s} />
                   </div>
-                  <h3 className="text-xl md:text-2xl font-light tracking-tight text-white/70 group-hover:text-white transition-colors duration-500 mb-4">
-                    {sub.name}
-                  </h3>
-                  <div className="flex items-center gap-2 text-white/0 group-hover:text-white/40 transition-all duration-500">
-                    <span className="text-[10px] tracking-[0.15em] uppercase">Explore</span>
-                    <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </div>
-                </Link>
-              </motion.div>
+                  <div className="text-[10px] font-medium tracking-[0.2em] uppercase text-white/25">{s.l}</div>
+                </div>
+              </R>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── Stats: Oversized Numbers ─── */}
-      <section className="py-32 px-8 border-t border-white/[0.04]">
-        <div className="max-w-[1800px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-0">
-          {[
-            { n: '10K+', l: 'Active Scholars' },
-            { n: '500+', l: 'Curated Papers' },
-            { n: '12', l: 'Subjects Covered' },
-            { n: '98%', l: 'Success Rate' },
-          ].map((stat, i) => (
-            <ParallaxBlock key={stat.l} offset={20 + i * 10}>
-              <div className={`${i > 0 ? 'md:border-l md:border-white/[0.04] md:pl-12' : ''}`}>
-                <div
-                  className="text-5xl md:text-7xl font-light tracking-tight mb-3 text-white/80"
-                  style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}
-                >
-                  {stat.n}
-                </div>
-                <div className="text-[10px] font-medium tracking-[0.2em] uppercase text-white/30">{stat.l}</div>
+      {/* ━━━ HOW IT WORKS — staggered, not a uniform grid ━━━ */}
+      <section className="py-28 lg:py-40 px-6 lg:px-10">
+        <div className="max-w-[1600px] mx-auto">
+          <R>
+            <div className="flex items-baseline gap-4 mb-20">
+              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[hsl(340,82%,62%)]/60">01</span>
+              <h2 className="text-3xl lg:text-5xl font-bold tracking-[-0.03em]">
+                How it actually works
+              </h2>
+            </div>
+          </R>
+
+          {/* 3 steps — NOT a uniform grid. Varied sizes, overlap. */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-4">
+            {/* Step 1: Big card */}
+            <R className="lg:col-span-5" d={100}>
+              <div className="group h-full p-8 lg:p-10 rounded-[28px] border border-white/[0.05] bg-white/[0.015] hover:bg-white/[0.03] transition-all duration-500 relative overflow-hidden">
+                <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-0 group-hover:opacity-[0.06] transition-opacity duration-700"
+                  style={{ background: 'radial-gradient(circle, hsl(340 82% 62%), transparent 60%)' }} />
+                <div className="text-[80px] lg:text-[100px] font-bold leading-none text-white/[0.03] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>01</div>
+                <h3 className="text-lg font-semibold mb-3 -mt-8">Browse past papers</h3>
+                <p className="text-sm text-white/30 leading-relaxed">Organized by subject, semester, and year. Every paper tagged and searchable.</p>
               </div>
-            </ParallaxBlock>
-          ))}
+            </R>
+
+            {/* Step 2: Medium card, offset down */}
+            <R className="lg:col-span-4 lg:mt-12" d={200}>
+              <div className="group h-full p-8 lg:p-10 rounded-[28px] border border-white/[0.05] bg-white/[0.015] hover:bg-white/[0.03] transition-all duration-500 relative overflow-hidden">
+                <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-0 group-hover:opacity-[0.06] transition-opacity duration-700"
+                  style={{ background: 'radial-gradient(circle, hsl(20 90% 68%), transparent 60%)' }} />
+                <div className="text-[80px] lg:text-[100px] font-bold leading-none text-white/[0.03] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>02</div>
+                <h3 className="text-lg font-semibold mb-3 -mt-8">Spot the patterns</h3>
+                <p className="text-sm text-white/30 leading-relaxed">Our AI highlights recurring topics. See what keeps coming back, year after year.</p>
+              </div>
+            </R>
+
+            {/* Step 3: Narrow card, offset more */}
+            <R className="lg:col-span-3 lg:mt-24" d={300}>
+              <div className="group h-full p-8 lg:p-10 rounded-[28px] border border-white/[0.05] bg-white/[0.015] hover:bg-white/[0.03] transition-all duration-500 relative overflow-hidden">
+                <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-0 group-hover:opacity-[0.06] transition-opacity duration-700"
+                  style={{ background: 'radial-gradient(circle, hsl(160 25% 50%), transparent 60%)' }} />
+                <div className="text-[80px] lg:text-[100px] font-bold leading-none text-white/[0.03] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>03</div>
+                <h3 className="text-lg font-semibold mb-3 -mt-8">Study smart</h3>
+                <p className="text-sm text-white/30 leading-relaxed">Focus on what matters. Skip what doesn't.</p>
+              </div>
+            </R>
+          </div>
         </div>
       </section>
 
-      {/* ─── CTA: Full-width typographic ─── */}
-      <section className="py-40 px-8 border-t border-white/[0.04]">
-        <div className="max-w-[1800px] mx-auto text-center">
-          <ParallaxBlock offset={30}>
-            <h2 className="text-4xl md:text-6xl lg:text-8xl font-light tracking-[-0.03em] mb-12">
-              Begin your <span className="italic text-white/40" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>preparation</span>
-            </h2>
-          </ParallaxBlock>
-          <MagneticButton
-            href="/signup"
-            className="inline-flex items-center gap-4 px-10 py-5 rounded-full border border-white/10 hover:bg-white hover:text-black text-sm font-medium transition-all duration-500 group"
-          >
-            Create Free Account
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </MagneticButton>
+      {/* ━━━ SUBJECTS — editorial list, not cards ━━━ */}
+      <section className="py-20 lg:py-32 px-6 lg:px-10 border-t border-white/[0.04]">
+        <div className="max-w-[1600px] mx-auto">
+          <R>
+            <div className="flex items-baseline gap-4 mb-4">
+              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[hsl(340,82%,62%)]/60">02</span>
+              <h2 className="text-3xl lg:text-5xl font-bold tracking-[-0.03em]">Subjects</h2>
+            </div>
+            <p className="text-sm text-white/25 mb-14 max-w-md">First-year curriculum. More semesters coming soon.</p>
+          </R>
+
+          {/* List-style subject rows — way more editorial than card grids */}
+          <div className="border-t border-white/[0.04]">
+            {subjects.map((sub, i) => (
+              <R key={sub.code} d={i * 60}>
+                <Link
+                  href={`/papers?subjectId=${sub.code}`}
+                  className="group flex items-center justify-between py-5 lg:py-6 border-b border-white/[0.04] hover:border-[hsl(340,82%,62%)]/15 transition-colors duration-500 px-1"
+                >
+                  <div className="flex items-center gap-6 lg:gap-10">
+                    <span className="text-[10px] font-mono text-white/15 w-8">{String(i + 1).padStart(2, '0')}</span>
+                    <div>
+                      <h3 className="text-base lg:text-lg font-medium text-white/75 group-hover:text-white transition-colors duration-300">{sub.name}</h3>
+                      <span className="text-[10px] text-white/20 mt-0.5 block">{sub.code}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-[9px] font-medium tracking-[0.2em] uppercase text-white/15 hidden md:block">{sub.tag}</span>
+                    <div className="w-8 h-8 rounded-full border border-white/[0.06] flex items-center justify-center group-hover:border-[hsl(340,82%,62%)]/30 group-hover:bg-[hsl(340,82%,62%)]/5 transition-all duration-300">
+                      <ArrowUpRight size={12} className="text-white/20 group-hover:text-[hsl(340,82%,62%)] transition-colors duration-300" />
+                    </div>
+                  </div>
+                </Link>
+              </R>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ─── Footer ─── */}
-      <footer className="border-t border-white/[0.04] py-16 px-8">
-        <div className="max-w-[1800px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <span className="text-[10px] tracking-[0.3em] uppercase text-white/30">ExamEdge Institute</span>
-          <span className="text-[10px] text-white/20 font-mono">© {new Date().getFullYear()}</span>
+      {/* ━━━ TESTIMONIAL — single big quote for personality ━━━ */}
+      <section className="py-24 lg:py-36 px-6 lg:px-10 relative overflow-hidden">
+        {/* Subtle rose blob */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.04] pointer-events-none"
+          style={{ background: 'radial-gradient(circle, hsl(340 82% 62%), transparent 50%)' }} />
+        
+        <div className="max-w-[1600px] mx-auto relative z-10">
+          <R>
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="flex justify-center gap-1 mb-8">
+                {[1,2,3,4,5].map(i => <Star key={i} size={14} className="text-[hsl(340,82%,62%)]/60 fill-[hsl(340,82%,62%)]/60" />)}
+              </div>
+              <blockquote className="text-2xl lg:text-4xl font-light leading-snug tracking-tight mb-8 text-white/70">
+                &ldquo;I used to spend <span className="italic text-white/90" style={{ fontFamily: 'var(--font-serif)' }}>weeks</span> hunting for past papers. ExamEdge gave me everything in <span className="italic text-white/90" style={{ fontFamily: 'var(--font-serif)' }}>minutes</span>.&rdquo;
+              </blockquote>
+              <div>
+                <p className="text-sm font-medium text-white/50">— Third-year CS Student</p>
+                <p className="text-[10px] text-white/20 mt-1">IIITD, Batch of 2026</p>
+              </div>
+            </div>
+          </R>
+        </div>
+      </section>
+
+      {/* ━━━ CTA — typographic, not a gradient box ━━━ */}
+      <section className="py-32 lg:py-44 px-6 lg:px-10 border-t border-white/[0.04] text-center">
+        <div className="max-w-[1600px] mx-auto flex flex-col items-center">
+          <R>
+            <div className="pb-4">
+              <h2 className="text-4xl md:text-6xl lg:text-[5.5rem] font-bold tracking-[-0.03em] leading-[0.92] mb-10 max-w-4xl mx-auto"
+                style={{
+                  textShadow: '1px 1px 0px hsl(340 82% 40%), 2px 2px 0px hsl(340 82% 40%), 3px 3px 0px hsl(340 82% 40%), 4px 4px 0px hsl(340 82% 40%)'
+                }}>
+                Ready to stop<br />
+                <span className="italic text-[hsl(340,82%,62%)]" style={{ 
+                  fontFamily: 'var(--font-serif)',
+                  textShadow: '1px 1px 0px hsl(340 82% 30%), 2px 2px 0px hsl(340 82% 30%), 3px 3px 0px hsl(340 82% 30%), 4px 4px 0px hsl(340 82% 30%)'
+                }}>winging it</span>?
+              </h2>
+            </div>
+          </R>
+          <R d={150}>
+            <div className="flex flex-wrap items-center justify-center gap-5">
+              <Link
+                href="/signup"
+                className="group relative px-10 py-5 rounded-full text-sm font-semibold text-white overflow-hidden transition-transform hover:scale-[1.03] active:scale-100"
+              >
+                <span className="absolute inset-0 bg-[hsl(340,82%,62%)] rounded-full" />
+                <span className="absolute inset-0 bg-[hsl(340,82%,62%)] rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
+                <span className="relative flex items-center gap-3">
+                  Create Free Account <ArrowRight size={15} />
+                </span>
+              </Link>
+              <Link href="/login" className="text-sm text-white/30 hover:text-white/60 transition-colors underline underline-offset-4 decoration-white/10 hover:decoration-white/30">
+                or sign in
+              </Link>
+            </div>
+          </R>
+        </div>
+      </section>
+
+      {/* ━━━ FOOTER — minimal ━━━ */}
+      <footer className="border-t border-white/[0.04] py-10 px-6 lg:px-10">
+        <div className="max-w-[1600px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <span className="text-[11px] tracking-[0.2em] uppercase text-white/20">Exam<span className="text-[hsl(340,82%,62%)]/40">Edge</span></span>
+          <div className="flex items-center gap-6">
+            <Link href="/login" className="text-[11px] text-white/20 hover:text-white/50 transition-colors">Login</Link>
+            <Link href="/signup" className="text-[11px] text-white/20 hover:text-white/50 transition-colors">Sign Up</Link>
+          </div>
+          <span className="text-[10px] text-white/10 font-mono">© {new Date().getFullYear()}</span>
         </div>
       </footer>
     </div>

@@ -38,13 +38,6 @@ const adminNavItems = [
   { name: 'Settings',       href: '/admin/settings',       icon: Settings },
 ]
 
-const S = {
-  base:    'hsl(220 16% 6%)',
-  surface: 'hsl(220 14% 9%)',
-  accent:  'hsl(327 100% 62%)',
-  border:  'rgba(255,255,255,0.06)',
-}
-
 export default function AdminLayoutComponent({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const router   = useRouter()
@@ -62,12 +55,11 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: S.base }}>
+      <div className="min-h-screen flex items-center justify-center bg-[hsl(20,8%,5%)]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl animate-spin"
-            style={{ border: '2px solid transparent', borderTopColor: S.accent, background: 'hsl(327 100% 62% / 0.1)' }}
-          />
-          <p className="text-sm text-white/40">Loading Admin Headquarters…</p>
+          <div className="w-10 h-10 rounded-xl animate-spin border-2 border-transparent border-t-[hsl(340,82%,62%)]"
+            style={{ background: 'hsl(340 82% 62% / 0.08)' }} />
+          <p className="text-sm text-white/30">Loading Admin…</p>
         </div>
       </div>
     )
@@ -82,22 +74,17 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
     const Icon = item.icon
     return (
       <Link href={item.href} onClick={onClick}>
-        <span
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative"
-          style={isActive ? {
-            background: 'hsl(327 100% 62% / 0.12)',
-            color: S.accent,
-          } : { color: 'rgba(255,255,255,0.5)' }}
-          onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)' }}
-          onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '' }}
-        >
-          <Icon size={16} style={isActive ? { color: S.accent } : {}} />
+        <span className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 relative ${
+          isActive
+            ? 'bg-[hsl(340,82%,62%)]/10 text-[hsl(340,82%,62%)]'
+            : 'text-white/40 hover:bg-white/[0.03] hover:text-white/70'
+        }`}>
+          <Icon size={15} />
           {!collapsed && <span className="whitespace-nowrap">{item.name}</span>}
           {isActive && (
             <motion.div
               layoutId="adminActiveIndicator"
-              className="absolute right-3 w-1.5 h-1.5 rounded-full"
-              style={{ background: S.accent }}
+              className="absolute right-3 w-1.5 h-1.5 rounded-full bg-[hsl(340,82%,62%)]"
             />
           )}
         </span>
@@ -106,89 +93,61 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
   }
 
   return (
-    <div className="min-h-screen text-white flex overflow-hidden" style={{ background: S.base }}>
-      {/* ─── Desktop Sidebar ─── */}
+    <div className="min-h-screen text-[#f5ede6] flex overflow-hidden bg-[hsl(20,8%,5%)]">
+      {/* Desktop Sidebar */}
       <aside
-        className="hidden md:flex flex-col shrink-0 h-screen transition-all duration-300 relative z-20"
-        style={{
-          width: collapsed ? 68 : 244,
-          background: S.surface,
-          borderRight: `1px solid ${S.border}`,
-        }}
+        className="hidden md:flex flex-col shrink-0 h-screen transition-all duration-300 relative z-20 bg-[hsl(20,6%,8%)] border-r border-white/[0.04]"
+        style={{ width: collapsed ? 64 : 240 }}
       >
-        {/* Logo */}
-        <div className="h-16 px-4 flex items-center gap-3" style={{ borderBottom: `1px solid ${S.border}` }}>
+        <div className="h-14 px-4 flex items-center gap-3 border-b border-white/[0.04]">
           {collapsed ? (
-            <div className="mx-auto w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-              <Shield size={15} style={{ color: S.accent }} />
+            <div className="mx-auto w-7 h-7 rounded-lg bg-[hsl(340,82%,62%)]/10 border border-[hsl(340,82%,62%)]/15 flex items-center justify-center">
+              <Shield size={13} className="text-[hsl(340,82%,62%)]/70" />
             </div>
           ) : (
-            <Link href="/admin" className="flex items-center gap-2.5 flex-1 overflow-hidden">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <Shield size={15} style={{ color: S.accent }} />
+            <Link href="/admin" className="flex items-center gap-2 flex-1 overflow-hidden">
+              <div className="w-7 h-7 rounded-lg bg-[hsl(340,82%,62%)]/10 border border-[hsl(340,82%,62%)]/15 flex items-center justify-center shrink-0">
+                <Shield size={13} className="text-[hsl(340,82%,62%)]/70" />
               </div>
               <div className="overflow-hidden min-w-0">
-                <p className="font-display font-bold text-sm tracking-tight whitespace-nowrap">Admin HQ</p>
-                <p className="text-[9px] text-white/30 whitespace-nowrap">ExamEdge Platform</p>
+                <p className="font-bold text-sm tracking-tight whitespace-nowrap">Admin</p>
+                <p className="text-[8px] text-white/20 whitespace-nowrap">ExamEdge</p>
               </div>
             </Link>
           )}
-          <button
-            onClick={() => setCollapsed(v => !v)}
-            className="ml-auto text-white/25 hover:text-white transition shrink-0"
-            style={collapsed ? { margin: 'auto' } : {}}
-          >
-            {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          <button onClick={() => setCollapsed(v => !v)} className="ml-auto text-white/20 hover:text-white/50 transition shrink-0"
+            style={collapsed ? { margin: 'auto' } : {}}>
+            {collapsed ? <ChevronRight size={13} /> : <ChevronLeft size={13} />}
           </button>
         </div>
 
-        {/* Nav */}
-        <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
+        <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
           {adminNavItems.map(item => <NavLink key={item.href} item={item} />)}
         </nav>
 
-        {/* Footer */}
-        <div className="p-3 space-y-2" style={{ borderTop: `1px solid ${S.border}` }}>
+        <div className="p-3 space-y-2 border-t border-white/[0.04]">
           {!collapsed && (
-            <Link
-              href="/dashboard"
-              className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all text-white/60 hover:text-white"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
-            >
-              <span>Student Space</span>
-              <ExternalLink size={11} />
+            <Link href="/dashboard"
+              className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-white/40 hover:text-white/70 bg-white/[0.02] border border-white/[0.04] transition-colors">
+              <span>Student</span><ExternalLink size={10} />
             </Link>
           )}
-          <button
-            onClick={() => signOut({ callbackUrl: '/login' })}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-red-400 hover:bg-red-500/10 transition-all"
-          >
-            <LogOut size={14} />
-            {!collapsed && <span>Sign Out</span>}
+          <button onClick={() => signOut({ callbackUrl: '/login' })}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-red-400/70 hover:text-red-400 hover:bg-red-500/8 transition-all">
+            <LogOut size={13} />{!collapsed && <span>Sign Out</span>}
           </button>
         </div>
       </aside>
 
-      {/* ─── Main Content Area ─── */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Mobile header */}
-        <header
-          className="md:hidden h-14 px-4 flex items-center justify-between shrink-0 z-10"
-          style={{ background: S.surface, borderBottom: `1px solid ${S.border}` }}
-        >
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-              <Shield size={14} style={{ color: S.accent }} />
-            </div>
-            <span className="font-display font-bold text-sm">Admin HQ</span>
+        <header className="md:hidden h-14 px-4 flex items-center justify-between shrink-0 z-10 bg-[hsl(20,6%,8%)] border-b border-white/[0.04]">
+          <div className="flex items-center gap-2">
+            <Shield size={14} className="text-[hsl(340,82%,62%)]/70" />
+            <span className="font-bold text-sm">Admin</span>
           </div>
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-white/60 hover:text-white"
-            style={{ background: 'rgba(255,255,255,0.04)' }}
-          >
-            {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+          <button onClick={() => setMobileOpen(!mobileOpen)} className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 bg-white/[0.03]">
+            {mobileOpen ? <X size={16} /> : <Menu size={16} />}
           </button>
         </header>
 
@@ -196,35 +155,27 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
         <AnimatePresence>
           {mobileOpen && (
             <>
-              <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black z-30 md:hidden"
-                onClick={() => setMobileOpen(false)}
-              />
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black z-30 md:hidden" onClick={() => setMobileOpen(false)} />
               <motion.div
                 initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
                 transition={{ type: 'spring', bounce: 0.1, duration: 0.35 }}
-                className="fixed top-0 bottom-0 left-0 w-64 flex flex-col z-40 md:hidden"
-                style={{ background: S.surface, borderRight: `1px solid ${S.border}` }}
-              >
-                <div className="h-14 px-4 flex items-center justify-between" style={{ borderBottom: `1px solid ${S.border}` }}>
-                  <span className="font-display font-bold text-base">Admin HQ</span>
-                  <button onClick={() => setMobileOpen(false)} className="text-white/40 hover:text-white">
-                    <X size={18} />
-                  </button>
+                className="fixed top-0 bottom-0 left-0 w-60 flex flex-col z-40 md:hidden bg-[hsl(20,6%,8%)] border-r border-white/[0.04]">
+                <div className="h-14 px-4 flex items-center justify-between border-b border-white/[0.04]">
+                  <span className="font-bold text-sm">Admin</span>
+                  <button onClick={() => setMobileOpen(false)} className="text-white/30 hover:text-white"><X size={16} /></button>
                 </div>
-                <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
+                <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
                   {adminNavItems.map(item => <NavLink key={item.href} item={item} onClick={() => setMobileOpen(false)} />)}
                 </nav>
-                <div className="p-3 space-y-2" style={{ borderTop: `1px solid ${S.border}` }}>
-                  <Link href="/dashboard" className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-white/60 hover:text-white"
-                    style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
+                <div className="p-3 space-y-2 border-t border-white/[0.04]">
+                  <Link href="/dashboard" className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-white/40 bg-white/[0.02] border border-white/[0.04]"
                     onClick={() => setMobileOpen(false)}>
-                    <span>Student Space</span><ExternalLink size={11} />
+                    <span>Student</span><ExternalLink size={10} />
                   </Link>
                   <button onClick={() => signOut({ callbackUrl: '/login' })}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-red-400 hover:bg-red-500/10 transition-all">
-                    <LogOut size={14} /><span>Sign Out</span>
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-red-400/70 hover:bg-red-500/8 transition-all">
+                    <LogOut size={13} /><span>Sign Out</span>
                   </button>
                 </div>
               </motion.div>
@@ -232,11 +183,8 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
           )}
         </AnimatePresence>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-5 md:p-8" style={{ background: S.base }}>
-          <div className="max-w-6xl mx-auto w-full">
-            {children}
-          </div>
+        <main className="flex-1 overflow-y-auto p-5 md:p-8 bg-[hsl(20,8%,5%)]">
+          <div className="max-w-6xl mx-auto w-full">{children}</div>
         </main>
       </div>
     </div>

@@ -62,15 +62,9 @@ export default function SignupPage() {
 
   return (
     <>
-      {/* Logo */}
-      <div className="flex items-center justify-center gap-3 mb-8">
-        <div className="w-10 h-10 rounded-full flex items-center justify-center font-serif text-sm font-bold text-black bg-white">
-          EE
-        </div>
-        <div>
-          <p className="font-semibold text-base leading-none tracking-tight">ExamEdge</p>
-          <p className="text-[10px] text-white/40 mt-0.5">College Exam Platform</p>
-        </div>
+      {/* Mobile logo */}
+      <div className="flex items-center gap-3 mb-10 lg:hidden">
+        <span className="text-base font-semibold tracking-tight">Exam<span className="text-[hsl(340,82%,62%)]">Edge</span></span>
       </div>
 
       <h1 className="text-2xl font-semibold text-center mb-1">Create your account</h1>

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useState } from 'react'
+import React, { useRef, useCallback } from 'react'
 
 interface SpotlightCardProps {
   children: React.ReactNode
@@ -11,32 +11,39 @@ interface SpotlightCardProps {
 export function SpotlightCard({ 
   children, 
   className = '', 
-  spotlightColor = 'rgba(255, 255, 255, 0.05)' 
+  spotlightColor = 'rgba(124, 58, 237, 0.08)' 
 }: SpotlightCardProps) {
   const divRef = useRef<HTMLDivElement>(null)
-  const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [opacity, setOpacity] = useState(0)
+  const spotRef = useRef<HTMLDivElement>(null)
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!divRef.current) return
-    const rect = divRef.current.getBoundingClientRect()
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top })
-  }
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = divRef.current
+    const spot = spotRef.current
+    if (!el || !spot) return
+    const rect = el.getBoundingClientRect()
+    spot.style.background = `radial-gradient(600px circle at ${e.clientX - rect.left}px ${e.clientY - rect.top}px, ${spotlightColor}, transparent 40%)`
+  }, [spotlightColor])
+
+  const handleMouseEnter = useCallback(() => {
+    if (spotRef.current) spotRef.current.style.opacity = '1'
+  }, [])
+
+  const handleMouseLeave = useCallback(() => {
+    if (spotRef.current) spotRef.current.style.opacity = '0'
+  }, [])
 
   return (
     <div
       ref={divRef}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setOpacity(1)}
-      onMouseLeave={() => setOpacity(0)}
-      className={`relative overflow-hidden rounded-3xl border border-white/5 bg-[#0a0a0c] transition-colors ${className}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={`relative overflow-hidden rounded-3xl border border-white/[0.06] bg-[hsl(230_30%_7%)] transition-colors ${className}`}
     >
       <div
-        className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-700 ease-in-out"
-        style={{
-          opacity,
-          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 40%)`,
-        }}
+        ref={spotRef}
+        className="pointer-events-none absolute -inset-px transition-opacity duration-700 ease-in-out"
+        style={{ opacity: 0 }}
       />
       {children}
     </div>
