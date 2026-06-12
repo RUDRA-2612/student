@@ -16,7 +16,8 @@ import {
   Map,
   Shield,
   ExternalLink,
-  ChevronDown
+  ChevronDown,
+  Target
 } from 'lucide-react'
 import { api } from '@/lib/trpc/react'
 import { NoiseOverlay } from '@/components/ui/noise-overlay'
@@ -26,9 +27,10 @@ const navItems = [
   { name: 'Dashboard',        href: '/dashboard',   icon: LayoutDashboard },
   { name: 'Curriculum',       href: '/curriculum',  icon: Compass },
   { name: 'Papers',           href: '/papers',      icon: BookOpen },
+  { name: 'Predict',          href: '/predict',     icon: Target },
   { name: 'Roadmaps',         href: '/roadmap',     icon: Map },
-  { name: 'FAQs',             href: '/faqs',        icon: HelpCircle },
   { name: 'Requests',         href: '/requests',    icon: Send },
+  { name: 'FAQs',             href: '/faqs',        icon: HelpCircle },
 ]
 
 /* ───── Dock Item Component (Desktop) ───── */
