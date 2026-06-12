@@ -40,9 +40,9 @@ export default function StudentDashboard() {
       <RevealCard>
         <div className="flex items-end justify-between border-b border-white/[0.04] pb-6 mb-2">
           <div>
-            <p className="text-[10px] font-medium tracking-[0.3em] uppercase text-white/30 mb-2">{greeting}</p>
-            <h1 className="text-4xl md:text-6xl font-light tracking-[-0.03em]">
-              {firstName}<span className="italic text-white/35 font-serif" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>.</span>
+            <p className="text-[10px] font-medium tracking-[0.3em] uppercase text-accent mb-2">{greeting}</p>
+            <h1 className="text-4xl md:text-6xl font-light tracking-[-0.03em] bg-clip-text text-transparent bg-gradient-to-br from-white to-white/60">
+              {firstName}<span className="italic bg-clip-text text-transparent bg-gradient-accent font-serif" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>.</span>
             </h1>
           </div>
           <div className="text-right hidden md:block">
@@ -54,18 +54,18 @@ export default function StudentDashboard() {
       {/* ─── Stats Grid: Individual 3D TiltCards ─── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: 'Bookmarks', value: stats?.bookmarksCount, icon: Bookmark, color: 'text-amber-400' },
-          { label: 'Study Roadmaps', value: stats?.roadmapsCount, icon: Map, color: 'text-emerald-400' },
-          { label: 'Requests File', value: stats?.requestsCount, icon: Send, color: 'text-purple-400' },
+          { label: 'Bookmarks', value: stats?.bookmarksCount, icon: Bookmark, color: 'text-brand-amber' },
+          { label: 'Study Roadmaps', value: stats?.roadmapsCount, icon: Map, color: 'text-brand-mint' },
+          { label: 'Requests File', value: stats?.requestsCount, icon: Send, color: 'text-accent' },
         ].map((stat, i) => (
           <RevealCard key={stat.label} delay={0.1 + i * 0.05}>
             <TiltCard 
               maxTilt={8}
               glareOpacity={0.08}
-              className="rounded-2xl border border-white/[0.06] bg-[#050505] p-6 flex flex-col justify-between h-40 cursor-default hover:border-white/[0.12] transition-colors"
+              className="rounded-2xl border border-white/[0.04] bg-bg-surface/50 backdrop-blur-xl p-6 flex flex-col justify-between h-40 cursor-default hover:border-white/[0.12] hover:shadow-glow-sm transition-all"
             >
               <div className="flex items-center justify-between" style={{ transform: 'translateZ(20px)' }}>
-                <stat.icon size={16} className="text-white/20" />
+                <stat.icon size={16} className={`${stat.color} opacity-80`} />
                 <span className="text-[9px] font-mono tracking-widest uppercase text-white/30">{stat.label}</span>
               </div>
               
@@ -89,10 +89,10 @@ export default function StudentDashboard() {
         {/* Left: Subjects List */}
         <div className="lg:col-span-7 space-y-6">
           <RevealCard delay={0.25}>
-            <div className="p-6 rounded-2xl border border-white/[0.06] bg-[#050505]">
+            <div className="p-6 rounded-2xl border border-white/[0.04] bg-bg-surface/50 backdrop-blur-xl hover:shadow-2xl hover:shadow-brand-mint/5 transition-all">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-sm font-semibold tracking-[0.15em] uppercase text-white/70 flex items-center gap-2">
-                  <BookOpen size={14} className="text-white/30" />
+                <h2 className="text-sm font-semibold tracking-[0.15em] uppercase text-white/90 flex items-center gap-2">
+                  <BookOpen size={14} className="text-brand-mint/80" />
                   Syllabus Subjects
                 </h2>
                 <Link href="/papers" className="text-[10px] font-semibold tracking-[0.15em] uppercase text-white/40 hover:text-white transition-colors flex items-center gap-1 group">
@@ -140,10 +140,12 @@ export default function StudentDashboard() {
             <TiltCard
               maxTilt={5}
               glareOpacity={0.06}
-              className="p-6 rounded-2xl border border-white/[0.06] bg-[#050505] hover:border-white/[0.1] transition-colors"
+              className="p-6 rounded-2xl border border-white/[0.04] bg-bg-surface/50 backdrop-blur-xl hover:border-white/[0.1] hover:shadow-glow-sm transition-all"
             >
               <div style={{ transform: 'translateZ(15px)' }}>
-                <p className="text-[9px] font-semibold tracking-[0.2em] uppercase text-white/30 mb-5">Quick Actions</p>
+                <p className="text-[9px] font-semibold tracking-[0.2em] uppercase text-white/40 mb-5 flex items-center gap-2">
+                  <Compass size={10} className="text-accent" /> Quick Actions
+                </p>
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { href: '/curriculum', icon: Compass, label: 'Curriculum' },
@@ -167,9 +169,9 @@ export default function StudentDashboard() {
 
           {/* Announcements */}
           <RevealCard delay={0.35}>
-            <div className="p-6 rounded-2xl border border-white/[0.06] bg-[#050505]">
+            <div className="p-6 rounded-2xl border border-white/[0.04] bg-bg-surface/50 backdrop-blur-xl hover:shadow-2xl hover:shadow-accent/5 transition-all">
               <div className="flex items-center gap-2 mb-5">
-                <Bell size={13} className="text-white/30" />
+                <Bell size={13} className="text-accent/80" />
                 <p className="text-[9px] font-semibold tracking-[0.2em] uppercase text-white/30">Academic Bulletins</p>
               </div>
               <div className="space-y-3 max-h-[260px] overflow-y-auto">
