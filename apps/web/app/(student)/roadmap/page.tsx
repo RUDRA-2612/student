@@ -11,6 +11,7 @@ import {
   CheckCircle2, 
   AlertCircle
 } from 'lucide-react'
+import { TiltCard } from '@/components/ui/tilt-card'
 
 interface RoadmapDay {
   day: number
@@ -30,7 +31,7 @@ export default function StudyRoadmaps() {
   const [roadmapDays, setRoadmapDays] = useState<RoadmapDay[] | null>(null)
   const [rawProgress, setRawProgress] = useState('')
 
-  // tRPC query to fetch generated roadmaps history
+  // tRPC queries
   const utils = api.useUtils()
   const { data: subjects } = api.subjects.list.useQuery({ isActive: true })
   const { data: savedHistory, isLoading: historyLoading } = api.student.myRoadmaps.useQuery()
@@ -69,7 +70,7 @@ export default function StudyRoadmaps() {
         if (response.status === 429) {
           throw new Error('Hourly rate limit exceeded (Max 10 AI requests per hour).')
         }
-        throw new Error('Failed to generate study roadmap. Please verify key bindings.')
+        throw new Error('Failed to generate study roadmap.')
       }
 
       const reader = response.body?.getReader()
@@ -115,7 +116,7 @@ export default function StudyRoadmaps() {
         throw new Error('AI engine returned invalid payload format. Please retry.')
       }
 
-      // Invalidate history queries to list new item
+      // Invalidate queries
       utils.student.myRoadmaps.invalidate()
       utils.student.dashboardStats.invalidate()
 
@@ -127,110 +128,122 @@ export default function StudyRoadmaps() {
   }
 
   return (
-    <div className="space-y-10">
-      {/* Header Profile */}
-      <div className="space-y-2">
-        <h1 className="font-display text-2xl md:text-3xl font-bold tracking-tight">AI Study Roadmaps</h1>
-        <p className="text-white/40 text-sm font-light">
-          Generate a day-by-day structured syllabus review calendar mapped precisely to your exam deadline.
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="border-b border-white/[0.04] pb-6">
+        <p className="text-[10px] font-mono tracking-[0.3em] uppercase text-white/30 mb-2">Workspace Assistant</p>
+        <h1 className="text-4xl md:text-5xl font-light tracking-[-0.02em]">
+          AI Study <span className="italic text-white/40 font-serif" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>Roadmaps</span>
+        </h1>
+        <p className="text-white/40 text-xs font-light max-w-xl mt-3 leading-relaxed">
+          Generate structured, custom day-by-day study calendars mapped directly to your examination dates.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        {/* Left Form Panel */}
+        {/* Left Form Panel: 3D TiltCard */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-bg-surface border border-white/[0.06] rounded-xl p-6 space-y-6">
-            <div className="flex items-center gap-2 pb-4 border-b border-white/[0.06]">
-              <Calendar size={18} className="text-accent" />
-              <h2 className="font-display font-semibold text-sm uppercase tracking-wider">Configure Calendar</h2>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Subject Scope</label>
-                <select
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white focus:outline-none cursor-pointer"
-                  required
-                >
-                  <option value="">Select a Subject...</option>
-                  {subjects?.map((sub) => (
-                    <option key={sub.id} value={sub.name}>{sub.name} ({sub.code})</option>
-                  ))}
-                </select>
+          <TiltCard
+            maxTilt={6}
+            glareOpacity={0.06}
+            className="bg-[#050505] border border-white/[0.06] rounded-2xl p-6 hover:border-white/[0.1] transition-colors"
+          >
+            <div className="space-y-6" style={{ transform: 'translateZ(15px)' }}>
+              <div className="flex items-center gap-2 pb-4 border-b border-white/[0.06]">
+                <Calendar size={15} className="text-white/40" />
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-white/70">Configuration</h2>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2 flex justify-between">
-                  <span>Preparation Timeline</span>
-                  <span className="text-accent font-bold">{days} Days</span>
-                </label>
-                <input
-                  type="range"
-                  min="7"
-                  max="90"
-                  value={days}
-                  onChange={(e) => setDays(Number(e.target.value))}
-                  className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent"
-                />
-                <div className="flex justify-between text-[10px] text-white/30 pt-1 font-mono">
-                  <span>7 Days</span>
-                  <span>45 Days</span>
-                  <span>90 Days</span>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <label className="block text-[10px] font-semibold text-white/40 uppercase tracking-wider mb-2">Target Subject</label>
+                  <div className="relative">
+                    <select
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
+                      className="appearance-none w-full px-4 py-2.5 bg-white/[0.02] border border-white/[0.06] rounded-xl text-xs text-white focus:outline-none cursor-pointer"
+                      required
+                    >
+                      <option value="">Select a Subject...</option>
+                      {subjects?.map((sub) => (
+                        <option key={sub.id} value={sub.name}>{sub.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown size={12} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
+                  </div>
                 </div>
-              </div>
 
-              <button
-                type="submit"
-                disabled={isSubmitting || !subject}
-                className="w-full py-3 bg-accent hover:bg-accent-hover disabled:bg-accent/40 text-white font-semibold rounded-lg text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-accent/15"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Generating Roadmap...
-                  </>
-                ) : (
-                  <>
-                    <Zap size={16} className="text-brand-amber" /> Create study Roadmap
-                  </>
-                )}
-              </button>
-            </form>
-          </div>
+                <div>
+                  <label className="block text-[10px] font-semibold text-white/40 uppercase tracking-wider mb-2 flex justify-between">
+                    <span>Timeline Size</span>
+                    <span className="text-white font-mono font-bold">{days} Days</span>
+                  </label>
+                  <input
+                    type="range"
+                    min="7"
+                    max="90"
+                    value={days}
+                    onChange={(e) => setDays(Number(e.target.value))}
+                    className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white"
+                  />
+                  <div className="flex justify-between text-[8px] text-white/20 pt-1 font-mono">
+                    <span>7D</span>
+                    <span>45D</span>
+                    <span>90D</span>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !subject}
+                  className="w-full py-3 bg-white text-black hover:bg-white/90 disabled:bg-white/30 disabled:text-black/50 font-bold rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                      Drafting Plan...
+                    </>
+                  ) : (
+                    <>
+                      <Zap size={13} /> Create Roadmap
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          </TiltCard>
         </div>
 
         {/* Right Output Panel */}
         <div className="lg:col-span-8 space-y-6">
           
-          {/* Active generation details */}
+          {/* Active Generation Display */}
           {(isSubmitting || roadmapDays || error) && (
-            <div className="bg-bg-surface border border-white/[0.06] rounded-xl p-6 space-y-6">
-              <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
-                <h3 className="font-display font-bold text-base">Active Study Plan</h3>
+            <div className="bg-[#050505] border border-white/[0.06] rounded-2xl p-6 space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-white/[0.04]">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-white/70">Generated Schedule</h3>
                 {isSubmitting && (
-                  <span className="flex items-center gap-1.5 text-xs text-brand-mint font-semibold animate-pulse">
-                    <Zap size={12} className="animate-spin" /> Streaming response...
+                  <span className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-mono animate-pulse">
+                    <Zap size={10} className="animate-spin" /> STREAM ACTIVE
                   </span>
                 )}
               </div>
 
               {error && (
-                <div className="p-4 bg-brand-coral/10 border border-brand-coral/20 rounded-xl flex items-start gap-3 text-sm text-brand-coral">
-                  <AlertCircle className="shrink-0 mt-0.5" size={16} />
+                <div className="p-4 bg-red-500/[0.03] border border-red-500/20 rounded-xl flex items-start gap-3 text-xs text-red-400">
+                  <AlertCircle className="shrink-0 mt-0.5" size={14} />
                   <div>
-                    <p className="font-semibold">Generation Failed</p>
-                    <p className="text-xs text-brand-coral/80 mt-1">{error}</p>
+                    <p className="font-semibold">Generation Error</p>
+                    <p className="text-red-400/80 mt-1">{error}</p>
                   </div>
                 </div>
               )}
 
               {isSubmitting && !roadmapDays && (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-lg bg-bg-base/40 border border-white/[0.04]">
-                    <p className="text-xs font-mono text-white/50 break-all leading-relaxed line-clamp-12">
+                  <div className="p-4 rounded-xl bg-white/[0.01] border border-white/[0.04]">
+                    <p className="text-[10px] font-mono text-white/30 break-all leading-relaxed line-clamp-6">
                       {rawProgress || 'Initializing study syllabus templates...'}
                     </p>
                   </div>
@@ -238,23 +251,23 @@ export default function StudyRoadmaps() {
               )}
 
               {roadmapDays && (
-                <div className="space-y-8 relative pl-6 before:absolute before:top-2 before:bottom-2 before:left-2 before:w-0.5 before:bg-white/[0.06]">
+                <div className="space-y-6 relative pl-5 before:absolute before:top-2 before:bottom-2 before:left-2.5 before:w-px before:bg-white/[0.06]">
                   {roadmapDays.map((dayItem) => (
                     <div key={dayItem.day} className="relative space-y-3">
-                      {/* Timeline node */}
-                      <span className="absolute -left-6 top-1.5 w-3.5 h-3.5 rounded-full bg-accent border-2 border-bg-surface flex items-center justify-center" />
+                      {/* Timeline node dot */}
+                      <span className="absolute -left-[23px] top-1.5 w-2 h-2 rounded-full bg-white border border-black flex items-center justify-center shadow-md shadow-white/25" />
                       
-                      <div className="p-5 rounded-xl bg-bg-base/30 border border-white/[0.04] space-y-4">
+                      <div className="p-5 rounded-xl bg-white/[0.01] border border-white/[0.04] space-y-4 hover:border-white/[0.08] transition-colors">
                         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.04] pb-3">
-                          <h4 className="font-display font-bold text-sm text-white">Day {dayItem.day} • {dayItem.topic}</h4>
-                          <span className="text-[10px] font-semibold text-brand-amber bg-brand-amber/10 px-2 py-0.5 rounded flex items-center gap-1 border border-brand-amber/10">
-                            <Clock size={10} /> {dayItem.hoursRequired} Hours
+                          <h4 className="text-xs font-semibold text-white/90">Day {dayItem.day} • {dayItem.topic}</h4>
+                          <span className="text-[8px] font-mono font-bold text-white/40 bg-white/[0.04] px-2 py-0.5 rounded flex items-center gap-1 border border-white/[0.06]">
+                            <Clock size={8} /> {dayItem.hoursRequired} Hrs Required
                           </span>
                         </div>
 
                         {/* Objectives Checklist */}
                         <div className="space-y-2">
-                          <p className="text-[10px] uppercase tracking-wider font-semibold text-white/40">Syllabus Objectives</p>
+                          <p className="text-[9px] uppercase tracking-wider font-semibold text-white/30 font-mono">Syllabus Focus</p>
                           <div className="space-y-1.5">
                             {dayItem.objectives.map((obj, oIdx) => {
                               const key = `roadmap-active-d${dayItem.day}-o${oIdx}`
@@ -263,10 +276,10 @@ export default function StudyRoadmaps() {
                                 <button
                                   key={oIdx}
                                   onClick={() => toggleObjective(key)}
-                                  className="w-full flex items-start gap-2.5 text-xs text-left text-white/70 hover:text-white transition group py-0.5"
+                                  className="w-full flex items-start gap-2 text-[11px] text-left text-white/50 hover:text-white transition group py-0.5"
                                 >
-                                  <CheckCircle2 size={14} className={`shrink-0 mt-0.5 transition-colors ${checked ? 'text-brand-mint' : 'text-white/20 group-hover:text-white/40'}`} />
-                                  <span className={checked ? 'line-through text-white/30 font-light' : 'font-light'}>{obj}</span>
+                                  <CheckCircle2 size={13} className={`shrink-0 mt-0.5 transition-colors ${checked ? 'text-white' : 'text-white/10 group-hover:text-white/20'}`} />
+                                  <span className={checked ? 'line-through text-white/20' : 'font-light'}>{obj}</span>
                                 </button>
                               )
                             })}
@@ -275,9 +288,9 @@ export default function StudyRoadmaps() {
 
                         {/* Resources List */}
                         {dayItem.resources && dayItem.resources.length > 0 && (
-                          <div className="space-y-1 pt-2 border-t border-white/[0.03]">
-                            <p className="text-[10px] uppercase tracking-wider font-semibold text-white/40">Suggested Materials</p>
-                            <ul className="list-disc list-inside text-xs text-white/50 space-y-1 font-light pl-1">
+                          <div className="space-y-1.5 pt-2.5 border-t border-white/[0.03]">
+                            <p className="text-[9px] uppercase tracking-wider font-semibold text-white/30 font-mono">Suggested Reference</p>
+                            <ul className="list-disc list-inside text-[10px] text-white/40 space-y-0.5 font-light pl-1">
                               {dayItem.resources.map((res, rIdx) => (
                                 <li key={rIdx}>{res}</li>
                               ))}
@@ -293,21 +306,20 @@ export default function StudyRoadmaps() {
           )}
 
           {/* History Panel */}
-          <div className="bg-bg-surface border border-white/[0.06] rounded-xl p-6 space-y-6">
-            <div className="flex items-center gap-2 pb-4 border-b border-white/[0.06]">
-              <Clock size={16} className="text-white/40" />
-              <h3 className="font-display font-semibold text-sm uppercase tracking-wider text-white/60">Study History</h3>
+          <div className="bg-[#050505] border border-white/[0.06] rounded-2xl p-6 space-y-6">
+            <div className="flex items-center gap-2 pb-4 border-b border-white/[0.04]">
+              <Clock size={14} className="text-white/30" />
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-white/70">Study History</h3>
             </div>
 
             {historyLoading ? (
               <div className="space-y-3">
-                <div className="h-12 bg-white/5 rounded-lg animate-pulse" />
-                <div className="h-12 bg-white/5 rounded-lg animate-pulse" />
+                <div className="h-12 bg-white/[0.01] border border-white/[0.04] rounded-xl animate-pulse" />
+                <div className="h-12 bg-white/[0.01] border border-white/[0.04] rounded-xl animate-pulse" />
               </div>
             ) : !savedHistory || savedHistory.length === 0 ? (
-              <div className="text-center py-6 text-xs text-white/30">
-                <Calendar size={24} className="mx-auto opacity-30 mb-2" />
-                No custom study schedules generated yet. Make one above.
+              <div className="text-center py-6 text-[10px] text-white/20">
+                No generated calendars found in active logs.
               </div>
             ) : (
               <div className="space-y-3">
@@ -316,25 +328,25 @@ export default function StudyRoadmaps() {
                   const contentArray = item.content as any[]
 
                   return (
-                    <div key={item.id} className="border border-white/[0.04] bg-bg-base/30 rounded-lg overflow-hidden transition">
+                    <div key={item.id} className="border border-white/[0.04] bg-white/[0.005] rounded-xl overflow-hidden transition-colors hover:bg-white/[0.01]">
                       <button
                         onClick={() => setSelectedRoadmap(isExpanded ? null : item)}
-                        className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-white/[0.02] transition"
+                        className="w-full px-4 py-3.5 flex items-center justify-between text-left transition"
                       >
                         <div className="space-y-1">
-                          <h4 className="font-bold text-xs text-white/90">{item.subject} Study Plan</h4>
-                          <p className="text-[10px] text-white/40">{new Date(item.createdAt).toLocaleString()} • {item.days} Day Schedule</p>
+                          <h4 className="font-semibold text-xs text-white/80">{item.subject} Study Plan</h4>
+                          <p className="text-[10px] text-white/30 font-mono">{new Date(item.createdAt).toLocaleDateString()} • {item.days} Days Timeline</p>
                         </div>
-                        {isExpanded ? <ChevronUp size={16} className="text-white/40" /> : <ChevronDown size={16} className="text-white/40" />}
+                        {isExpanded ? <ChevronUp size={14} className="text-white/30" /> : <ChevronDown size={14} className="text-white/30" />}
                       </button>
 
                       {isExpanded && (
-                        <div className="px-4 pb-4 border-t border-white/[0.04] pt-4 space-y-6 bg-bg-surface/50 max-h-[500px] overflow-y-auto">
+                        <div className="px-4 pb-4 border-t border-white/[0.04] pt-4 space-y-4 bg-white/[0.005] max-h-[400px] overflow-y-auto">
                           {contentArray.map((dayItem: RoadmapDay, dayIdx: number) => (
-                            <div key={dayIdx} className="p-4 rounded-lg bg-bg-base/20 border border-white/[0.04] space-y-3 text-xs">
+                            <div key={dayIdx} className="p-4 rounded-xl bg-black/40 border border-white/[0.03] space-y-3 text-xs">
                               <div className="flex items-center justify-between pb-2 border-b border-white/[0.04]">
-                                <span className="font-semibold text-accent">Day {dayItem.day} • {dayItem.topic}</span>
-                                <span className="text-brand-amber bg-brand-amber/5 px-2 py-0.5 rounded border border-brand-amber/10 font-bold">{dayItem.hoursRequired} Hours</span>
+                                <span className="font-semibold text-white/80">Day {dayItem.day} • {dayItem.topic}</span>
+                                <span className="text-[9px] font-mono text-white/40 bg-white/[0.04] px-2 py-0.5 rounded border border-white/[0.06] font-bold">{dayItem.hoursRequired} Hrs</span>
                               </div>
                               <div className="space-y-1.5">
                                 {dayItem.objectives.map((obj, objIdx) => {
@@ -344,10 +356,10 @@ export default function StudyRoadmaps() {
                                     <button
                                       key={objIdx}
                                       onClick={() => toggleObjective(key)}
-                                      className="w-full flex items-start gap-2 text-left text-white/70 hover:text-white py-0.5"
+                                      className="w-full flex items-start gap-2 text-[11px] text-left text-white/50 hover:text-white py-0.5"
                                     >
-                                      <CheckCircle2 size={13} className={`shrink-0 mt-0.5 ${checked ? 'text-brand-mint' : 'text-white/20'}`} />
-                                      <span className={checked ? 'line-through text-white/30' : ''}>{obj}</span>
+                                      <CheckCircle2 size={13} className={`shrink-0 mt-0.5 ${checked ? 'text-white' : 'text-white/10'}`} />
+                                      <span className={checked ? 'line-through text-white/20' : ''}>{obj}</span>
                                     </button>
                                   )
                                 })}

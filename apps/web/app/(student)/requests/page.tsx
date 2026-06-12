@@ -12,8 +12,10 @@ import {
   CheckCircle2, 
   MessageSquare,
   AlertCircle,
-  FileText
+  FileText,
+  ChevronDown
 } from 'lucide-react'
+import { TiltCard } from '@/components/ui/tilt-card'
 
 type RequestFormValues = z.infer<typeof RequestCreateSchema>
 
@@ -56,7 +58,6 @@ export default function StudentRequests() {
   })
 
   const onSubmit = (data: RequestFormValues) => {
-    // Convert empty string to null for DB compliance
     const payload = {
       ...data,
       subjectId: data.subjectId || null
@@ -65,160 +66,175 @@ export default function StudentRequests() {
   }
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       {/* Header Profile */}
-      <div className="space-y-2">
-        <h1 className="font-display text-2xl md:text-3xl font-bold tracking-tight">Requests & Support</h1>
-        <p className="text-white/40 text-sm font-light">
-          Submit demands for missing examination papers, request custom solutions, or report platform bugs directly.
+      <div className="border-b border-white/[0.04] pb-6">
+        <p className="text-[10px] font-mono tracking-[0.3em] uppercase text-white/30 mb-2">Support Services</p>
+        <h1 className="text-4xl md:text-5xl font-light tracking-[-0.02em]">
+          Requests & <span className="italic text-white/40 font-serif" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>Support</span>
+        </h1>
+        <p className="text-white/40 text-xs font-light max-w-xl mt-3 leading-relaxed">
+          Submit missing exam paper demands, request custom expert solutions, or report technical bugs.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        {/* Left pane: Form to submit request */}
+        {/* Left pane: Form to submit request inside a TiltCard */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-bg-surface border border-white/[0.06] rounded-xl p-6 space-y-6">
-            <div className="flex items-center gap-2 pb-4 border-b border-white/[0.06]">
-              <Send size={18} className="text-accent" />
-              <h2 className="font-display font-semibold text-sm uppercase tracking-wider">New Request</h2>
+          <TiltCard
+            maxTilt={5}
+            glareOpacity={0.06}
+            className="bg-[#050505] border border-white/[0.06] rounded-2xl p-6 hover:border-white/[0.1] transition-colors"
+          >
+            <div className="space-y-6" style={{ transform: 'translateZ(15px)' }}>
+              <div className="flex items-center gap-2 pb-4 border-b border-white/[0.06]">
+                <Send size={15} className="text-white/40" />
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-white/70">New Support Ticket</h2>
+              </div>
+
+              {successMsg && (
+                <div className="p-4 bg-emerald-500/[0.03] border border-emerald-500/20 rounded-xl text-xs text-emerald-400 flex items-start gap-2">
+                  <CheckCircle2 className="shrink-0 mt-0.5 text-emerald-400" size={14} />
+                  <span>{successMsg}</span>
+                </div>
+              )}
+
+              {errorMsg && (
+                <div className="p-4 bg-red-500/[0.03] border border-red-500/20 rounded-xl text-xs text-red-400 flex items-start gap-2">
+                  <AlertCircle className="shrink-0 mt-0.5 text-red-400" size={14} />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <div>
+                  <label className="block text-[9px] font-semibold text-white/40 uppercase tracking-widest mb-2 font-mono">Category</label>
+                  <div className="relative">
+                    <select
+                      {...register('type')}
+                      className="appearance-none w-full px-4 py-2.5 bg-white/[0.02] border border-white/[0.06] rounded-xl text-xs text-white focus:outline-none cursor-pointer"
+                    >
+                      <option value="PAPER_REQUEST">Missing Exam Paper</option>
+                      <option value="SOLUTION_REQUEST">Detailed Solutions Guide</option>
+                      <option value="TOPIC_CLARIFICATION">Topic Clarification / Doubt</option>
+                      <option value="BUG_REPORT">Report Platform Bug</option>
+                      <option value="FEATURE_REQUEST">Suggest New Feature</option>
+                      <option value="OTHER">Other Query</option>
+                    </select>
+                    <ChevronDown size={12} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
+                  </div>
+                  {errors.type && <p className="text-[10px] text-red-400 mt-1.5">{errors.type.message}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-[9px] font-semibold text-white/40 uppercase tracking-widest mb-2 font-mono">Linked Subject (Optional)</label>
+                  <div className="relative">
+                    <select
+                      {...register('subjectId')}
+                      className="appearance-none w-full px-4 py-2.5 bg-white/[0.02] border border-white/[0.06] rounded-xl text-xs text-white focus:outline-none cursor-pointer"
+                    >
+                      <option value="">No Subject Linked</option>
+                      {subjects?.map((sub) => (
+                        <option key={sub.id} value={sub.id}>{sub.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown size={12} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
+                  </div>
+                  {errors.subjectId && <p className="text-[10px] text-red-400 mt-1.5">{errors.subjectId.message}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-[9px] font-semibold text-white/40 uppercase tracking-widest mb-2 font-mono">Short Summary</label>
+                  <input
+                    {...register('title')}
+                    type="text"
+                    placeholder="e.g. Calculus midterm solutions guide request"
+                    className="w-full px-4 py-2.5 bg-white/[0.02] border border-white/[0.06] focus:border-white/20 rounded-xl text-xs text-white placeholder:text-white/20 focus:outline-none transition-colors"
+                  />
+                  {errors.title && <p className="text-[10px] text-red-400 mt-1.5">{errors.title.message}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-[9px] font-semibold text-white/40 uppercase tracking-widest mb-2 font-mono">Description</label>
+                  <textarea
+                    {...register('message')}
+                    rows={4}
+                    placeholder="Provide details (specific year, topics to explain, error details)..."
+                    className="w-full px-4 py-2.5 bg-white/[0.02] border border-white/[0.06] focus:border-white/20 rounded-xl text-xs text-white placeholder:text-white/20 focus:outline-none resize-none transition-colors"
+                  />
+                  {errors.message && <p className="text-[10px] text-red-400 mt-1.5">{errors.message.message}</p>}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-3 bg-white text-black hover:bg-white/90 disabled:bg-white/30 disabled:text-black/50 font-bold rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? 'Submitting Ticket...' : 'File Support Ticket'}
+                </button>
+              </form>
             </div>
-
-            {successMsg && (
-              <div className="p-4 bg-brand-mint/10 border border-brand-mint/20 rounded-xl text-xs text-brand-mint flex items-start gap-2">
-                <CheckCircle2 className="shrink-0 mt-0.5" size={14} />
-                <span>{successMsg}</span>
-              </div>
-            )}
-
-            {errorMsg && (
-              <div className="p-4 bg-brand-coral/10 border border-brand-coral/20 rounded-xl text-xs text-brand-coral flex items-start gap-2">
-                <AlertCircle className="shrink-0 mt-0.5" size={14} />
-                <span>{errorMsg}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Request Type</label>
-                <select
-                  {...register('type')}
-                  className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white focus:outline-none cursor-pointer"
-                >
-                  <option value="PAPER_REQUEST">Missing Exam Paper</option>
-                  <option value="SOLUTION_REQUEST">Detailed Solutions Guide</option>
-                  <option value="TOPIC_CLARIFICATION">Topic Clarification / Doubt</option>
-                  <option value="BUG_REPORT">Report Platform Bug</option>
-                  <option value="FEATURE_REQUEST">Suggest New Feature</option>
-                  <option value="OTHER">Other Query</option>
-                </select>
-                {errors.type && <p className="text-xs text-brand-coral mt-1.5">{errors.type.message}</p>}
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Subject (Optional)</label>
-                <select
-                  {...register('subjectId')}
-                  className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white focus:outline-none cursor-pointer"
-                >
-                  <option value="">No Subject Linked</option>
-                  {subjects?.map((sub) => (
-                    <option key={sub.id} value={sub.id}>{sub.name} ({sub.code})</option>
-                  ))}
-                </select>
-                {errors.subjectId && <p className="text-xs text-brand-coral mt-1.5">{errors.subjectId.message}</p>}
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Title</label>
-                <input
-                  {...register('title')}
-                  type="text"
-                  placeholder="e.g. REET 2021 Level 1 Math paper request"
-                  className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white placeholder:text-white/20 focus:outline-none"
-                />
-                {errors.title && <p className="text-xs text-brand-coral mt-1.5">{errors.title.message}</p>}
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Details / Message</label>
-                <textarea
-                  {...register('message')}
-                  rows={4}
-                  placeholder="Describe details regarding this request (e.g. Exam year, set number, specific questions to resolve)..."
-                  className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white placeholder:text-white/20 focus:outline-none resize-none"
-                />
-                {errors.message && <p className="text-xs text-brand-coral mt-1.5">{errors.message.message}</p>}
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-3 bg-accent hover:bg-accent-hover disabled:bg-accent/40 text-white font-semibold rounded-lg text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-accent/15"
-              >
-                {isSubmitting ? 'Submitting Request...' : 'Submit Support Request'}
-              </button>
-            </form>
-          </div>
+          </TiltCard>
         </div>
 
         {/* Right pane: List of user's past requests */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="bg-bg-surface border border-white/[0.06] rounded-xl p-6 space-y-6">
-            <div className="flex items-center gap-2 pb-4 border-b border-white/[0.06]">
-              <Clock size={16} className="text-white/40" />
-              <h2 className="font-display font-semibold text-sm uppercase tracking-wider text-white/60">My Requests History</h2>
+          <div className="bg-[#050505] border border-white/[0.06] rounded-2xl p-6 space-y-6">
+            <div className="flex items-center gap-2 pb-4 border-b border-white/[0.04]">
+              <Clock size={14} className="text-white/30" />
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-white/70">Support Logs History</h2>
             </div>
 
             {listLoading ? (
               <div className="space-y-4">
                 {[1, 2].map((i) => (
-                  <div key={i} className="h-24 bg-white/5 rounded-lg animate-pulse" />
+                  <div key={i} className="h-24 bg-white/[0.01] border border-white/[0.04] rounded-xl animate-pulse" />
                 ))}
               </div>
             ) : !listData?.requests || listData.requests.length === 0 ? (
-              <div className="text-center py-12 text-xs text-white/30 space-y-2">
-                <FileText className="mx-auto opacity-30" size={32} />
-                <p>You haven&apos;t filed any support requests yet.</p>
+              <div className="text-center py-12 text-[10px] text-white/20 space-y-2">
+                <FileText className="mx-auto opacity-20" size={24} />
+                <p>No historical support logs on file.</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {listData.requests.map((req) => {
                   const statusColors = 
-                    req.status === 'RESOLVED' ? 'bg-brand-mint/10 text-brand-mint border-brand-mint/20' :
-                    req.status === 'IN_PROGRESS' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                    req.status === 'CLOSED' ? 'bg-white/5 text-white/40 border-white/10' :
-                    'bg-brand-amber/10 text-brand-amber border-brand-amber/20'
+                    req.status === 'RESOLVED' ? 'bg-emerald-500/[0.04] text-emerald-400 border-emerald-500/20' :
+                    req.status === 'IN_PROGRESS' ? 'bg-blue-500/[0.04] text-blue-400 border-blue-500/20' :
+                    req.status === 'CLOSED' ? 'bg-white/[0.02] text-white/30 border-white/[0.06]' :
+                    'bg-amber-500/[0.04] text-amber-400 border-amber-500/20'
 
                   return (
-                    <div key={req.id} className="p-5 rounded-xl border border-white/[0.04] bg-bg-base/30 space-y-4">
+                    <div key={req.id} className="p-5 rounded-2xl border border-white/[0.04] bg-white/[0.005] space-y-4">
                       <div className="flex items-start justify-between gap-4">
                         <div className="space-y-1">
-                          <span className="text-[9px] font-mono text-white/40 bg-white/5 px-2 py-0.5 rounded border border-white/10">
+                          <span className="text-[8px] font-mono font-bold text-white/30 bg-white/[0.04] px-2 py-0.5 rounded border border-white/[0.06] tracking-wider uppercase">
                             {req.type.replace('_', ' ')}
                           </span>
-                          <h3 className="font-display font-bold text-sm text-white mt-1.5">{req.title}</h3>
-                          <p className="text-[10px] text-white/30">{new Date(req.createdAt).toLocaleString()} {req.subject && `• Subject: ${req.subject.name}`}</p>
+                          <h3 className="text-xs font-semibold text-white/80 mt-2">{req.title}</h3>
+                          <p className="text-[9px] font-mono text-white/20">{new Date(req.createdAt).toLocaleString()} {req.subject && `• Subject: ${req.subject.name}`}</p>
                         </div>
-                        <span className={`px-2.5 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-wider shrink-0 ${statusColors}`}>
+                        <span className={`px-2 py-0.5 rounded-full border text-[8px] font-bold uppercase tracking-wider shrink-0 ${statusColors}`}>
                           {req.status}
                         </span>
                       </div>
 
-                      <p className="text-xs font-light text-white/60 leading-relaxed bg-bg-surface/30 p-3 rounded-lg border border-white/[0.02]">
+                      <p className="text-xs font-light text-white/45 leading-relaxed bg-white/[0.01] p-3 rounded-xl border border-white/[0.03]">
                         {req.message}
                       </p>
 
                       {req.adminReply && (
-                        <div className="p-4 rounded-xl bg-accent/5 border border-accent/15 space-y-2 relative overflow-hidden">
-                          <div className="absolute top-0 bottom-0 left-0 w-1 bg-accent" />
-                          <div className="flex items-center justify-between text-[10px] text-white/40 pb-1.5 border-b border-white/[0.04]">
-                            <span className="font-semibold text-accent flex items-center gap-1">
-                              <MessageSquare size={10} /> Expert Response
+                        <div className="p-4 rounded-xl bg-white/[0.01] border border-white/[0.04] space-y-2 relative overflow-hidden">
+                          <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-white/20" />
+                          <div className="flex items-center justify-between text-[9px] text-white/35 pb-1.5 border-b border-white/[0.03]">
+                            <span className="font-semibold text-white/60 flex items-center gap-1">
+                              <MessageSquare size={9} /> Mentor Response
                             </span>
                             <span>{req.repliedAt ? new Date(req.repliedAt).toLocaleDateString() : ''}</span>
                           </div>
-                          <p className="text-xs text-white/80 leading-relaxed font-light whitespace-pre-wrap">{req.adminReply}</p>
+                          <p className="text-[11px] text-white/60 leading-relaxed font-light whitespace-pre-wrap">{req.adminReply}</p>
                         </div>
                       )}
                     </div>

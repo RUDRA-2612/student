@@ -12,6 +12,7 @@ import {
   ExternalLink
 } from 'lucide-react'
 import Link from 'next/link'
+import { TiltCard } from '@/components/ui/tilt-card'
 
 const categories = [
   { id: 'all', name: 'All FAQs' },
@@ -41,79 +42,112 @@ export default function FAQPortal() {
     setExpandedId(expandedId === id ? null : id)
   }
 
+  // Highlight search text helper
+  const highlightText = (text: string, search: string) => {
+    if (!search.trim()) return <span>{text}</span>
+    const regex = new RegExp(`(${search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi')
+    const parts = text.split(regex)
+    return (
+      <span>
+        {parts.map((part, i) => 
+          regex.test(part) 
+            ? <mark key={i} className="bg-white/10 text-white font-semibold px-0.5 rounded">{part}</mark> 
+            : part
+        )}
+      </span>
+    )
+  }
+
   return (
-    <div className="space-y-10">
-      {/* Header Profile */}
-      <div className="space-y-2">
-        <h1 className="font-display text-2xl md:text-3xl font-bold tracking-tight">Help Desk & FAQs</h1>
-        <p className="text-white/40 text-sm font-light">
-          Find answers to frequently asked questions about Rajasthan exams, syllabus frameworks, and AI-predicted question parameters.
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="border-b border-white/[0.04] pb-6">
+        <p className="text-[10px] font-mono tracking-[0.3em] uppercase text-white/30 mb-2">Support Database</p>
+        <h1 className="text-4xl md:text-5xl font-light tracking-[-0.02em]">
+          Help Desk & <span className="italic text-white/40 font-serif" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>FAQs</span>
+        </h1>
+        <p className="text-white/40 text-xs font-light max-w-xl mt-3 leading-relaxed">
+          Access immediate answers regarding Rajasthan state curriculum structures, grading parameters, and Study Roadmaps.
         </p>
       </div>
 
       {/* Search Bar */}
-      <div className="relative max-w-xl">
-        <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-white/30">
-          <Search size={18} />
+      <div className="relative max-w-md">
+        <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-white/20">
+          <Search size={16} />
         </span>
         <input
           type="text"
-          placeholder="Search support queries..."
+          placeholder="Search support database logs..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 bg-bg-surface border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-accent/15"
+          className="w-full pl-10 pr-4 py-2.5 bg-white/[0.02] border border-white/[0.06] focus:border-white/20 rounded-xl text-xs text-white placeholder:text-white/20 focus:outline-none transition-all"
         />
       </div>
 
-      {/* Tabs list */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.06] pb-4">
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => {
-              setSelectedCategory(cat.id)
-              setExpandedId(null)
-            }}
-            className={`px-4 py-2 rounded-lg text-xs font-semibold transition ${
-              selectedCategory === cat.id 
-                ? 'bg-accent/10 text-accent border border-accent/20' 
-                : 'text-white/40 hover:text-white/70 border border-transparent'
-            }`}
-          >
-            {cat.name}
-          </button>
-        ))}
-      </div>
-
+      {/* Main Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left pane: FAQ Accordion */}
-        <div className="lg:col-span-8 space-y-4">
+        
+        {/* Left Side: Categories selector */}
+        <div className="lg:col-span-3 space-y-2">
+          <p className="text-[9px] font-mono uppercase tracking-widest text-white/30 px-2 mb-3">Categories</p>
+          <div className="flex flex-row lg:flex-col flex-wrap gap-1">
+            {categories.map((cat) => {
+              const isSelected = selectedCategory === cat.id
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setSelectedCategory(cat.id)
+                    setExpandedId(null)
+                  }}
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold text-left transition-all ${
+                    isSelected 
+                      ? 'bg-white/[0.04] text-white border border-white/[0.08]' 
+                      : 'text-white/40 hover:text-white/70 hover:bg-white/[0.01] border border-transparent'
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Middle: FAQ Accordion List */}
+        <div className="lg:col-span-6 space-y-3">
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-14 bg-white/5 rounded-lg animate-pulse" />
+                <div key={i} className="h-16 bg-white/[0.02] border border-white/[0.04] rounded-xl animate-pulse" />
               ))}
             </div>
           ) : !filteredFaqs || filteredFaqs.length === 0 ? (
-            <div className="p-8 bg-bg-surface border border-white/[0.06] rounded-xl text-center space-y-2">
-              <HelpCircle className="mx-auto text-white/20" size={32} />
-              <p className="text-white/40 text-sm">No matching FAQs found. Please query again or contact advisors.</p>
+            <div className="p-8 bg-[#050505] border border-white/[0.06] rounded-2xl text-center space-y-3">
+              <HelpCircle className="mx-auto text-white/15" size={28} />
+              <p className="text-white/30 text-xs">No matching queries found in index. Try a different search.</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {filteredFaqs.map((faq) => {
                 const isExpanded = expandedId === faq.id
                 return (
                   <div 
                     key={faq.id} 
-                    className="border border-white/[0.05] bg-bg-surface rounded-xl overflow-hidden transition"
+                    className="border border-white/[0.05] bg-[#050505] rounded-xl overflow-hidden transition-all hover:border-white/[0.08]"
                   >
                     <button
                       onClick={() => toggleExpand(faq.id)}
-                      className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-white/[0.01] transition gap-4"
+                      className="w-full px-5 py-4 flex items-center justify-between text-left transition gap-4"
                     >
-                      <span className="font-display font-semibold text-sm text-white/95 leading-tight">{faq.question}</span>
-                      {isExpanded ? <ChevronUp size={16} className="text-white/40 shrink-0" /> : <ChevronDown size={16} className="text-white/40 shrink-0" />}
+                      <span className="text-xs font-semibold text-white/80 leading-snug">
+                        {highlightText(faq.question, searchQuery)}
+                      </span>
+                      {isExpanded ? (
+                        <ChevronUp size={14} className="text-white/40 shrink-0" />
+                      ) : (
+                        <ChevronDown size={14} className="text-white/40 shrink-0" />
+                      )}
                     </button>
 
                     <AnimatePresence initial={false}>
@@ -122,10 +156,10 @@ export default function FAQPortal() {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.25 }}
+                          transition={{ duration: 0.2, ease: 'easeOut' }}
                         >
-                          <div className="px-5 pb-5 pt-2 border-t border-white/[0.04] text-xs leading-relaxed text-white/60 font-light whitespace-pre-wrap">
-                            {faq.answer}
+                          <div className="px-5 pb-5 pt-1.5 border-t border-white/[0.04] text-[11px] leading-relaxed text-white/50 font-light whitespace-pre-wrap">
+                            {highlightText(faq.answer, searchQuery)}
                           </div>
                         </motion.div>
                       )}
@@ -137,23 +171,29 @@ export default function FAQPortal() {
           )}
         </div>
 
-        {/* Right pane: Action card */}
-        <div className="lg:col-span-4">
-          <div className="bg-gradient-to-br from-accent/15 via-transparent to-transparent border border-accent/20 rounded-2xl p-6 space-y-4">
-            <div className="w-10 h-10 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
-              <MessageSquare size={18} />
+        {/* Right Pane: Help desk support ticket block */}
+        <div className="lg:col-span-3">
+          <TiltCard
+            maxTilt={6}
+            glareOpacity={0.06}
+            className="bg-[#050505] border border-white/[0.06] hover:border-white/[0.1] rounded-2xl p-5 space-y-5 cursor-default"
+          >
+            <div className="space-y-4" style={{ transform: 'translateZ(15px)' }}>
+              <div className="w-8 h-8 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/60">
+                <MessageSquare size={14} />
+              </div>
+              <h3 className="text-sm font-semibold text-white/90">Need Custom Support?</h3>
+              <p className="text-white/40 text-[11px] leading-relaxed font-light">
+                If you have missing syllabus sheets or unresolved question banks, submit an support demand ticket.
+              </p>
+              <Link
+                href="/requests"
+                className="w-full py-2.5 bg-white text-black text-[10px] font-bold tracking-wider uppercase rounded-xl transition flex items-center justify-center gap-1.5"
+              >
+                File Request <ExternalLink size={10} />
+              </Link>
             </div>
-            <h3 className="font-display font-bold text-base">Still Have Questions?</h3>
-            <p className="text-white/50 text-xs leading-relaxed font-light">
-              Submit a support ticket or request specific exam papers directly to our academic panel. We resolve tickets within 24 hours.
-            </p>
-            <Link
-              href="/requests"
-              className="w-full py-2.5 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1.5"
-            >
-              Raise Support Request <ExternalLink size={12} />
-            </Link>
-          </div>
+          </TiltCard>
         </div>
 
       </div>

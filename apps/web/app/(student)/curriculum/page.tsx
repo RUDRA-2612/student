@@ -3,14 +3,13 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  Sparkles, 
   Layers, 
   TrendingUp, 
   ChevronRight,
-  BookOpenCheck
+  Award
 } from 'lucide-react'
+import { TiltCard } from '@/components/ui/tilt-card'
 
-// Course Structure types
 interface Course {
   id: string
   name: string
@@ -73,7 +72,7 @@ const sem1Courses: Course[] = [
     skills: ['Hardware Understanding', 'Circuit Analysis'],
     whyImportant: 'Establishes hardware foundations necessary to understand computer architecture.',
     formula: {
-      latex: 'V = I \\times R',
+      latex: 'V = I × R',
       label: "Ohm's Law"
     }
   },
@@ -111,8 +110,8 @@ const sem1Courses: Course[] = [
     skills: ['Mathematical Modeling', 'AI Mathematics Foundation'],
     whyImportant: 'Calculus is the bedrock of machine learning optimization algorithms (gradient descent).',
     formula: {
-      latex: '\\frac{d}{dx}(x^n) = n x^{n-1}',
-      label: 'Power Rule of Derivatives'
+      latex: 'f\'(x) = lim (h→0) [f(x+h) - f(x)] / h',
+      label: 'Derivative Definition'
     }
   },
   {
@@ -215,8 +214,8 @@ const sem2Courses: Course[] = [
     skills: ['Mathematical Modeling', 'AI/ML Mathematics Foundation'],
     whyImportant: 'Linear algebra is the foundation of computer vision, NLP, and neural networks representation.',
     formula: {
-      latex: 'A x = b',
-      label: 'Matrix Equation'
+      latex: 'A x = λ x',
+      label: 'Eigenvalue Equation'
     }
   },
   {
@@ -256,12 +255,11 @@ const sem2Courses: Course[] = [
 
 const rankedSubjects = [
   { rank: 1, name: 'Programming-I', why: 'Fundamentals of logical coding; gateway to DSA.' },
-  { rank: 2, name: 'Programming-II', why: 'OOP structures, essential for software design & projects.' },
+  { rank: 2, name: 'Programming-II', why: 'OOP structures, essential for software projects.' },
   { rank: 3, name: 'Calculus', why: 'Essential optimization math for deep learning.' },
-  { rank: 4, name: 'Linear Algebra & DE', why: 'Bedrock of AI/ML, computer vision, and data representations.' },
-  { rank: 5, name: 'Digital Electronics', why: 'Explains processors, registers, and OS level computing.' },
-  { rank: 6, name: 'Communication Skills', why: 'Crucial for interviews, pitching, and professional growth.' },
-  { rank: 7, name: 'Critical Thinking', why: 'Develops product-oriented mindsets and reasoning.' }
+  { rank: 4, name: 'Linear Algebra & DE', why: 'Bedrock of AI/ML, computer vision representations.' },
+  { rank: 5, name: 'Digital Electronics', why: 'Explains processors, registers, and OS mechanics.' },
+  { rank: 6, name: 'Communication Skills', why: 'Crucial for passing placements & HR reviews.' }
 ]
 
 export default function CurriculumGuide() {
@@ -272,49 +270,46 @@ export default function CurriculumGuide() {
   const totalCredits = activeSem === 1 ? 20 : 19
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       {/* Header section */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wider">
-          <BookOpenCheck size={14} className="animate-pulse" />
-          JK Lakshmipat University
-        </div>
-        <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight">
-          B.Tech CSE <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-brand-coral">Curriculum Guide</span>
+      <div className="border-b border-white/[0.04] pb-6">
+        <p className="text-[10px] font-mono tracking-[0.3em] uppercase text-white/30 mb-2">Curriculum Guide</p>
+        <h1 className="text-4xl md:text-5xl font-light tracking-[-0.02em]">
+          B.Tech CSE <span className="italic text-white/40 font-serif" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>Syllabus Guide</span>
         </h1>
-        <p className="text-white/60 text-sm md:text-base max-w-xl font-light">
-          A detailed breakdown of Semester 1 & Semester 2 courses, credits, key skills, and placement importance.
+        <p className="text-white/40 text-xs font-light max-w-xl mt-3 leading-relaxed">
+          Explore course credits, objective logs, core formulas, and career insights for B.Tech computer science.
         </p>
       </div>
 
-      {/* Main Grid: Left side Course Cards / Right side details & rankings */}
+      {/* Main Grid: Course Cards / Detail & ledger boards */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left pane: Switcher & course list (8cols) */}
         <div className="lg:col-span-8 space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             {/* Semester switch tabs */}
-            <div className="flex bg-white/5 border border-white/10 rounded-xl p-1 gap-1">
+            <div className="flex bg-white/[0.02] border border-white/[0.06] rounded-xl p-1 gap-1">
               <button
                 onClick={() => { setActiveSem(1); setSelectedCourse(null); }}
                 className={`px-4 py-2 rounded-lg text-xs font-semibold transition ${
-                  activeSem === 1 ? 'bg-accent text-white shadow-md shadow-accent/25' : 'text-white/40 hover:text-white/80'
+                  activeSem === 1 ? 'bg-white text-black' : 'text-white/40 hover:text-white/80'
                 }`}
               >
-                Semester 1 (20 Credits)
+                Semester 1 ({totalCredits} Credits)
               </button>
               <button
                 onClick={() => { setActiveSem(2); setSelectedCourse(null); }}
                 className={`px-4 py-2 rounded-lg text-xs font-semibold transition ${
-                  activeSem === 2 ? 'bg-accent text-white shadow-md shadow-accent/25' : 'text-white/40 hover:text-white/80'
+                  activeSem === 2 ? 'bg-white text-black' : 'text-white/40 hover:text-white/80'
                 }`}
               >
                 Semester 2 (19 Credits)
               </button>
             </div>
             
-            <span className="text-xs font-mono text-white/40">
-              Semester Credits: {totalCredits} | Total Year Credits: 39
+            <span className="text-[10px] font-mono text-white/30 uppercase tracking-widest">
+              Credits Log: {totalCredits} / 39 Year Total
             </span>
           </div>
 
@@ -323,125 +318,118 @@ export default function CurriculumGuide() {
             {courses.map((course) => {
               const isSelected = selectedCourse?.id === course.id
               return (
-                <motion.div
+                <TiltCard
                   key={course.id}
-                  layoutId={`card-${course.id}`}
+                  maxTilt={10}
+                  glareOpacity={0.06}
                   onClick={() => setSelectedCourse(course)}
-                  className={`p-5 rounded-xl cursor-pointer border transition-all flex flex-col justify-between gap-4 relative overflow-hidden group ${
+                  className={`p-5 rounded-2xl cursor-pointer border transition-all flex flex-col justify-between h-56 relative overflow-hidden group ${
                     isSelected 
-                      ? 'border-accent bg-accent/5 shadow-lg shadow-accent/5' 
-                      : 'border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/15'
+                      ? 'border-white/30 bg-white/[0.03]' 
+                      : 'border-white/[0.06] bg-[#050505] hover:bg-white/[0.01] hover:border-white/[0.12]'
                   }`}
-                  whileHover={{ y: -2 }}
                 >
-                  <div className="space-y-3">
+                  <div className="space-y-4" style={{ transform: 'translateZ(15px)' }}>
                     <div className="flex items-start justify-between">
-                      <span className="text-[10px] font-mono font-semibold text-accent bg-accent/10 border border-accent/20 px-2 py-0.5 rounded-full">
-                        {course.credits} Credits
+                      <span className="text-[9px] font-mono font-bold text-white/40 bg-white/[0.04] border border-white/[0.06] px-2.5 py-0.5 rounded">
+                        {course.credits} CREDITS
                       </span>
                       {course.formula && (
-                        <span className="text-[10px] bg-white/5 border border-white/10 px-2 py-0.5 rounded text-white/50 font-mono">
-                          Formula
+                        <span className="text-[8px] font-mono text-emerald-400 bg-emerald-500/[0.05] border border-emerald-500/10 px-2 py-0.5 rounded uppercase tracking-wider">
+                          Equation
                         </span>
                       )}
                     </div>
-                    <h3 className="font-display font-bold text-lg text-white group-hover:text-accent transition-colors">
+                    <h3 className="text-lg font-normal text-white group-hover:text-white transition-colors" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>
                       {course.name}
                     </h3>
-                    <p className="text-xs text-white/50 line-clamp-3 font-light leading-relaxed">
+                    <p className="text-xs text-white/45 line-clamp-3 font-light leading-relaxed">
                       {course.purpose}
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between border-t border-white/[0.04] pt-3 text-xs text-white/40 group-hover:text-white transition-colors">
-                    <span className="text-[10px] uppercase font-mono tracking-wider font-semibold">
-                      Details & Topics
+                  <div className="flex items-center justify-between border-t border-white/[0.04] pt-3 text-[10px] text-white/30 group-hover:text-white/60 transition-colors" style={{ transform: 'translateZ(20px)' }}>
+                    <span className="uppercase font-mono tracking-wider font-semibold">
+                      Explore Topics
                     </span>
-                    <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    <ChevronRight size={12} className="group-hover:translate-x-1 transition-transform" />
                   </div>
-                </motion.div>
+                </TiltCard>
               )
             })}
           </div>
         </div>
 
-        {/* Right pane: Selected Course Detail Panel & Career Rankings (4cols) */}
+        {/* Right pane: Course detail blueprints & ranks (4cols) */}
         <div className="lg:col-span-4 space-y-6">
           <AnimatePresence mode="wait">
             {selectedCourse ? (
               <motion.div
                 key={selectedCourse.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="p-6 rounded-xl border border-accent/20 bg-accent/5 space-y-5"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="p-6 rounded-2xl border border-white/[0.08] bg-[#050505] space-y-5"
               >
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
-                  <h3 className="font-display font-bold text-lg text-white">
+                <div className="flex items-center justify-between border-b border-white/[0.04] pb-3">
+                  <h3 className="text-sm font-semibold text-white/80">
                     {selectedCourse.name}
                   </h3>
                   <button 
                     onClick={() => setSelectedCourse(null)}
-                    className="text-xs text-white/40 hover:text-white"
+                    className="text-[10px] font-mono text-white/30 hover:text-white uppercase tracking-wider"
                   >
-                    Clear
+                    Close
                   </button>
                 </div>
 
-                <div className="space-y-4 text-xs font-light leading-relaxed text-white/70">
+                <div className="space-y-4 text-xs font-light leading-relaxed text-white/60">
                   <div className="space-y-1">
-                    <p className="font-bold text-accent uppercase tracking-wider text-[10px]">Objective</p>
-                    <p className="text-white/80">{selectedCourse.purpose}</p>
+                    <p className="font-semibold text-white/40 uppercase tracking-widest text-[9px] font-mono">Objective</p>
+                    <p className="text-white/70">{selectedCourse.purpose}</p>
                   </div>
 
                   {selectedCourse.formula && (
-                    <div className="p-3 bg-black/40 border border-white/5 rounded-lg text-center space-y-1">
-                      <p className="text-[9px] uppercase tracking-wider text-white/40 font-mono">{selectedCourse.formula.label}</p>
-                      <p className="font-mono text-sm font-semibold text-transparent bg-clip-text bg-gradient-to-r from-accent to-brand-coral">
+                    <div className="p-4 bg-white/[0.01] border border-white/[0.04] rounded-xl text-center space-y-1.5 relative overflow-hidden">
+                      <div className="absolute inset-y-0 left-0 w-0.5 bg-white/20" />
+                      <p className="text-[8px] uppercase tracking-widest text-white/30 font-mono">{selectedCourse.formula.label}</p>
+                      <p className="font-mono text-xs font-bold text-white/90">
                         {selectedCourse.formula.latex}
                       </p>
                     </div>
                   )}
 
                   <div className="space-y-1">
-                    <p className="font-bold text-accent uppercase tracking-wider text-[10px]">Core Topics</p>
-                    <ul className="list-disc list-inside space-y-0.5 text-white/60">
-                      {selectedCourse.topics.slice(0, 6).map((topic, i) => (
+                    <p className="font-semibold text-white/40 uppercase tracking-widest text-[9px] font-mono">Core Syllabus</p>
+                    <ul className="list-disc list-inside space-y-0.5 text-white/50 pl-1">
+                      {selectedCourse.topics.slice(0, 5).map((topic, i) => (
                         <li key={i} className="truncate">{topic}</li>
                       ))}
-                      {selectedCourse.topics.length > 6 && (
-                        <li className="text-[10px] text-accent/80 font-semibold list-none">+ {selectedCourse.topics.length - 6} more topics</li>
+                      {selectedCourse.topics.length > 5 && (
+                        <li className="text-[9px] text-white/30 font-semibold list-none mt-1">+ {selectedCourse.topics.length - 5} additional topics</li>
                       )}
                     </ul>
                   </div>
 
-                  {(selectedCourse.labWork || selectedCourse.activities) && (
-                    <div className="space-y-1">
-                      <p className="font-bold text-accent uppercase tracking-wider text-[10px]">Lab Work & Activities</p>
-                      <ul className="list-disc list-inside space-y-0.5 text-white/60">
-                        {(selectedCourse.labWork || selectedCourse.activities)?.map((act, i) => (
-                          <li key={i} className="truncate">{act}</li>
+                  {selectedCourse.skills && (
+                    <div className="space-y-1.5">
+                      <p className="font-semibold text-white/40 uppercase tracking-widest text-[9px] font-mono">Skills Log</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {selectedCourse.skills.map((skill, i) => (
+                          <span key={i} className="px-2 py-0.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-[9px] text-white/75">
+                            {skill}
+                          </span>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   )}
 
-                  <div className="space-y-1.5">
-                    <p className="font-bold text-accent uppercase tracking-wider text-[10px]">Skills Acquired</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {selectedCourse.skills.map((skill, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] text-white/80">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-1 border-t border-white/[0.06] pt-3">
-                    <p className="font-bold text-brand-mint uppercase tracking-wider text-[10px] flex items-center gap-1">
-                      <Sparkles size={10} /> Placement & Placement Importance
+                  <div className="space-y-1 border-t border-white/[0.04] pt-3">
+                    <p className="font-semibold text-white/50 uppercase tracking-widest text-[9px] font-mono flex items-center gap-1">
+                      <Award size={10} /> Placement Scope
                     </p>
-                    <p className="text-white/60 text-[11px] leading-relaxed italic">
+                    <p className="text-white/40 text-[10px] leading-relaxed italic">
                       "{selectedCourse.whyImportant}"
                     </p>
                   </div>
@@ -451,42 +439,38 @@ export default function CurriculumGuide() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] text-center space-y-4"
+                className="p-6 rounded-2xl border border-white/[0.06] bg-[#050505] text-center py-10 space-y-3"
               >
-                <Layers className="mx-auto text-white/20 animate-bounce" size={36} />
-                <h3 className="font-display font-semibold text-sm">Course Exploration</h3>
-                <p className="text-white/40 text-xs leading-relaxed max-w-xs mx-auto">
-                  Click on any course card to reveal full details, core topics, lab work, formulas, and placment insight.
+                <Layers className="mx-auto text-white/15 animate-pulse" size={28} />
+                <h3 className="font-semibold text-xs text-white/70">Course Details</h3>
+                <p className="text-white/30 text-[11px] leading-relaxed max-w-xs mx-auto font-light">
+                  Select any textbook card on the left to inspect topic coverage, equations, and career relevance.
                 </p>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Placement Importance Rankings */}
-          <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
-            <div className="flex items-center gap-2 border-b border-white/[0.06] pb-3">
-              <TrendingUp size={16} className="text-brand-amber" />
-              <h3 className="font-display font-bold text-sm text-white">
-                Career Importance Ranking
+          {/* Career Importance Rankings (Editorial Ledger) */}
+          <div className="p-6 rounded-2xl border border-white/[0.06] bg-[#050505] space-y-4">
+            <div className="flex items-center gap-2 border-b border-white/[0.04] pb-3">
+              <TrendingUp size={14} className="text-white/40" />
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-white/70">
+                Placement Importance
               </h3>
             </div>
             
             <div className="space-y-3">
               {rankedSubjects.map((sub) => (
-                <div key={sub.rank} className="flex gap-3 text-xs">
-                  <span className="font-mono font-bold text-brand-amber text-sm w-4 shrink-0">
+                <div key={sub.rank} className="flex gap-3 text-[11px] font-light">
+                  <span className="font-mono text-white/20 text-xs w-4 shrink-0">
                     {sub.rank}.
                   </span>
                   <div className="space-y-0.5">
-                    <p className="font-semibold text-white/95">{sub.name}</p>
-                    <p className="text-[10px] text-white/40 leading-relaxed font-light">{sub.why}</p>
+                    <p className="font-semibold text-white/85">{sub.name}</p>
+                    <p className="text-[10px] text-white/30 leading-relaxed font-light">{sub.why}</p>
                   </div>
                 </div>
               ))}
-            </div>
-
-            <div className="border-t border-white/[0.06] pt-3 text-[11px] text-white/40 italic text-center font-light">
-              Mastering these 7 courses in first year guarantees a smooth transition to DSA, DBMS, and AI/ML.
             </div>
           </div>
 

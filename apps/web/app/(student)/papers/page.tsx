@@ -11,9 +11,11 @@ import {
   BookOpenCheck,
   ChevronLeft,
   ChevronRight,
-  BookmarkCheck
+  BookmarkCheck,
+  ChevronDown
 } from 'lucide-react'
 import Link from 'next/link'
+import { TiltCard } from '@/components/ui/tilt-card'
 
 export default function PapersCatalog() {
   const searchParams = useSearchParams()
@@ -65,20 +67,23 @@ export default function PapersCatalog() {
   return (
     <div className="space-y-8">
       {/* Page header */}
-      <div className="space-y-1">
-        <h1 className="font-display text-2xl md:text-3xl font-bold tracking-tight">Syllabus & Practice Papers</h1>
-        <p className="text-white/40 text-sm font-light">
-          Browse and download previous years question papers, mock tests, and official college exam syllabi.
+      <div className="border-b border-white/[0.04] pb-6">
+        <p className="text-[10px] font-mono tracking-[0.3em] uppercase text-white/30 mb-2">Academic Index</p>
+        <h1 className="text-4xl md:text-5xl font-light tracking-[-0.02em]">
+          Syllabus & <span className="italic text-white/40 font-serif" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>Practice Papers</span>
+        </h1>
+        <p className="text-white/40 text-xs font-light max-w-xl mt-3 leading-relaxed">
+          Search and download previous years question papers, mock tests, and official curriculum syllabi.
         </p>
       </div>
 
       {/* Filter and Search Panel */}
-      <div className="bg-bg-surface border border-white/[0.06] rounded-xl p-5 space-y-4">
-        <div className="flex flex-col md:flex-row gap-4">
+      <div className="bg-[#050505] border border-white/[0.06] rounded-2xl p-5 space-y-4">
+        <div className="flex flex-col lg:flex-row gap-4">
           {/* Search bar */}
           <div className="flex-1 relative">
-            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-white/30">
-              <Search size={18} />
+            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-white/20">
+              <Search size={16} />
             </span>
             <input
               type="text"
@@ -88,57 +93,66 @@ export default function PapersCatalog() {
                 setSearchQuery(e.target.value)
                 setPage(1)
               }}
-              className="w-full pl-10 pr-4 py-2.5 bg-bg-base border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-accent/15"
+              className="w-full pl-10 pr-4 py-2.5 bg-white/[0.02] border border-white/[0.06] focus:border-white/20 rounded-xl text-xs text-white placeholder:text-white/20 focus:outline-none transition-all"
             />
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             {/* Subject filter */}
-            <select
-              value={subjectFilter}
-              onChange={(e) => {
-                setSubjectFilter(e.target.value)
-                setPage(1)
-              }}
-              className="px-4 py-2.5 bg-bg-base border border-white/[0.08] focus:border-accent/40 rounded-lg text-xs text-white/80 focus:outline-none cursor-pointer"
-            >
-              <option value="">All Subjects</option>
-              {subjects?.map((sub) => (
-                <option key={sub.id} value={sub.id}>{sub.name} ({sub.code})</option>
-              ))}
-            </select>
+            <div className="relative group">
+              <select
+                value={subjectFilter}
+                onChange={(e) => {
+                  setSubjectFilter(e.target.value)
+                  setPage(1)
+                }}
+                className="appearance-none px-4 pr-9 py-2.5 bg-white/[0.02] border border-white/[0.06] hover:border-white/10 rounded-xl text-xs text-white/75 focus:outline-none cursor-pointer transition-all"
+              >
+                <option value="">All Subjects</option>
+                {subjects?.map((sub) => (
+                  <option key={sub.id} value={sub.id}>{sub.name}</option>
+                ))}
+              </select>
+              <ChevronDown size={12} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
+            </div>
 
             {/* Exam Type filter */}
-            <select
-              value={examTypeFilter}
-              onChange={(e) => {
-                setExamTypeFilter(e.target.value)
-                setPage(1)
-              }}
-              className="px-4 py-2.5 bg-bg-base border border-white/[0.08] focus:border-accent/40 rounded-lg text-xs text-white/80 focus:outline-none cursor-pointer"
-            >
-              <option value="">All Types</option>
-              <option value="COMPETITIVE">Competitive</option>
-              <option value="MOCK">Mock Exams</option>
-              <option value="FINAL">Final Exams</option>
-              <option value="MIDTERM">Midterm</option>
-              <option value="ASSIGNMENT">Assignment</option>
-            </select>
+            <div className="relative">
+              <select
+                value={examTypeFilter}
+                onChange={(e) => {
+                  setExamTypeFilter(e.target.value)
+                  setPage(1)
+                }}
+                className="appearance-none px-4 pr-9 py-2.5 bg-white/[0.02] border border-white/[0.06] hover:border-white/10 rounded-xl text-xs text-white/75 focus:outline-none cursor-pointer transition-all"
+              >
+                <option value="">All Types</option>
+                <option value="COMPETITIVE">Competitive</option>
+                <option value="MOCK">Mock Exams</option>
+                <option value="FINAL">Final Exams</option>
+                <option value="MIDTERM">Midterm</option>
+                <option value="ASSIGNMENT">Assignment</option>
+              </select>
+              <ChevronDown size={12} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
+            </div>
 
             {/* Difficulty filter */}
-            <select
-              value={difficultyFilter}
-              onChange={(e) => {
-                setDifficultyFilter(e.target.value)
-                setPage(1)
-              }}
-              className="px-4 py-2.5 bg-bg-base border border-white/[0.08] focus:border-accent/40 rounded-lg text-xs text-white/80 focus:outline-none cursor-pointer"
-            >
-              <option value="">All Difficulties</option>
-              <option value="EASY">Easy</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="HARD">Hard</option>
-            </select>
+            <div className="relative">
+              <select
+                value={difficultyFilter}
+                onChange={(e) => {
+                  setDifficultyFilter(e.target.value)
+                  setPage(1)
+                }}
+                className="appearance-none px-4 pr-9 py-2.5 bg-white/[0.02] border border-white/[0.06] hover:border-white/10 rounded-xl text-xs text-white/75 focus:outline-none cursor-pointer transition-all"
+              >
+                <option value="">All Difficulties</option>
+                <option value="EASY">Easy</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HARD">Hard</option>
+              </select>
+              <ChevronDown size={12} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
+            </div>
           </div>
         </div>
       </div>
@@ -147,15 +161,15 @@ export default function PapersCatalog() {
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-48 bg-white/5 rounded-xl animate-pulse" />
+            <div key={i} className="h-56 bg-white/[0.02] border border-white/[0.04] rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : !data?.papers || data.papers.length === 0 ? (
-        <div className="p-12 rounded-xl bg-bg-surface border border-white/[0.06] text-center max-w-lg mx-auto">
-          <BookOpenCheck className="mx-auto text-white/20 mb-4" size={40} />
-          <h3 className="font-display font-semibold text-lg mb-2">No Papers Found</h3>
-          <p className="text-white/40 text-sm leading-relaxed mb-6">
-            We couldn&apos;t find any question papers matching your filters. Try clearing your search or checking other subjects.
+        <div className="p-12 rounded-2xl bg-[#050505] border border-white/[0.06] text-center max-w-md mx-auto space-y-4">
+          <BookOpenCheck className="mx-auto text-white/15" size={36} />
+          <h3 className="font-semibold text-sm">No Publications Found</h3>
+          <p className="text-white/30 text-xs leading-relaxed max-w-xs mx-auto">
+            We couldn&apos;t find any question papers matching your filter parameters. Try clearing your filters.
           </p>
           <button
             onClick={() => {
@@ -165,7 +179,7 @@ export default function PapersCatalog() {
               setSearchQuery('')
               setPage(1)
             }}
-            className="px-5 py-2.5 rounded-lg bg-accent hover:bg-accent-hover text-white text-xs font-semibold transition"
+            className="px-4 py-2 rounded-xl bg-white text-black text-[10px] font-bold tracking-wider uppercase hover:bg-white/90 transition"
           >
             Clear Filters
           </button>
@@ -175,79 +189,81 @@ export default function PapersCatalog() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.papers.map((paper: any) => {
               const isBookmarked = bookmarkedIds.has(paper.id)
-              const diffColor = 
-                paper.difficulty === 'HARD' ? 'text-red-400 bg-red-400/10' :
-                paper.difficulty === 'MEDIUM' ? 'text-amber-400 bg-amber-400/10' :
-                'text-emerald-400 bg-emerald-400/10'
+              const diffBorder = 
+                paper.difficulty === 'HARD' ? 'border-red-500/20 text-red-400 bg-red-500/[0.03]' :
+                paper.difficulty === 'MEDIUM' ? 'border-amber-500/20 text-amber-400 bg-amber-500/[0.03]' :
+                'border-emerald-500/20 text-emerald-400 bg-emerald-500/[0.03]'
 
               return (
-                <div 
+                <TiltCard 
                   key={paper.id} 
-                  className="bg-bg-surface border border-white/[0.06] hover:border-white/12 transition rounded-xl p-5 flex flex-col justify-between gap-5 relative group"
+                  maxTilt={10}
+                  glareOpacity={0.08}
+                  className="bg-[#050505] border border-white/[0.06] hover:border-white/[0.12] transition-colors rounded-2xl p-5 flex flex-col justify-between h-56 relative group cursor-default"
                 >
                   {/* Top line Info */}
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="text-[10px] font-mono text-white/40 bg-white/5 px-2 py-0.5 rounded border border-white/10">
-                        {paper.year}
+                  <div className="space-y-3" style={{ transform: 'translateZ(15px)' }}>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[9px] font-mono text-white/30 bg-white/[0.03] border border-white/[0.06] px-2 py-0.5 rounded">
+                        {paper.year} PYQ
                       </span>
                       <button
                         onClick={() => toggleBookmark.mutate({ paperId: paper.id })}
                         className={`w-7 h-7 rounded-lg border flex items-center justify-center transition-all ${
                           isBookmarked 
-                            ? 'bg-accent/15 border-accent/30 text-accent' 
-                            : 'border-white/10 text-white/40 hover:text-white hover:bg-white/5'
+                            ? 'bg-white/10 border-white/20 text-white' 
+                            : 'border-white/[0.06] text-white/30 hover:text-white hover:bg-white/[0.04]'
                         }`}
                       >
-                        {isBookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+                        {isBookmarked ? <BookmarkCheck size={13} /> : <Bookmark size={13} />}
                       </button>
                     </div>
 
                     <div className="space-y-1">
                       <Link href={`/papers/${paper.id}`} className="block">
-                        <h3 className="font-display font-bold text-base text-white group-hover:text-accent transition-colors line-clamp-2">
+                        <h3 className="text-base font-normal text-white/80 group-hover:text-white transition-colors line-clamp-2" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>
                           {paper.title}
                         </h3>
                       </Link>
-                      <p className="text-xs text-white/50">{paper.subject?.name || 'Subject'}</p>
+                      <p className="text-[10px] text-white/30 uppercase tracking-wider font-semibold">{paper.subject?.name || 'Subject'}</p>
                     </div>
                   </div>
 
                   {/* Mid stats/badges */}
-                  <div className="flex flex-wrap items-center gap-2 pt-2">
-                    <span className="text-[9px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border border-white/[0.08] text-white/60 bg-white/[0.02]">
+                  <div className="flex flex-wrap items-center gap-1.5 pt-2" style={{ transform: 'translateZ(20px)' }}>
+                    <span className="text-[8px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border border-white/[0.06] text-white/40 bg-white/[0.01]">
                       {paper.examType}
                     </span>
-                    <span className={`text-[9px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${diffColor}`}>
+                    <span className={`text-[8px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${diffBorder}`}>
                       {paper.difficulty}
                     </span>
                   </div>
 
                   {/* Footer Stats and links */}
-                  <div className="flex items-center justify-between pt-4 border-t border-white/[0.04] text-[11px] text-white/40">
-                    <div className="flex items-center gap-3">
-                      <span className="flex items-center gap-1"><Eye size={12} /> {paper.viewCount}</span>
-                      <span className="flex items-center gap-1"><Download size={12} /> {paper.downloadCount}</span>
+                  <div className="flex items-center justify-between pt-3.5 border-t border-white/[0.04] text-[10px] text-white/30" style={{ transform: 'translateZ(25px)' }}>
+                    <div className="flex items-center gap-2.5 font-mono">
+                      <span className="flex items-center gap-1"><Eye size={10} /> {paper.viewCount}</span>
+                      <span className="flex items-center gap-1"><Download size={10} /> {paper.downloadCount}</span>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
                       <Link
                         href={`/papers/${paper.id}`}
-                        className="px-2.5 py-1.5 rounded bg-white/5 hover:bg-white/10 text-white/90 border border-white/5 hover:border-white/10 transition"
+                        className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] text-white/70 hover:text-white border border-white/[0.06] transition text-[10px] font-medium"
                       >
                         Solutions
                       </Link>
                       {paper.pdfUrl && (
                         <button
                           onClick={() => handleDownload(paper.id, paper.pdfUrl)}
-                          className="px-2.5 py-1.5 rounded bg-accent hover:bg-accent-hover text-white transition flex items-center justify-center"
+                          className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-white/90 text-black transition flex items-center justify-center"
                         >
-                          <Download size={12} />
+                          <Download size={11} />
                         </button>
                       )}
                     </div>
                   </div>
-                </div>
+                </TiltCard>
               )
             })}
           </div>
@@ -258,19 +274,19 @@ export default function PapersCatalog() {
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="w-9 h-9 rounded-lg border border-white/10 bg-bg-surface hover:bg-white/5 disabled:opacity-40 transition flex items-center justify-center text-white"
+                className="w-8 h-8 rounded-lg border border-white/[0.06] bg-[#050505] hover:bg-white/[0.03] disabled:opacity-20 transition flex items-center justify-center text-white"
               >
-                <ChevronLeft size={16} />
+                <ChevronLeft size={14} />
               </button>
-              <span className="text-xs text-white/50 px-3 font-mono">
+              <span className="text-[10px] text-white/30 px-3 font-mono">
                 Page {page} of {data.pages}
               </span>
               <button
                 onClick={() => setPage(p => Math.min(data.pages, p + 1))}
                 disabled={page === data.pages}
-                className="w-9 h-9 rounded-lg border border-white/10 bg-bg-surface hover:bg-white/5 disabled:opacity-40 transition flex items-center justify-center text-white"
+                className="w-8 h-8 rounded-lg border border-white/[0.06] bg-[#050505] hover:bg-white/[0.03] disabled:opacity-20 transition flex items-center justify-center text-white"
               >
-                <ChevronRight size={16} />
+                <ChevronRight size={14} />
               </button>
             </div>
           )}
