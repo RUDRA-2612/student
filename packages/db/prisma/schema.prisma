@@ -171,7 +171,7 @@ model Question {
   modelAnswer    String?
   isPublished    Boolean                @default(false)
   predictedScore Float?
-  embedding      Unsupported("vector")?
+  // embedding      Unsupported("vector")?
   algoliaId      String?
   createdAt      DateTime               @default(now())
   updatedAt      DateTime               @updatedAt
