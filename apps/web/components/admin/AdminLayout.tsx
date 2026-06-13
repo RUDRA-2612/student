@@ -23,14 +23,27 @@ import {
   ChevronLeft,
   ChevronRight,
   MessageSquare,
+  Layers,
+  Map,
+  Calendar,
+  GraduationCap,
+  Github
 } from 'lucide-react'
 
 const adminNavItems = [
   { name: 'Overview',       href: '/admin',                icon: LayoutDashboard },
+  { name: 'Semesters',      href: '/admin/semesters',      icon: Layers },
   { name: 'Subjects',       href: '/admin/subjects',       icon: BookOpen },
+  { name: 'Syllabus',       href: '/admin/syllabus',       icon: BookOpen },
+  { name: 'Curriculum',     href: '/admin/curriculum',     icon: FileText },
   { name: 'Papers',         href: '/admin/papers',         icon: FileText },
   { name: 'Questions',      href: '/admin/questions',      icon: HelpCircle },
   { name: 'Solutions',      href: '/admin/solutions',      icon: Video },
+  { name: 'Resources',      href: '/admin/resources',      icon: Video },
+  { name: 'Roadmaps',       href: '/admin/roadmaps',       icon: Map },
+  { name: 'Calendar',       href: '/admin/calendar',       icon: Calendar },
+  { name: 'Placement Hub',  href: '/admin/placement',      icon: GraduationCap },
+  { name: 'GitHub Sync',    href: '/admin/github',         icon: Github },
   { name: 'FAQs',           href: '/admin/faqs',           icon: MessageSquare },
   { name: 'Requests',       href: '/admin/requests',       icon: Send },
   { name: 'Announcements',  href: '/admin/announcements',  icon: Bell },

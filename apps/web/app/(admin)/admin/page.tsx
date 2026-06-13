@@ -5,13 +5,17 @@ import {
   Users, 
   FileText, 
   HelpCircle, 
-  MessageSquare, 
   Activity, 
   Download, 
   Eye, 
   ShieldCheck,
   TrendingUp,
-  ShieldAlert
+  ShieldAlert,
+  Layers,
+  BookOpen,
+  Map,
+  Bell,
+  Video
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import AdminLoading from '../loading'
@@ -65,9 +69,13 @@ export default function AdminOverview() {
 
   const stats = [
     { label: 'Total Students', value: overview.studentCount, icon: Users, color: 'text-accent border-accent/10 bg-accent/5' },
-    { label: 'Exam Papers', value: overview.paperCount, icon: FileText, color: 'text-brand-mint border-brand-mint/10 bg-brand-mint/5' },
+    { label: 'Semesters', value: overview.semesterCount, icon: Layers, color: 'text-blue-400 border-blue-500/10 bg-blue-500/5' },
+    { label: 'Subjects', value: overview.subjectCount, icon: BookOpen, color: 'text-brand-mint border-brand-mint/10 bg-brand-mint/5' },
+    { label: 'Exam Papers', value: overview.paperCount, icon: FileText, color: 'text-purple-400 border-purple-500/10 bg-purple-500/5' },
     { label: 'Question Bank', value: overview.questionCount, icon: HelpCircle, color: 'text-brand-amber border-brand-amber/10 bg-brand-amber/5' },
-    { label: 'Pending Requests', value: overview.pendingRequests, icon: MessageSquare, color: 'text-blue-400 border-blue-500/10 bg-blue-500/5' }
+    { label: 'Study Resources', value: overview.resourceCount, icon: Video, color: 'text-emerald-400 border-emerald-500/10 bg-emerald-500/5' },
+    { label: 'Roadmaps', value: overview.roadmapCount, icon: Map, color: 'text-pink-400 border-pink-500/10 bg-pink-500/5' },
+    { label: 'Bulletins', value: overview.announcementCount, icon: Bell, color: 'text-orange-400 border-orange-500/10 bg-orange-500/5' }
   ]
 
   return (
@@ -89,7 +97,7 @@ export default function AdminOverview() {
           </div>
           <h1 className="font-display text-3xl font-extrabold tracking-tight">Admin Headquarters</h1>
           <p className="text-white/60 text-sm max-w-lg font-light">
-            Manage Rajasthan Board exam papers, monitor student support tickets, and review AI prediction metrics.
+            Manage your university academic portal: semesters, syllabus versions, resources, calendar events, and custom student roadmaps.
           </p>
         </div>
       </motion.div>
@@ -104,7 +112,7 @@ export default function AdminOverview() {
           return (
             <div key={stat.label} className={`p-5 rounded-xl border flex flex-col justify-between gap-3 ${stat.color}`}>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-white/50 tracking-wide uppercase">{stat.label}</span>
+                <span className="text-[10px] font-semibold text-white/50 tracking-wide uppercase">{stat.label}</span>
                 <Icon size={18} className="opacity-80" />
               </div>
               <span className="text-2xl md:text-3xl font-display font-bold text-white">

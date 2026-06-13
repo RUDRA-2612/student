@@ -3,19 +3,28 @@
 import { useState } from 'react'
 import { api } from '@/lib/trpc/react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { SubjectCreateSchema } from '@examedge/validators'
-import { z } from 'zod'
 import { 
   BookOpen, 
   Trash2, 
   CheckCircle2, 
   AlertCircle, 
   FolderPlus,
-  FolderOpen
+  FolderOpen,
+  GraduationCap,
+  Layers
 } from 'lucide-react'
 
-type SubjectFormValues = z.infer<typeof SubjectCreateSchema>
+type SubjectFormValues = {
+  name: string
+  code: string
+  description: string
+  category: string
+  sortOrder: number
+  credits: number
+  semesterId: string | null
+  facultyName: string | null
+  facultyEmail: string | null
+}
 
 export default function AdminSubjects() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
@@ -23,18 +32,22 @@ export default function AdminSubjects() {
 
   const utils = api.useUtils()
 
-  // Fetch subjects list (including inactive ones)
-  const { data: subjects, isLoading } = api.subjects.list.useQuery({ isActive: false })
+  // Fetch subjects list and active semesters list
+  const { data: subjects, isLoading: subjectsLoading } = api.subjects.list.useQuery({ isActive: false })
+  const { data: semesters } = api.semesters.list.useQuery({ isActiveOnly: true })
 
   // Form setup
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<SubjectFormValues>({
-    resolver: zodResolver(SubjectCreateSchema),
     defaultValues: {
       name: '',
       code: '',
       description: '',
-      category: 'Competitive',
-      sortOrder: 0
+      category: 'Core CSE',
+      sortOrder: 0,
+      credits: 3,
+      semesterId: '',
+      facultyName: '',
+      facultyEmail: ''
     }
   })
 
@@ -66,22 +79,28 @@ export default function AdminSubjects() {
   })
 
   const onSubmit = (data: SubjectFormValues) => {
-    createMutation.mutate(data)
+    // Map empty semesterId string to null
+    const payload = {
+      ...data,
+      semesterId: data.semesterId === '' ? null : data.semesterId,
+      facultyName: data.facultyName === '' ? null : data.facultyName,
+      facultyEmail: data.facultyEmail === '' ? null : data.facultyEmail,
+    }
+    createMutation.mutate(payload)
   }
 
   const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this subject? This will cascade and delete all associated papers/questions!')) {
+    if (confirm('Are you sure you want to delete this subject? This will cascade and delete all associated papers/questions/resources!')) {
       deleteMutation.mutate({ id })
     }
   }
 
   return (
     <div className="space-y-10">
-      {/* Header Profile */}
       <div className="space-y-2">
-        <h1 className="font-display text-2xl md:text-3xl font-bold tracking-tight">Syllabus Subjects</h1>
+        <h1 className="font-display text-2xl md:text-3xl font-bold tracking-tight">University Subjects</h1>
         <p className="text-white/40 text-sm font-light">
-          Create, edit, and organize examination subject structures for Rajasthan REET, RPSC, and SI categories.
+          Create, edit, and organize academic subject structures, assign semesters, credits, and faculty details.
         </p>
       </div>
 
@@ -95,7 +114,7 @@ export default function AdminSubjects() {
             </div>
 
             {successMsg && (
-              <div className="p-4 bg-brand-mint/10 border border-brand-mint/20 rounded-xl text-xs text-brand-mint flex items-start gap-2">
+              <div className="p-4 bg-sage/10 border border-sage/20 rounded-xl text-xs text-sage flex items-start gap-2">
                 <CheckCircle2 className="shrink-0 mt-0.5" size={14} />
                 <span>{successMsg}</span>
               </div>
@@ -110,67 +129,111 @@ export default function AdminSubjects() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Subject Name</label>
+                <label className="form-label">Subject Name</label>
                 <input
-                  {...register('name')}
+                  {...register('name', { required: 'Name is required' })}
                   type="text"
-                  placeholder="e.g. Environmental Studies"
-                  className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white placeholder:text-white/20 focus:outline-none"
+                  placeholder="e.g. Programming-I"
+                  className="form-input"
                 />
                 {errors.name && <p className="text-xs text-brand-coral mt-1.5">{errors.name.message}</p>}
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Code</label>
-                <input
-                  {...register('code')}
-                  type="text"
-                  placeholder="e.g. REET-EVS"
-                  className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white placeholder:text-white/20 focus:outline-none"
-                />
-                {errors.code && <p className="text-xs text-brand-coral mt-1.5">{errors.code.message}</p>}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="form-label">Subject Code</label>
+                  <input
+                    {...register('code', { required: 'Code is required' })}
+                    type="text"
+                    placeholder="e.g. CSE101"
+                    className="form-input"
+                  />
+                  {errors.code && <p className="text-xs text-brand-coral mt-1.5">{errors.code.message}</p>}
+                </div>
+                <div>
+                  <label className="form-label">Credits</label>
+                  <input
+                    {...register('credits', { valueAsNumber: true, required: 'Credits required' })}
+                    type="number"
+                    className="form-input"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Category</label>
+                <label className="form-label">Semester Assignment</label>
+                <select
+                  {...register('semesterId')}
+                  className="form-input cursor-pointer"
+                >
+                  <option value="">No Semester assigned</option>
+                  {semesters?.map((sem) => (
+                    <option key={sem.id} value={sem.id}>
+                      {sem.name} ({sem.academicYear})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="form-label">Category</label>
                 <select
                   {...register('category')}
-                  className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white focus:outline-none cursor-pointer"
+                  className="form-input cursor-pointer"
                 >
-                  <option value="Competitive">Competitive (REET / RPSC)</option>
+                  <option value="Core CSE">Core CSE</option>
                   <option value="Engineering">Engineering</option>
-                  <option value="Medical">Medical</option>
-                  <option value="Arts">Arts</option>
-                  <option value="Commerce">Commerce</option>
+                  <option value="Mathematics">Mathematics</option>
+                  <option value="Design & Thinking">Design & Thinking</option>
+                  <option value="Humanities">Humanities</option>
+                  <option value="Communication">Communication</option>
                 </select>
-                {errors.category && <p className="text-xs text-brand-coral mt-1.5">{errors.category.message}</p>}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="form-label">Faculty Name</label>
+                  <input
+                    {...register('facultyName')}
+                    type="text"
+                    placeholder="Dr. Smith"
+                    className="form-input"
+                  />
+                </div>
+                <div>
+                  <label className="form-label">Faculty Email</label>
+                  <input
+                    {...register('facultyEmail')}
+                    type="email"
+                    placeholder="smith@univ.edu"
+                    className="form-input"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Sort Order</label>
+                <label className="form-label">Sort Order</label>
                 <input
                   {...register('sortOrder', { valueAsNumber: true })}
                   type="number"
-                  className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white focus:outline-none"
+                  className="form-input"
                 />
-                {errors.sortOrder && <p className="text-xs text-brand-coral mt-1.5">{errors.sortOrder.message}</p>}
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Description</label>
+                <label className="form-label">Description</label>
                 <textarea
                   {...register('description')}
                   rows={3}
-                  placeholder="Subject syllabus framework details..."
-                  className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white placeholder:text-white/20 focus:outline-none resize-none"
+                  placeholder="Subject details..."
+                  className="form-input resize-none"
                 />
-                {errors.description && <p className="text-xs text-brand-coral mt-1.5">{errors.description.message}</p>}
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg text-sm transition"
+                className="w-full btn-primary"
               >
                 {isSubmitting ? 'Creating...' : 'Create Subject'}
               </button>
@@ -186,7 +249,7 @@ export default function AdminSubjects() {
               <h2 className="font-display font-semibold text-sm uppercase tracking-wider text-white/60">Subject Directory</h2>
             </div>
 
-            {isLoading ? (
+            {subjectsLoading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="h-16 bg-white/5 rounded-lg animate-pulse" />
@@ -201,12 +264,27 @@ export default function AdminSubjects() {
               <div className="space-y-3">
                 {subjects.map((sub) => (
                   <div key={sub.id} className="p-4 rounded-xl border border-white/[0.04] bg-bg-base/20 flex items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <span className="text-[9px] font-semibold text-accent/80 bg-accent/10 px-2 py-0.5 rounded-full uppercase border border-accent/20 tracking-wider">
-                        {sub.category}
-                      </span>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[9px] font-semibold text-accent/80 bg-accent/10 px-2 py-0.5 rounded-full uppercase border border-accent/20 tracking-wider">
+                          {sub.category}
+                        </span>
+                        {sub.semester && (
+                          <span className="text-[9px] font-semibold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full uppercase border border-blue-500/20 tracking-wider flex items-center gap-1">
+                            <Layers size={9} /> {sub.semester.name}
+                          </span>
+                        )}
+                        <span className="text-[9px] font-semibold text-white/40 bg-white/5 px-2 py-0.5 rounded-full border border-white/10 tracking-wider">
+                          {sub.credits} Credits
+                        </span>
+                      </div>
                       <h4 className="font-display font-bold text-sm text-white/95 mt-1">{sub.name}</h4>
                       <p className="text-xs text-white/40 leading-relaxed font-light">{sub.description || 'No description provided.'}</p>
+                      {sub.facultyName && (
+                        <p className="text-[10px] text-white/30 flex items-center gap-1">
+                          <GraduationCap size={11} /> Faculty: {sub.facultyName} ({sub.facultyEmail})
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-3 shrink-0">
@@ -226,7 +304,6 @@ export default function AdminSubjects() {
             )}
           </div>
         </div>
-
       </div>
     </div>
   )

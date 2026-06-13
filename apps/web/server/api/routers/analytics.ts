@@ -10,6 +10,11 @@ export const analyticsRouter = createTRPCRouter({
       pendingRequests,
       topPapers,
       recentLogs,
+      semesterCount,
+      subjectCount,
+      resourceCount,
+      announcementCount,
+      roadmapCount,
     ] = await Promise.all([
       ctx.db.user.count({ where: { role: 'STUDENT' } }),
       ctx.db.paper.count(),
@@ -25,6 +30,11 @@ export const analyticsRouter = createTRPCRouter({
         take: 10,
         include: { user: { select: { name: true, email: true } } },
       }),
+      ctx.db.semester.count(),
+      ctx.db.subject.count(),
+      ctx.db.studyResource.count(),
+      ctx.db.announcement.count(),
+      ctx.db.roadmap.count(),
     ])
 
     return {
@@ -34,6 +44,11 @@ export const analyticsRouter = createTRPCRouter({
       pendingRequests,
       topPapers,
       recentLogs,
+      semesterCount,
+      subjectCount,
+      resourceCount,
+      announcementCount,
+      roadmapCount,
     }
   }),
 

@@ -86,24 +86,36 @@ model VerificationToken {
 }
 
 model Subject {
-  id          String           @id @default(cuid())
-  name        String
-  code        String           @unique
-  description String?
-  category    String
-  thumbnail   String?
-  isActive    Boolean          @default(true)
-  sortOrder   Int              @default(0)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  faqs        FAQ[]
-  papers      Paper[]
-  questions   Question[]
-  requests    StudentRequest[]
-  tags        Tag[]
+  id              String           @id @default(cuid())
+  name            String
+  code            String           @unique
+  description     String?
+  category        String
+  thumbnail       String?
+  isActive        Boolean          @default(true)
+  sortOrder       Int              @default(0)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  credits         Int              @default(3)
+  facultyName     String?
+  facultyEmail    String?
+  syllabusUrl     String?
+  syllabusKey     String?
+  syllabusContent Json?
+  syllabusVersion Int              @default(1)
+  semesterId      String?
+  semester        Semester?        @relation(fields: [semesterId], references: [id], onDelete: SetNull)
+  faqs            FAQ[]
+  papers          Paper[]
+  questions       Question[]
+  requests        StudentRequest[]
+  tags            Tag[]
+  syllabusVersions SyllabusVersion[]
+  studyResources  StudyResource[]
 
   @@index([category])
   @@index([isActive])
+  @@index([semesterId])
 }
 
 model Tag {
@@ -369,4 +381,160 @@ enum AnnouncementType {
   WARNING
   IMPORTANT
   MAINTENANCE
+}
+
+model Semester {
+  id           String    @id @default(cuid())
+  name         String
+  academicYear String    // e.g., "2025-2026"
+  isActive     Boolean   @default(true)
+  sortOrder    Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  subjects     Subject[]
+
+  @@index([isActive])
+}
+
+model SyllabusVersion {
+  id             String    @id @default(cuid())
+  subjectId      String
+  version        Int
+  fileUrl        String?
+  fileKey        String?
+  manualContent  Json?     // Unit-wise details entered manually
+  changesSummary String?
+  createdAt      DateTime  @default(now())
+  createdBy      String
+  subject        Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@index([subjectId])
+}
+
+model Curriculum {
+  id           String    @id @default(cuid())
+  branch       String    // e.g., "CSE", "ECE"
+  academicYear String    // e.g., "2025-2026"
+  semester     Int       // e.g., 1 to 8
+  version      String    // e.g., "v1.0"
+  fileUrl      String?
+  fileKey      String?
+  content      String?
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([branch])
+  @@index([isActive])
+}
+
+model StudyResource {
+  id          String            @id @default(cuid())
+  title       String
+  type        StudyResourceType
+  url         String
+  fileKey     String?
+  subjectId   String
+  createdBy   String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  subject     Subject           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@index([subjectId])
+}
+
+model Roadmap {
+  id          String             @id @default(cuid())
+  title       String
+  description String
+  category    String             // e.g., "DSA", "Web Dev"
+  isPublished Boolean            @default(false)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  milestones  RoadmapMilestone[]
+
+  @@index([isPublished])
+}
+
+model RoadmapMilestone {
+  id          String   @id @default(cuid())
+  roadmapId   String
+  title       String
+  description String
+  order       Int      @default(0)
+  resources   Json?    // Array of resource links/files
+  checkpoints Json?    // Array of checkpoint tasks
+  roadmap     Roadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+
+  @@index([roadmapId])
+}
+
+model CalendarEvent {
+  id          String            @id @default(cuid())
+  title       String
+  description String?
+  type        CalendarEventType
+  date        DateTime          @db.Date
+  startDate   DateTime?
+  endDate     DateTime?
+  createdBy   String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([date])
+}
+
+model PlacementResource {
+  id        String            @id @default(cuid())
+  title     String
+  category  PlacementCategory
+  content   String?           // Markdown or text details
+  url       String?
+  fileKey   String?
+  createdBy String
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String?  // null if targeted to everyone
+  title     String
+  message   String
+  type      String   // e.g., "INFO", "ANNOUNCEMENT", "EXAM"
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+enum StudyResourceType {
+  NOTES
+  PPT
+  LAB_MANUAL
+  CHEAT_SHEET
+  YOUTUBE_PLAYLIST
+  VIDEO
+  EXTERNAL
+}
+
+enum CalendarEventType {
+  MIDTERM1
+  MIDTERM2
+  QUIZ
+  ENDTERM
+  REGISTRATION
+  HOLIDAY
+  EVENT
+  PLACEMENT
+}
+
+enum PlacementCategory {
+  DSA_SHEET
+  APTITUDE
+  INTERVIEW_Q
+  RESUME
+  HR
+  CODING_CHALLENGE
 }

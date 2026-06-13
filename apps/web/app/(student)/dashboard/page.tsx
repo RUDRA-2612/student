@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { api } from '@/lib/trpc/react'
 import Link from 'next/link'
-import { BookOpen, Map, Bookmark, Clock, Bell, ArrowUpRight, Send, Compass, Activity, Zap, AlertOctagon } from 'lucide-react'
+import { BookOpen, Map, Bookmark, Clock, Bell, ArrowUpRight, Send, Compass, Activity, Zap, AlertOctagon, Sparkles } from 'lucide-react'
 
 /* IO Reveal */
 function Reveal({ children, className = '', d = 0 }: { children: React.ReactNode; className?: string; d?: number }) {
@@ -189,14 +189,16 @@ export default function StudentDashboard() {
               <div className="grid grid-cols-2 gap-2.5 h-[calc(100%-32px)]">
                 {[
                   { href: '/curriculum', icon: Compass, label: 'Curriculum' },
-                  { href: '/roadmap', icon: Map, label: 'Roadmap' },
-                  { href: '/papers', icon: BookOpen, label: 'Papers' },
-                  { href: '/requests', icon: Send, label: 'Requests' },
+                  { href: '/roadmap', icon: Map, label: 'Roadmaps' },
+                  { href: '/student/calendar', icon: Clock, label: 'Calendar' },
+                  { href: '/student/placement', icon: Zap, label: 'Placement' },
+                  { href: '/student/ai-assistant', icon: Sparkles, label: 'AI Partner' },
+                  { href: '/requests', icon: Send, label: 'Support' },
                 ].map((item) => (
                   <Link key={item.label} href={item.href}
-                    className="group flex flex-col items-start justify-center gap-1.5 p-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.03] hover:border-white/[0.07] transition-all duration-300">
-                    <item.icon size={16} className="text-white/25 group-hover:text-white/70 transition-colors" />
-                    <span className="text-[11px] font-medium text-white/45 group-hover:text-white/80 transition-colors">{item.label}</span>
+                    className="group flex flex-col items-start justify-center gap-1.5 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.03] hover:border-white/[0.07] transition-all duration-300">
+                    <item.icon size={15} className="text-white/25 group-hover:text-white/70 transition-colors" />
+                    <span className="text-[10px] font-medium text-white/45 group-hover:text-white/80 transition-colors">{item.label}</span>
                   </Link>
                 ))}
               </div>
