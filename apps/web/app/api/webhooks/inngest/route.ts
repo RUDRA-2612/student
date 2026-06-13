@@ -5,6 +5,7 @@ import {
   deleteFileJob,
   requestResolvedJob,
   aggregateStatsJob,
+  requestCreatedJob,
 } from '@/lib/inngest/functions'
 
 export const { GET, POST, PUT } = serve({
@@ -14,5 +15,6 @@ export const { GET, POST, PUT } = serve({
     deleteFileJob,
     requestResolvedJob,
     aggregateStatsJob,
+    requestCreatedJob,
   ],
 })

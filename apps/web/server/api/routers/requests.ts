@@ -7,12 +7,39 @@ export const requestsRouter = createTRPCRouter({
   create: protectedProcedure
     .input(RequestCreateSchema)
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.studentRequest.create({
+      const request = await ctx.db.studentRequest.create({
         data: {
           ...input,
           userId: (ctx.session.user as any).id,
         },
       })
+
+      const ip = ctx.req.ip ?? ctx.req.headers.get('x-forwarded-for') ?? 'unknown'
+      const userAgent = ctx.req.headers.get('user-agent') ?? 'unknown'
+
+      // Log request creation to ActivityLog for silent tracking/auditing
+      await ctx.db.activityLog.create({
+        data: {
+          userId: (ctx.session.user as any).id,
+          action: 'CREATE_REQUEST',
+          entity: 'StudentRequest',
+          entityId: request.id,
+          ip: ip === 'unknown' ? null : ip,
+          userAgent: userAgent === 'unknown' ? null : userAgent,
+        }
+      }).catch(console.error)
+
+      // Send background event for admin email alert
+      await ctx.inngest.send({
+        name: 'request/created',
+        data: {
+          requestId: request.id,
+          ip,
+          userAgent,
+        },
+      }).catch(console.error)
+
+      return request
     }),
 
   list: protectedProcedure
