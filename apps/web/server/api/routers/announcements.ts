@@ -9,21 +9,25 @@ export const announcementsRouter = createTRPCRouter({
     }).optional())
     .query(async ({ ctx, input }) => {
       const now = new Date()
-      const where: any = {
-        isActive: true,
+      const expiryFilter = {
         OR: [
           { expiresAt: null },
           { expiresAt: { gte: now } },
         ],
       }
 
-      if (input?.subjectId) {
-        where.OR = [
-          { targetAll: true },
-          { subjects: { has: input.subjectId } },
-        ]
-      } else {
-        where.targetAll = true
+      const targetFilter = input?.subjectId
+        ? {
+            OR: [
+              { targetAll: true },
+              { subjects: { has: input.subjectId } },
+            ],
+          }
+        : { targetAll: true }
+
+      const where = {
+        isActive: true,
+        AND: [expiryFilter, targetFilter],
       }
 
       return ctx.db.announcement.findMany({

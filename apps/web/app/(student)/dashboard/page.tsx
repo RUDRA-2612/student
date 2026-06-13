@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { api } from '@/lib/trpc/react'
 import Link from 'next/link'
-import { BookOpen, Map, Bookmark, Clock, Bell, ArrowUpRight, Send, Compass, Activity, Zap } from 'lucide-react'
+import { BookOpen, Map, Bookmark, Clock, Bell, ArrowUpRight, Send, Compass, Activity, Zap, AlertOctagon } from 'lucide-react'
 
 /* IO Reveal */
 function Reveal({ children, className = '', d = 0 }: { children: React.ReactNode; className?: string; d?: number }) {
@@ -61,15 +61,50 @@ export default function StudentDashboard() {
   const name = session?.user?.name || 'Scholar'
   const firstName = name.split(' ')[0]
 
-  const { data: stats, isLoading: statsLoading } = api.student.dashboardStats.useQuery()
-  const { data: subjects, isLoading: subjectsLoading } = api.subjects.list.useQuery({ isActive: true })
-  const { data: announcements, isLoading: announcementsLoading } = api.announcements.list.useQuery()
+  const { data: stats, isLoading: statsLoading, isError: statsError, refetch: refetchStats } = api.student.dashboardStats.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+    retry: 1,
+  })
+  const { data: subjects, isLoading: subjectsLoading, isError: subjectsError, refetch: refetchSubjects } = api.subjects.list.useQuery({ isActive: true }, {
+    refetchOnWindowFocus: false,
+    retry: 1,
+  })
+  const { data: announcements, isLoading: announcementsLoading, isError: announcementsError, refetch: refetchAnnouncements } = api.announcements.list.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+    retry: 1,
+  })
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
 
+  const hasError = statsError || subjectsError || announcementsError
+  const handleRetryAll = () => {
+    if (statsError) refetchStats()
+    if (subjectsError) refetchSubjects()
+    if (announcementsError) refetchAnnouncements()
+  }
+
   return (
     <div className="w-full">
+      {hasError && (
+        <div className="mb-6 p-4 rounded-xl border border-red-500/10 bg-red-500/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center text-red-400 shrink-0">
+              <AlertOctagon size={16} />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-white">Some dashboard data failed to load</p>
+              <p className="text-[10px] text-white/40">You may be seeing partial information. Please try refreshing.</p>
+            </div>
+          </div>
+          <button
+            onClick={handleRetryAll}
+            className="px-3.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-[10px] font-semibold text-white/80 hover:text-white transition-all active:scale-95 whitespace-nowrap"
+          >
+            Retry Loading
+          </button>
+        </div>
+      )}
       {/* ─── BENTO GRID ─── */}
       <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-4 auto-rows-min">
 
@@ -104,6 +139,8 @@ export default function StudentDashboard() {
                 <p className="text-[10px] font-mono tracking-widest uppercase text-white/25 mb-1.5">Activity</p>
                 {statsLoading ? (
                   <div className="h-10 w-20 bg-white/[0.03] rounded relative overflow-hidden"><Shimmer /></div>
+                ) : statsError ? (
+                  <span className="text-sm font-semibold text-red-400/70">Error</span>
                 ) : (
                   <span className="text-5xl font-bold tracking-tight text-gradient-accent" style={{ fontFamily: 'var(--font-serif)' }}>
                     <CountUp target={(stats?.roadmapsCount ?? 0) + (stats?.requestsCount ?? 0) + (stats?.bookmarksCount ?? 0)} />
@@ -128,6 +165,8 @@ export default function StudentDashboard() {
                 <div>
                   {statsLoading ? (
                     <div className="h-7 w-10 bg-white/[0.03] rounded relative overflow-hidden"><Shimmer /></div>
+                  ) : statsError ? (
+                    <span className="text-xs text-red-400/50">Error</span>
                   ) : (
                     <span className="text-3xl font-bold text-white/80" style={{ fontFamily: 'var(--font-serif)' }}>
                       <CountUp target={stat.value ?? 0} />
@@ -180,6 +219,11 @@ export default function StudentDashboard() {
               <div className="flex-1 flex flex-col gap-1">
                 {subjectsLoading ? (
                   [1,2,3,4,5].map(i => <div key={i} className="h-12 rounded-lg bg-white/[0.02] relative overflow-hidden"><Shimmer /></div>)
+                ) : subjectsError ? (
+                  <div className="py-8 text-center text-red-400/50 text-[10px] flex-1 flex flex-col items-center justify-center gap-2">
+                    <span>Failed to load syllabus</span>
+                    <button onClick={() => refetchSubjects()} className="px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10 text-[9px] text-white/60 active:scale-95 transition-all">Retry</button>
+                  </div>
                 ) : !subjects?.length ? (
                   <div className="py-14 text-center text-white/20 text-xs flex-1 flex items-center justify-center">No active subjects</div>
                 ) : (
@@ -210,6 +254,11 @@ export default function StudentDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {announcementsLoading ? (
                   [1,2].map(i => <div key={i} className="h-20 rounded-xl bg-white/[0.02] relative overflow-hidden"><Shimmer /></div>)
+                ) : announcementsError ? (
+                  <div className="col-span-2 py-6 text-center text-red-400/50 text-[10px] flex flex-col items-center justify-center gap-2">
+                    <span>Failed to load bulletins</span>
+                    <button onClick={() => refetchAnnouncements()} className="px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10 text-[9px] text-white/60 active:scale-95 transition-all">Retry</button>
+                  </div>
                 ) : !announcements?.length ? (
                   <div className="col-span-2 py-6 text-center text-white/15 text-xs">No announcements</div>
                 ) : (

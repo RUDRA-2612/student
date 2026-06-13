@@ -38,35 +38,55 @@ const adminNavItems = [
   { name: 'Settings',       href: '/admin/settings',       icon: Settings },
 ]
 
+/** Branded loading screen for admin panel */
+function AdminLoadingScreen({ message = 'Loading Admin' }: { message?: string }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[hsl(20,8%,5%)]">
+      <div className="flex flex-col items-center gap-5">
+        <div className="relative">
+          <div className="w-12 h-12 rounded-xl animate-spin border-2 border-transparent border-t-[hsl(340,82%,62%)]"
+            style={{ background: 'hsl(340 82% 62% / 0.08)' }} />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Shield size={16} className="text-[hsl(340,82%,62%)]/50" />
+          </div>
+        </div>
+        <div className="text-center space-y-1">
+          <p className="text-xs font-mono tracking-wider uppercase text-white/25">{message}</p>
+          <p className="text-[10px] text-white/15">Exam<span className="text-[hsl(340,82%,62%)]/40">Edge</span> — Admin</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function AdminLayoutComponent({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const router   = useRouter()
   const pathname = usePathname()
   const [collapsed,  setCollapsed]  = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
 
+  // Unified auth + role guard — single effect
   useEffect(() => {
+    if (isRedirecting) return
     if (status === 'unauthenticated') {
-      router.push('/login')
-    } else if (session && !['ADMIN', 'SUPERADMIN'].includes((session.user as any)?.role)) {
-      router.push('/unauthorized')
+      setIsRedirecting(true)
+      router.replace('/login')
+    } else if (status === 'authenticated' && session && !['ADMIN', 'SUPERADMIN'].includes((session.user as any)?.role)) {
+      setIsRedirecting(true)
+      router.replace('/unauthorized')
     }
-  }, [status, session, router])
+  }, [status, session, router, isRedirecting])
 
+  // Show branded loading while session is resolving
   if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[hsl(20,8%,5%)]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 rounded-xl animate-spin border-2 border-transparent border-t-[hsl(340,82%,62%)]"
-            style={{ background: 'hsl(340 82% 62% / 0.08)' }} />
-          <p className="text-sm text-white/30">Loading Admin…</p>
-        </div>
-      </div>
-    )
+    return <AdminLoadingScreen />
   }
 
+  // Show loading while redirect is in progress — prevents flash of nothing
   if (!session || !['ADMIN', 'SUPERADMIN'].includes((session.user as any)?.role)) {
-    return null
+    return <AdminLoadingScreen message={status === 'unauthenticated' ? 'Redirecting' : 'Verifying access'} />
   }
 
   const NavLink = ({ item, onClick }: { item: typeof adminNavItems[0]; onClick?: () => void }) => {

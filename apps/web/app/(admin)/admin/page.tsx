@@ -10,9 +10,11 @@ import {
   Download, 
   Eye, 
   ShieldCheck,
-  TrendingUp
+  TrendingUp,
+  ShieldAlert
 } from 'lucide-react'
 import { motion } from 'framer-motion'
+import AdminLoading from '../loading'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -28,15 +30,33 @@ const itemVariants = {
 }
 
 export default function AdminOverview() {
-  const { data: overview, isLoading } = api.analytics.overview.useQuery(undefined, {
+  const { data: overview, isLoading, isError, error, refetch } = api.analytics.overview.useQuery(undefined, {
     refetchOnWindowFocus: false,
+    retry: 1,
   })
 
   if (isLoading) {
+    return <AdminLoading />
+  }
+
+  if (isError) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-        <div className="w-10 h-10 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-        <p className="text-white/40 text-xs font-mono">Loading overview data...</p>
+      <div className="min-h-[50vh] flex flex-col items-center justify-center gap-4 text-center p-6 rounded-2xl border border-red-500/10 bg-red-500/5 max-w-xl mx-auto mt-10 animate-fade-in">
+        <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-400">
+          <ShieldAlert size={24} />
+        </div>
+        <div className="space-y-1">
+          <h3 className="font-display font-bold text-sm uppercase tracking-wider text-white">System Error</h3>
+          <p className="text-white/40 text-xs max-w-sm">
+            {error?.message || 'An unexpected error occurred while fetching the admin overview analytics.'}
+          </p>
+        </div>
+        <button
+          onClick={() => refetch()}
+          className="mt-2 px-4 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-white/[0.15] text-xs font-semibold text-white/80 hover:text-white transition-all active:scale-95"
+        >
+          Try Again
+        </button>
       </div>
     )
   }

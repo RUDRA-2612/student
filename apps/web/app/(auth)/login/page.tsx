@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -21,10 +21,31 @@ export default function LoginPage() {
   const [guestLoading, setGuestLoading] = useState(false)
   const [showPw, setShowPw]  = useState(false)
   const router = useRouter()
+  const { update: updateSession } = useSession()
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
     resolver: zodResolver(LoginSchema),
   })
+
+  /**
+   * After signIn succeeds, force the client-side session to refresh,
+   * then read the role from the updated session to route correctly.
+   */
+  const handlePostLogin = async () => {
+    try {
+      // Force NextAuth to re-fetch the session from the server
+      const freshSession = await updateSession()
+      const role = (freshSession?.user as any)?.role ?? 'STUDENT'
+      const dest = ['ADMIN', 'SUPERADMIN'].includes(role) ? '/admin' : '/dashboard'
+      // replace instead of push so back-button won't return to login
+      router.replace(dest)
+      router.refresh()
+    } catch {
+      // Fallback: if session update fails, still redirect
+      router.replace('/dashboard')
+      router.refresh()
+    }
+  }
 
   const onSubmit = async (data: LoginForm) => {
     setLoading(true)
@@ -38,7 +59,7 @@ export default function LoginPage() {
       if (res?.error) {
         setError('Invalid credentials. Please check your email and password.')
       } else {
-        router.push('/dashboard')
+        await handlePostLogin()
       }
     } catch {
       setError('Something went wrong. Please try again.')
@@ -59,7 +80,7 @@ export default function LoginPage() {
       if (res?.error) {
         setError('Failed to log in as guest. Please try again.')
       } else {
-        router.push('/dashboard')
+        await handlePostLogin()
       }
     } catch {
       setError('Something went wrong. Please try again.')

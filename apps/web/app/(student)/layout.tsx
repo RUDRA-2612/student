@@ -64,15 +64,36 @@ function DockItem({ href, icon: Icon, label, isActive, count }: {
   )
 }
 
+/** Branded loading screen shown while session is loading or redirecting */
+function StudentLoadingScreen({ message = 'Loading' }: { message?: string }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[hsl(20,8%,5%)]">
+      <div className="flex flex-col items-center gap-5">
+        {/* Branded spinner */}
+        <div className="relative">
+          <div className="w-10 h-10 rounded-xl border-2 border-[hsl(340,82%,62%)]/20 border-t-[hsl(340,82%,62%)] animate-spin" />
+          <div className="absolute inset-0 w-10 h-10 rounded-xl bg-[hsl(340,82%,62%)]/5" />
+        </div>
+        <div className="text-center space-y-1">
+          <p className="text-xs font-mono tracking-wider uppercase text-white/25">{message}</p>
+          <p className="text-[10px] text-white/15">Exam<span className="text-[hsl(340,82%,62%)]/40">Edge</span></p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function StudentLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const router = useRouter()
   const pathname = usePathname()
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const { data: stats } = api.student.dashboardStats.useQuery(undefined, {
-    enabled: status === 'authenticated'
+    enabled: status === 'authenticated',
+    refetchOnWindowFocus: false,
   })
 
   useEffect(() => {
@@ -85,22 +106,24 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  // Unified auth guard — single effect handles all redirect cases
   useEffect(() => {
-    if (status === 'unauthenticated') router.push('/login')
-  }, [status, router])
+    if (status === 'unauthenticated' && !isRedirecting) {
+      setIsRedirecting(true)
+      router.replace('/login')
+    }
+  }, [status, router, isRedirecting])
 
+  // Show loading screen while session is being fetched
   if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[hsl(20,8%,5%)]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 rounded-lg border-2 border-[hsl(340,82%,62%)]/20 border-t-[hsl(340,82%,62%)] animate-spin" />
-          <p className="text-xs font-mono tracking-wider uppercase text-white/25">Loading</p>
-        </div>
-      </div>
-    )
+    return <StudentLoadingScreen />
   }
 
-  if (!session) return null
+  // Show loading screen while redirecting unauthenticated users
+  // This prevents the flash-of-nothing between detection and redirect
+  if (!session || status === 'unauthenticated') {
+    return <StudentLoadingScreen message="Redirecting" />
+  }
 
   const userRole = (session?.user as any)?.role || 'STUDENT'
   const isAdmin = ['ADMIN', 'SUPERADMIN'].includes(userRole)

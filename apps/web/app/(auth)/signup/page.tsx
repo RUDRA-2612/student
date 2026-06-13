@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -21,6 +22,7 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [showPw,  setShowPw]  = useState(false)
   const router = useRouter()
+  const { update: updateSession } = useSession()
 
   const { register, handleSubmit, formState: { errors } } = useForm<SignupForm>({
     resolver: zodResolver(SignupSchema),
@@ -30,6 +32,7 @@ export default function SignupPage() {
     setLoading(true)
     setError(null)
     try {
+      // 1. Register the account
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -39,8 +42,26 @@ export default function SignupPage() {
       if (!response.ok) {
         throw new Error(resData.error || 'Failed to create account.')
       }
+
+      // 2. Auto sign-in with the newly created credentials
       setSuccess(true)
-      setTimeout(() => router.push('/login'), 2500)
+      const signInRes = await signIn('credentials', {
+        email:    data.email,
+        password: data.password,
+        redirect: false,
+      })
+
+      if (signInRes?.error) {
+        // Sign-in failed but account was created — send to login
+        setTimeout(() => router.replace('/login'), 1500)
+      } else {
+        // Force session refresh and redirect to dashboard
+        await updateSession()
+        setTimeout(() => {
+          router.replace('/dashboard')
+          router.refresh()
+        }, 1200)
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to create account. Please try again.')
     } finally {
@@ -55,7 +76,10 @@ export default function SignupPage() {
           <CheckCircle2 className="text-green-400" size={32} />
         </div>
         <h2 className="font-semibold text-2xl mb-2 text-green-400">Account Created!</h2>
-        <p className="text-white/50 text-sm">Your ExamEdge account is ready. Redirecting to sign in…</p>
+        <p className="text-white/50 text-sm">Signing you in automatically…</p>
+        <div className="mt-4 flex justify-center">
+          <div className="w-5 h-5 rounded-full border-2 border-green-400/30 border-t-green-400 animate-spin" />
+        </div>
       </div>
     )
   }
