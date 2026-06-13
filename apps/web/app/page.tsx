@@ -16,7 +16,7 @@ function R({ children, className = '', d = 0 }: { children: React.ReactNode; cla
     return () => obs.disconnect()
   }, [])
   return (
-    <div ref={ref} className={`transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${v ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} ${className}`} style={{ transitionDelay: `${d}ms` }}>
+    <div ref={ref} className={`transition-all ${v ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} ${className}`} style={{ transitionDuration: '900ms', transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)', transitionDelay: `${d}ms` }}>
       {children}
     </div>
   )

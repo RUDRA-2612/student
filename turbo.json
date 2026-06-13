@@ -1,5 +1,10 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "DATABASE_URL",
+    "DIRECT_DATABASE_URL",
+    "AUTH_SECRET"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build", "db:generate"],
