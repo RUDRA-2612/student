@@ -121,7 +121,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
   // Show loading screen while redirecting unauthenticated users
   // This prevents the flash-of-nothing between detection and redirect
-  if (!session || status === 'unauthenticated') {
+  if (status === 'unauthenticated' || !session) {
     return <StudentLoadingScreen message="Redirecting" />
   }
 
