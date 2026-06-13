@@ -1,4 +1,6 @@
 import { PrismaClient, Role, ExamType, Difficulty, QuestionType, ImportanceLevel } from '@prisma/client'
+import * as crypto from 'crypto'
+import * as bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
@@ -16,11 +18,15 @@ async function main() {
   await prisma.subject.deleteMany()
 
   // Bootstrap Admin Account
+  const initialPassword = process.env.ADMIN_INITIAL_PASSWORD || crypto.randomBytes(16).toString('hex')
+  const passwordHash = bcrypt.hashSync(initialPassword, 10)
+
   const admin = await prisma.user.create({
     data: {
       name: 'System Admin',
       email: 'admin@examedge.com',
       role: Role.ADMIN,
+      passwordHash,
       profile: {
         create: {
           bio: 'Platform System Admin Account',
@@ -29,6 +35,14 @@ async function main() {
     }
   })
   console.log('Admin user seeded:', admin.email)
+  console.log('==================================================')
+  console.log('ADMIN ACCOUNT BOOTSTRAP DETAILS:')
+  console.log(`Email:    ${admin.email}`)
+  console.log(`Password: ${initialPassword}`)
+  if (!process.env.ADMIN_INITIAL_PASSWORD) {
+    console.log('WARNING: This password was dynamically generated. Save it securely!')
+  }
+  console.log('==================================================')
 
   // Seed JKLU CSE Semester 1 Subjects
   const prog1 = await prisma.subject.create({

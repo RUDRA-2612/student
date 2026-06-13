@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { createTRPCRouter, protectedProcedure, adminProcedure } from '../trpc'
 import { RequestCreateSchema } from '@examedge/validators'
 import { inngest } from '@/lib/inngest/client'
+import { TRPCError } from '@trpc/server'
 
 export const requestsRouter = createTRPCRouter({
   create: protectedProcedure
@@ -105,5 +106,30 @@ export const requestsRouter = createTRPCRouter({
       }).catch(console.error)
 
       return request
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const role = (ctx.session.user as any).role
+      const isStudent = role === 'STUDENT'
+
+      const request = await ctx.db.studentRequest.findUnique({
+        where: { id: input.id }
+      })
+
+      if (!request) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Request not found' })
+      }
+
+      if (isStudent && request.userId !== (ctx.session.user as any).id) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'You are not authorized to delete this request' })
+      }
+
+      await ctx.db.studentRequest.delete({
+        where: { id: input.id }
+      })
+
+      return { success: true }
     }),
 })

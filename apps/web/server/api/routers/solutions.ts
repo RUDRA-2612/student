@@ -17,6 +17,14 @@ export const solutionsRouter = createTRPCRouter({
         where: { paperId: input.paperId },
       })
       if (!solution) throw new TRPCError({ code: 'NOT_FOUND', message: 'No solution found for this paper' })
+
+      // Improve security: prevent non-admins from retrieving unpublished solutions
+      const role = (ctx.session?.user as any)?.role
+      const isAdmin = ['ADMIN', 'SUPERADMIN'].includes(role)
+      if (!isAdmin && !solution.isPublished) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'No solution found for this paper' })
+      }
+
       return solution
     }),
 

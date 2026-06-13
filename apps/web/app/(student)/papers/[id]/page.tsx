@@ -117,7 +117,7 @@ export default function PaperDetails() {
           {paper.title}
         </h1>
         <p className="text-white/40 text-sm font-light">
-          Official board examination paper from {paper.university}. Subject code: <span className="font-mono">{paper.subject.code}</span>.
+          Official board examination paper. Subject code: <span className="font-mono">{paper.subject.code}</span>.
         </p>
       </div>
 

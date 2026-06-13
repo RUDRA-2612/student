@@ -13,7 +13,8 @@ import {
   MessageSquare,
   AlertCircle,
   FileText,
-  ChevronDown
+  ChevronDown,
+  Trash2
 } from 'lucide-react'
 import { TiltCard } from '@/components/ui/tilt-card'
 
@@ -56,6 +57,26 @@ export default function StudentRequests() {
       setTimeout(() => setErrorMsg(null), 5000)
     }
   })
+
+  // Delete request mutation
+  const deleteRequestMutation = api.requests.delete.useMutation({
+    onSuccess: () => {
+      setSuccessMsg('Your support request has been successfully deleted.')
+      utils.requests.list.invalidate()
+      utils.student.dashboardStats.invalidate()
+      setTimeout(() => setSuccessMsg(null), 5000)
+    },
+    onError: (err) => {
+      setErrorMsg(err.message || 'Failed to delete request. Please try again.')
+      setTimeout(() => setErrorMsg(null), 5000)
+    }
+  })
+
+  const handleDelete = (id: string) => {
+    if (confirm('Are you sure you want to delete this support request?')) {
+      deleteRequestMutation.mutate({ id })
+    }
+  }
 
   const onSubmit = (data: RequestFormValues) => {
     const payload = {
@@ -216,9 +237,18 @@ export default function StudentRequests() {
                           <h3 className="text-xs font-semibold text-white/80 mt-2">{req.title}</h3>
                           <p className="text-[9px] font-mono text-white/20">{new Date(req.createdAt).toLocaleString()} {req.subject && `• Subject: ${req.subject.name}`}</p>
                         </div>
-                        <span className={`px-2 py-0.5 rounded-full border text-[8px] font-bold uppercase tracking-wider shrink-0 ${statusColors}`}>
-                          {req.status}
-                        </span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className={`px-2 py-0.5 rounded-full border text-[8px] font-bold uppercase tracking-wider ${statusColors}`}>
+                            {req.status}
+                          </span>
+                          <button
+                            onClick={() => handleDelete(req.id)}
+                            className="w-7 h-7 rounded-lg bg-white/[0.02] hover:bg-red-500/10 text-white/40 hover:text-red-400 border border-white/[0.06] hover:border-red-500/20 flex items-center justify-center transition active:scale-95"
+                            title="Delete Request"
+                          >
+                            <Trash2 size={11} />
+                          </button>
+                        </div>
                       </div>
 
                       <p className="text-xs font-light text-white/45 leading-relaxed bg-white/[0.01] p-3 rounded-xl border border-white/[0.03]">

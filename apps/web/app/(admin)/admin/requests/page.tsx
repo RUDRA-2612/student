@@ -7,7 +7,8 @@ import {
   MessageSquare,
   AlertCircle,
   HelpCircle,
-  CornerDownRight
+  CornerDownRight,
+  Trash2
 } from 'lucide-react'
 
 export default function AdminRequests() {
@@ -36,6 +37,26 @@ export default function AdminRequests() {
       setTimeout(() => setErrorMsg(null), 4000)
     }
   })
+
+  // Delete mutation
+  const deleteMutation = api.requests.delete.useMutation({
+    onSuccess: () => {
+      setSuccessMsg('Ticket successfully deleted.')
+      utils.requests.list.invalidate()
+      utils.analytics.overview.invalidate()
+      setTimeout(() => setSuccessMsg(null), 4000)
+    },
+    onError: (err) => {
+      setErrorMsg(err.message || 'Failed to delete ticket.')
+      setTimeout(() => setErrorMsg(null), 4000)
+    }
+  })
+
+  const handleDelete = (requestId: string) => {
+    if (confirm('Are you sure you want to delete this support ticket permanently?')) {
+      deleteMutation.mutate({ id: requestId })
+    }
+  }
 
   const handleResolveSubmit = (requestId: string) => {
     if (replyText.trim().length < 5) {
@@ -112,17 +133,26 @@ export default function AdminRequests() {
                       </p>
                     </div>
 
-                    {req.status === 'PENDING' && !isReplying && (
+                    <div className="flex items-center gap-3 shrink-0">
+                      {req.status === 'PENDING' && !isReplying && (
+                        <button
+                          onClick={() => {
+                            setActiveReplyId(req.id)
+                            setReplyText('')
+                          }}
+                          className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-lg transition"
+                        >
+                          Write Reply
+                        </button>
+                      )}
                       <button
-                        onClick={() => {
-                          setActiveReplyId(req.id)
-                          setReplyText('')
-                        }}
-                        className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-lg transition"
+                        onClick={() => handleDelete(req.id)}
+                        className="w-8 h-8 rounded-lg bg-white/5 hover:bg-red-500/10 text-white/40 hover:text-red-400 border border-white/10 hover:border-red-500/20 flex items-center justify-center transition active:scale-95"
+                        title="Delete Ticket"
                       >
-                        Write Reply
+                        <Trash2 size={12} />
                       </button>
-                    )}
+                    </div>
                   </div>
 
                   <p className="text-xs font-light text-white/60 leading-relaxed bg-bg-surface/30 p-3 rounded-lg border border-white/[0.02]">

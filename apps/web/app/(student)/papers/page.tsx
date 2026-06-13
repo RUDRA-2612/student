@@ -87,7 +87,7 @@ export default function PapersCatalog() {
             </span>
             <input
               type="text"
-              placeholder="Search by title, university, or syllabus keyword..."
+              placeholder="Search by title or syllabus keyword..."
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value)
@@ -135,24 +135,6 @@ export default function PapersCatalog() {
               </select>
               <ChevronDown size={12} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
             </div>
-
-            {/* Difficulty filter */}
-            <div className="relative">
-              <select
-                value={difficultyFilter}
-                onChange={(e) => {
-                  setDifficultyFilter(e.target.value)
-                  setPage(1)
-                }}
-                className="appearance-none px-4 pr-9 py-2.5 bg-white/[0.02] border border-white/[0.06] hover:border-white/10 rounded-xl text-xs text-white/75 focus:outline-none cursor-pointer transition-all"
-              >
-                <option value="">All Difficulties</option>
-                <option value="EASY">Easy</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HARD">Hard</option>
-              </select>
-              <ChevronDown size={12} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
-            </div>
           </div>
         </div>
       </div>
@@ -189,10 +171,6 @@ export default function PapersCatalog() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.papers.map((paper: any) => {
               const isBookmarked = bookmarkedIds.has(paper.id)
-              const diffBorder = 
-                paper.difficulty === 'HARD' ? 'border-red-500/20 text-red-400 bg-red-500/[0.03]' :
-                paper.difficulty === 'MEDIUM' ? 'border-amber-500/20 text-amber-400 bg-amber-500/[0.03]' :
-                'border-emerald-500/20 text-emerald-400 bg-emerald-500/[0.03]'
 
               return (
                 <TiltCard 
@@ -233,9 +211,6 @@ export default function PapersCatalog() {
                   <div className="flex flex-wrap items-center gap-1.5 pt-2" style={{ transform: 'translateZ(20px)' }}>
                     <span className="text-[8px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border border-white/[0.06] text-white/40 bg-white/[0.01]">
                       {paper.examType}
-                    </span>
-                    <span className={`text-[8px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${diffBorder}`}>
-                      {paper.difficulty}
                     </span>
                   </div>
 

@@ -41,6 +41,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const normalizedEmail = email.toLowerCase()
 
         if (normalizedEmail === 'guest@examedge.com') {
+          if (process.env.ALLOW_GUEST_ACCESS !== 'true') {
+            return null
+          }
           let guestUser = await db.user.findUnique({
             where: { email: 'guest@examedge.com' },
             include: { profile: true },
@@ -71,7 +74,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!user) return null
 
         if (['ADMIN', 'SUPERADMIN'].includes(user.role)) {
-          const storedHash = process.env.ADMIN_PASSWORD_HASH || (user.passwordHash ?? bcrypt.hashSync('YourSecureAdminPasswordHere', 10))
+          const storedHash = process.env.ADMIN_PASSWORD_HASH || user.passwordHash
+          if (!storedHash) return null
           const isValid = await bcrypt.compare(password, storedHash)
           if (!isValid) return null
         } else {

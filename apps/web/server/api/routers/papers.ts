@@ -68,6 +68,13 @@ export const papersRouter = createTRPCRouter({
       })
       if (!paper) throw new TRPCError({ code: 'NOT_FOUND' })
 
+      // Improve security: hide unpublished solution content from non-admin users
+      const role = (ctx.session?.user as any)?.role
+      const isAdmin = ['ADMIN', 'SUPERADMIN'].includes(role)
+      if (!isAdmin && paper.solution && !paper.solution.isPublished) {
+        paper.solution = null
+      }
+
       // Increment view count (fire and forget)
       ctx.db.paper.update({ where: { id: input.id }, data: { viewCount: { increment: 1 } } })
         .catch(console.error)

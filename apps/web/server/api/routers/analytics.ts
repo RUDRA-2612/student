@@ -23,7 +23,13 @@ export const analyticsRouter = createTRPCRouter({
       ctx.db.paper.findMany({
         orderBy: { downloadCount: 'desc' },
         take: 5,
-        select: { id: true, title: true, downloadCount: true, viewCount: true },
+        select: {
+          id: true,
+          title: true,
+          downloadCount: true,
+          viewCount: true,
+          subject: { select: { name: true, code: true } },
+        },
       }),
       ctx.db.activityLog.findMany({
         orderBy: { createdAt: 'desc' },

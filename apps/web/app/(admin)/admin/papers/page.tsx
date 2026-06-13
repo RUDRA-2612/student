@@ -207,41 +207,22 @@ export default function AdminPapers() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Exam Type</label>
-                  <select
-                    {...register('examType')}
-                    className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-xs text-white focus:outline-none cursor-pointer"
-                  >
-                    <option value="MOCK">Mock Paper</option>
-                    <option value="COMPETITIVE">Competitive (REET/RPSC)</option>
-                    <option value="FINAL">Final</option>
-                    <option value="MIDTERM">Midterm</option>
-                    <option value="ASSIGNMENT">Assignment</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Difficulty</label>
-                  <select
-                    {...register('difficulty')}
-                    className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-xs text-white focus:outline-none cursor-pointer"
-                  >
-                    <option value="EASY">Easy</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HARD">Hard</option>
-                  </select>
-                </div>
+              <div>
+                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">Exam Type</label>
+                <select
+                  {...register('examType')}
+                  className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-xs text-white focus:outline-none cursor-pointer"
+                >
+                  <option value="MOCK">Mock Paper</option>
+                  <option value="COMPETITIVE">Competitive (REET/RPSC)</option>
+                  <option value="FINAL">Final</option>
+                  <option value="MIDTERM">Midterm</option>
+                  <option value="ASSIGNMENT">Assignment</option>
+                </select>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wide mb-2">University / Board</label>
-                <input
-                  {...register('university')}
-                  type="text"
-                  className="w-full px-4 py-2.5 bg-bg-input border border-white/[0.08] focus:border-accent/40 rounded-lg text-sm text-white focus:outline-none"
-                />
-              </div>
+              <input type="hidden" {...register('difficulty')} />
+              <input type="hidden" {...register('university')} />
 
               {/* Tag input */}
               <div>

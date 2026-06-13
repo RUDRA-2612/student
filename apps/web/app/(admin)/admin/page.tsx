@@ -137,7 +137,15 @@ export default function AdminOverview() {
                 <div key={paper.id} className="p-4 rounded-xl flex items-center justify-between gap-4" style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.04)' }}>
                   <div className="space-y-1 min-w-0">
                     <h4 className="text-xs font-semibold text-white/95 truncate">{paper.title}</h4>
-                    <p className="text-[10px] text-white/40">Paper ID: {paper.id}</p>
+                    <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-white/40">
+                      <span>Paper ID: {paper.id}</span>
+                      {paper.subject && (
+                        <>
+                          <span>•</span>
+                          <span className="text-[hsl(340,82%,62%)]/85 font-medium">{paper.subject.name}</span>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-3 text-xs text-white/50 shrink-0">
                     <span className="flex items-center gap-1"><Eye size={12} /> {paper.viewCount}</span>
