@@ -26,6 +26,7 @@ export default function PapersCatalog() {
   const [difficultyFilter, setDifficultyFilter] = useState(searchParams.get('difficulty') || '')
   const [searchQuery, setSearchQuery] = useState('')
   const [page, setPage] = useState(1)
+  const [showSuggestions, setShowSuggestions] = useState(false)
 
   // API calls
   const utils = api.useUtils()
@@ -33,6 +34,14 @@ export default function PapersCatalog() {
   
   const { data: bookmarks } = api.student.myBookmarks.useQuery()
   const bookmarkedIds = new Set(bookmarks?.map(b => b.paperId).filter(Boolean))
+
+  // Suggestion computed items
+  const matchingSubjects = searchQuery.trim().length >= 2
+    ? subjects?.filter(sub => 
+        sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        sub.code.toLowerCase().includes(searchQuery.toLowerCase())
+      ).slice(0, 3)
+    : []
 
   const { data, isLoading } = api.papers.list.useQuery({
     subjectId: subjectFilter || undefined,
@@ -44,6 +53,14 @@ export default function PapersCatalog() {
   }, {
     placeholderData: (prev) => prev,
   })
+
+  const matchingPapers = searchQuery.trim().length >= 2
+    ? data?.papers?.filter((paper: any) =>
+        paper.title.toLowerCase().includes(searchQuery.toLowerCase())
+      ).slice(0, 4)
+    : []
+
+  const hasSuggestions = (matchingSubjects && matchingSubjects.length > 0) || (matchingPapers && matchingPapers.length > 0)
 
   // Mutations
   const toggleBookmark = api.student.toggleBookmark.useMutation({
@@ -93,8 +110,58 @@ export default function PapersCatalog() {
                 setSearchQuery(e.target.value)
                 setPage(1)
               }}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               className="w-full pl-10 pr-4 py-2.5 bg-white/[0.02] border border-white/[0.06] focus:border-white/20 rounded-xl text-xs text-white placeholder:text-white/20 focus:outline-none transition-all"
             />
+            {showSuggestions && searchQuery.trim().length >= 2 && hasSuggestions && (
+              <div className="absolute left-0 right-0 top-full mt-2 bg-[#080808]/95 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-2xl z-50 overflow-hidden divide-y divide-white/[0.04]">
+                {matchingSubjects && matchingSubjects.length > 0 && (
+                  <div className="p-3">
+                    <p className="text-[9px] font-mono tracking-wider text-white/30 uppercase mb-2 px-2">Suggested Subjects</p>
+                    <div className="space-y-0.5">
+                      {matchingSubjects.map((sub) => (
+                        <button
+                          key={sub.id}
+                          onClick={() => {
+                            setSubjectFilter(sub.id)
+                            setSearchQuery('')
+                            setPage(1)
+                            setShowSuggestions(false)
+                          }}
+                          className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-white/[0.03] text-xs text-white/70 hover:text-white transition-all flex items-center justify-between"
+                        >
+                          <span>{sub.name}</span>
+                          <span className="text-[9px] font-mono text-white/30">{sub.code}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {matchingPapers && matchingPapers.length > 0 && (
+                  <div className="p-3">
+                    <p className="text-[9px] font-mono tracking-wider text-white/30 uppercase mb-2 px-2">Suggested Papers</p>
+                    <div className="space-y-0.5">
+                      {matchingPapers.map((paper: any) => (
+                        <Link
+                          key={paper.id}
+                          href={`/papers/${paper.id}`}
+                          onClick={() => setShowSuggestions(false)}
+                          className="block px-2 py-1.5 rounded-lg hover:bg-white/[0.03] text-xs text-white/70 hover:text-white transition-all"
+                        >
+                          <div className="font-medium truncate">{paper.title}</div>
+                          <div className="text-[9px] text-white/30 mt-0.5 flex items-center gap-1.5">
+                            <span className="uppercase">{paper.examType}</span>
+                            <span>•</span>
+                            <span>{paper.year}</span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center gap-3">

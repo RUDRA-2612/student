@@ -118,8 +118,8 @@ async function main() {
 
   const de = await prisma.subject.create({
     data: {
-      name: 'Digital Electronics',
-      code: 'ECE102',
+      name: 'Digital Circuit and Systems',
+      code: 'EE1120',
       description: 'Binary arithmetic, logic gates, Boolean algebra, Karnaugh maps, flip-flops, registers, counters, and CPU foundations.',
       category: 'Core CSE',
       sortOrder: 8,
@@ -261,7 +261,7 @@ async function main() {
 
   const paper6 = await prisma.paper.create({
     data: {
-      title: 'Applied Physics Endterm Exam 2025',
+      title: 'Applied Physics Endterm Exam 2025 (Set 1)',
       subjectId: physics.id,
       year: 2025,
       examType: ExamType.FINAL,
@@ -275,19 +275,33 @@ async function main() {
 
   const paper7 = await prisma.paper.create({
     data: {
-      title: 'Applied Physics Midterm II Exam 2025',
+      title: 'Applied Physics Endterm Exam 2025 (Set 2)',
       subjectId: physics.id,
       year: 2025,
-      examType: ExamType.MIDTERM,
+      examType: ExamType.FINAL,
       university: 'JK Lakshmipat University',
       difficulty: Difficulty.MEDIUM,
-      pdfUrl: '/uploads/papers/applied_physics_midterm_2_2025.pdf',
+      pdfUrl: '/uploads/papers/applied_physics_endterm_2025_set_2.pdf',
       isPublished: true,
       createdBy: admin.id,
     }
   })
 
-  console.log('Mock papers seeded:', paper1.title, ',', paper2.title, ',', paper3.title, ',', paper4.title, ',', paper5.title, ',', paper6.title, ',', paper7.title)
+  const paper8 = await prisma.paper.create({
+    data: {
+      title: 'Digital Circuit and Systems Endterm Exam 2025',
+      subjectId: de.id,
+      year: 2025,
+      examType: ExamType.FINAL,
+      university: 'JK Lakshmipat University',
+      difficulty: Difficulty.MEDIUM,
+      pdfUrl: '/uploads/papers/digital_circuit_endterm_2025.pdf',
+      isPublished: true,
+      createdBy: admin.id,
+    }
+  })
+
+  console.log('Mock papers seeded:', paper1.title, ',', paper2.title, ',', paper3.title, ',', paper4.title, ',', paper5.title, ',', paper6.title, ',', paper7.title, ',', paper8.title)
 
   // Seed Solutions
   await prisma.solution.create({
