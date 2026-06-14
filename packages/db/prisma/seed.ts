@@ -106,7 +106,7 @@ async function main() {
   })
 
   // Seed JKLU CSE Semester 2 Subjects
-  await prisma.subject.create({
+  const prog2 = await prisma.subject.create({
     data: {
       name: 'Programming-II',
       code: 'CSE102',
@@ -126,7 +126,7 @@ async function main() {
     }
   })
 
-  await prisma.subject.create({
+  const physics = await prisma.subject.create({
     data: {
       name: 'Applied Physics',
       code: 'PHY102',
@@ -245,7 +245,49 @@ async function main() {
     }
   })
 
-  console.log('Mock papers seeded:', paper1.title, ',', paper2.title, ',', paper3.title, ',', paper4.title)
+  const paper5 = await prisma.paper.create({
+    data: {
+      title: 'Programming II (C) Endterm Exam 2025',
+      subjectId: prog2.id,
+      year: 2025,
+      examType: ExamType.FINAL,
+      university: 'JK Lakshmipat University',
+      difficulty: Difficulty.MEDIUM,
+      pdfUrl: '/uploads/papers/programming_2_endterm_2025.pdf',
+      isPublished: true,
+      createdBy: admin.id,
+    }
+  })
+
+  const paper6 = await prisma.paper.create({
+    data: {
+      title: 'Applied Physics Endterm Exam 2025',
+      subjectId: physics.id,
+      year: 2025,
+      examType: ExamType.FINAL,
+      university: 'JK Lakshmipat University',
+      difficulty: Difficulty.MEDIUM,
+      pdfUrl: '/uploads/papers/applied_physics_endterm_2025.pdf',
+      isPublished: true,
+      createdBy: admin.id,
+    }
+  })
+
+  const paper7 = await prisma.paper.create({
+    data: {
+      title: 'Applied Physics Midterm II Exam 2025',
+      subjectId: physics.id,
+      year: 2025,
+      examType: ExamType.MIDTERM,
+      university: 'JK Lakshmipat University',
+      difficulty: Difficulty.MEDIUM,
+      pdfUrl: '/uploads/papers/applied_physics_midterm_2_2025.pdf',
+      isPublished: true,
+      createdBy: admin.id,
+    }
+  })
+
+  console.log('Mock papers seeded:', paper1.title, ',', paper2.title, ',', paper3.title, ',', paper4.title, ',', paper5.title, ',', paper6.title, ',', paper7.title)
 
   // Seed Solutions
   await prisma.solution.create({
