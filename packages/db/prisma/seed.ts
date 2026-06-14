@@ -156,7 +156,7 @@ async function main() {
     }
   })
 
-  await prisma.subject.create({
+  const ctStory = await prisma.subject.create({
     data: {
       name: 'Critical Thinking & Storytelling',
       code: 'DES102',
@@ -217,7 +217,35 @@ async function main() {
     }
   })
 
-  console.log('Mock papers seeded:', paper1.title, ',', paper2.title)
+  const paper3 = await prisma.paper.create({
+    data: {
+      title: 'Critical Thinking & Storytelling Endterm Exam 2025',
+      subjectId: ctStory.id,
+      year: 2025,
+      examType: ExamType.FINAL,
+      university: 'JK Lakshmipat University',
+      difficulty: Difficulty.MEDIUM,
+      pdfUrl: '/uploads/papers/ccct_endterm_2025.pdf',
+      isPublished: true,
+      createdBy: admin.id,
+    }
+  })
+
+  const paper4 = await prisma.paper.create({
+    data: {
+      title: 'Linear Algebra & Differential Equations Endterm Exam 2025',
+      subjectId: lade.id,
+      year: 2025,
+      examType: ExamType.FINAL,
+      university: 'JK Lakshmipat University',
+      difficulty: Difficulty.MEDIUM,
+      pdfUrl: '/uploads/papers/linear_algebra_endterm_2025.pdf',
+      isPublished: true,
+      createdBy: admin.id,
+    }
+  })
+
+  console.log('Mock papers seeded:', paper1.title, ',', paper2.title, ',', paper3.title, ',', paper4.title)
 
   // Seed Solutions
   await prisma.solution.create({

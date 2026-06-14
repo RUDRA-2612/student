@@ -150,7 +150,10 @@ export default function PaperDetails() {
             <div className="bg-bg-surface border border-white/[0.06] rounded-xl overflow-hidden aspect-[4/5] relative flex flex-col items-center justify-center">
               {paper.pdfUrl ? (
                 <iframe
-                  src={`https://docs.google.com/viewer?url=${encodeURIComponent(paper.pdfUrl)}&embedded=true`}
+                  src={paper.pdfUrl.startsWith('http')
+                    ? `https://docs.google.com/viewer?url=${encodeURIComponent(paper.pdfUrl)}&embedded=true`
+                    : paper.pdfUrl
+                  }
                   className="w-full h-full border-0"
                   title="PDF Viewer"
                 />
