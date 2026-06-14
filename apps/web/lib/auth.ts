@@ -11,6 +11,8 @@ import { z } from 'zod'
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(db) as any,
   session: { strategy: 'jwt', maxAge: 30 * 24 * 60 * 60 }, // 30 days
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+  trustHost: true,
 
   providers: [
     GoogleProvider({
