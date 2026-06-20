@@ -139,10 +139,10 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       </div>
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 h-14 bg-[hsl(20,6%,8%)]/85 backdrop-blur-md border-b border-white/[0.04] z-40 px-5 flex items-center justify-between">
-        <Link href="/dashboard" className="flex items-center gap-2.5 group">
-          <span className="text-sm font-semibold tracking-tight">Exam<span className="text-[hsl(340,82%,62%)]">Edge</span></span>
-          <span className="text-[7px] font-mono text-white/20 flex items-center gap-1 mt-0.5">
+      <header className="fixed top-0 left-0 right-0 h-14 bg-[hsl(20,6%,8%)]/85 backdrop-blur-md border-b border-white/[0.04] z-40 px-3 sm:px-5 flex items-center justify-between">
+        <Link href="/dashboard" className="flex items-center gap-2 group no-hover-chip">
+          <span className="text-sm font-semibold"><Logo className="text-[11px]" /></span>
+          <span className="hidden sm:flex text-[7px] font-mono text-white/20 items-center gap-1 mt-0.5">
             <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" /> live
           </span>
         </Link>

@@ -53,16 +53,16 @@ export default function LandingPage() {
 
       {/* ─── Nav ─── */}
       <header className="absolute top-0 w-full z-50">
-        <div className="max-w-[1600px] mx-auto px-6 lg:px-10">
-          <div className="flex items-center justify-between h-20">
-            <Link 
-              href="/" 
-              className="text-[20px] font-bold pointer-events-auto no-hover-chip"
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            <Link
+              href="/"
+              className="text-[13px] sm:text-[18px] md:text-[20px] font-bold pointer-events-auto no-hover-chip"
             >
               <Logo />
             </Link>
-            <div className="flex items-center gap-3">
-              <Link href="/login" className="text-[11px] font-bold tracking-[0.15em] uppercase text-black dark:text-white hover:opacity-80 transition-opacity">Login</Link>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Link href="/login" className="text-[10px] sm:text-[11px] font-bold tracking-[0.15em] uppercase text-black dark:text-white hover:opacity-80 transition-opacity">Login</Link>
               <ThemeToggle />
             </div>
           </div>
@@ -70,29 +70,27 @@ export default function LandingPage() {
       </header>
 
       {/* ━━━ HERO — centered 3D editorial ━━━ */}
-      <section className="relative flex items-start justify-center pt-[100px] pb-[40px] text-center">
-        <div className="max-w-[1600px] mx-auto px-6 lg:px-10 w-full flex flex-col items-center">
-          {/* Centered headline with 3D text shadow and padding to prevent cutoffs */}
+      <section className="relative flex items-start justify-center pt-[80px] sm:pt-[100px] pb-[40px] text-center">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 w-full flex flex-col items-center">
+          {/* Centered headline */}
           <div className="mb-4 lg:mb-6">
             <div className="overflow-hidden pb-6">
-              <h1 className="animate-text-reveal text-[clamp(2.5rem,6vw,6rem)] leading-[0.9]">
+              <h1 className="animate-text-reveal text-[clamp(1.8rem,7vw,6rem)] leading-[0.9]">
                 <Logo />
               </h1>
             </div>
           </div>
 
-          {/* Bottom row — tagline + CTA, centered alignment */}
+          {/* Bottom row — tagline + CTA */}
           <div className="flex flex-col items-center gap-2">
-
-
-            <div className="animate-fade-up flex items-center justify-center gap-4 mt-0" style={{ animationDelay: '1s' }}>
+            <div className="animate-fade-up flex flex-col sm:flex-row items-center justify-center gap-3 mt-0 w-full sm:w-auto" style={{ animationDelay: '1s' }}>
               <Link
                 href="/login"
-                className="group relative px-8 py-4 rounded-full text-[13px] font-semibold text-[hsl(var(--text-primary))] overflow-hidden transition-transform hover:scale-[1.03] active:scale-100"
+                className="group relative w-full sm:w-auto px-8 py-4 rounded-full text-[13px] font-semibold text-[hsl(var(--text-primary))] overflow-hidden transition-transform hover:scale-[1.03] active:scale-100"
               >
                 <span className="absolute inset-0 bg-[hsl(var(--accent))] rounded-full" />
                 <span className="absolute inset-0 bg-[hsl(var(--accent))] rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity" />
-                <span className="relative flex items-center gap-2">
+                <span className="relative flex items-center justify-center gap-2">
                   Start Free <ArrowRight size={14} />
                 </span>
               </Link>
@@ -107,40 +105,40 @@ export default function LandingPage() {
       </section>
 
 
-      {/* ━━━ SUBJECTS — editorial list, not cards ━━━ */}
-      <section className="pt-0 pb-[50px] px-6 lg:px-10 border-t border-white/[0.04]">
+      {/* ━━━ SUBJECTS — responsive grid ━━━ */}
+      <section className="pt-0 pb-[50px] px-4 sm:px-6 lg:px-10 border-t border-white/[0.04]">
         <div className="max-w-[1600px] mx-auto">
           <R>
             <div className="mb-4">
-              <h2 className="text-3xl lg:text-5xl font-bold tracking-[-0.03em]">Subjects</h2>
+              <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold tracking-[-0.03em]">Subjects</h2>
             </div>
             <p className="text-sm text-[hsl(var(--text-primary))]/ mb-0 max-w-md">First-year curriculum. More semesters coming soon.</p>
           </R>
 
-          {/* Square cards layout */}
-          <div className="flex flex-wrap justify-start gap-4 lg:gap-6 pb-12 pt-[22px]">
+          {/* Responsive grid — 2 cols on mobile, 3 on tablet, 4+ on desktop */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 pb-12 pt-[22px]">
             {subjects.map((sub, i) => (
               <R key={sub.code} d={i * 60}>
                 <Link
                   href={`/papers?subjectId=${sub.code}`}
-                  className="group flex flex-col w-52 h-52 lg:w-60 lg:h-60 p-5 pt-5 rounded-[2rem] bg-bg-surface border border-white/[0.04] hover:border-accent/30 hover:shadow-glow-sm transition-all duration-500"
+                  className="group flex flex-col w-full aspect-square p-4 sm:p-5 rounded-[1.5rem] sm:rounded-[2rem] bg-bg-surface border border-white/[0.04] hover:border-accent/30 hover:shadow-glow-sm transition-all duration-500"
                 >
                   {/* TOP: Name and Tag */}
                   <div>
-                    <h3 className="text-lg lg:text-xl font-medium text-[hsl(var(--text-primary))] leading-tight group-hover:text-accent transition-colors duration-300 mb-1">{sub.name}</h3>
-                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-accent/80">{sub.tag}</span>
+                    <h3 className="text-sm sm:text-lg lg:text-xl font-medium text-[hsl(var(--text-primary))] leading-tight group-hover:text-accent transition-colors duration-300 mb-1">{sub.name}</h3>
+                    <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.2em] uppercase text-accent/80">{sub.tag}</span>
                   </div>
 
                   {/* MIDDLE: Option to go further */}
-                  <div className="mt-4">
-                    <div className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[hsl(var(--text-secondary))] group-hover:text-[hsl(var(--text-primary))] transition-colors bg-white/[0.03] px-3 py-1.5 rounded-full border border-white/[0.05] group-hover:border-accent/30">
-                      Explore Subject <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+                  <div className="mt-3 sm:mt-4">
+                    <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-medium text-[hsl(var(--text-secondary))] group-hover:text-[hsl(var(--text-primary))] transition-colors bg-white/[0.03] px-2.5 sm:px-3 py-1.5 rounded-full border border-white/[0.05] group-hover:border-accent/30">
+                      Explore <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   </div>
 
                   {/* BOTTOM: Code */}
                   <div className="mt-auto flex items-end justify-between">
-                    <span className="text-[11px] font-mono font-bold tracking-[0.1em] text-[hsl(var(--text-primary))]">{sub.code}</span>
+                    <span className="text-[10px] sm:text-[11px] font-mono font-bold tracking-[0.1em] text-[hsl(var(--text-primary))]">{sub.code}</span>
                   </div>
                 </Link>
               </R>
@@ -153,7 +151,7 @@ export default function LandingPage() {
       <div className="w-full max-w-[1600px] mx-auto h-[1px] bg-gradient-to-r from-transparent via-orange-600/60 dark:via-blue-400/60 to-transparent" />
 
       {/* ━━━ FOOTER — beautifully crafted credits ━━━ */}
-      <footer className="py-4 px-6 lg:px-10 mt-8 relative overflow-hidden">
+      <footer className="py-4 px-4 sm:px-6 lg:px-10 mt-8 relative overflow-hidden">
         {/* Subtle glowing orb in footer */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full opacity-[0.03] pointer-events-none"
           style={{ background: 'radial-gradient(ellipse, hsl(var(--accent)), transparent 60%)' }} />
@@ -163,7 +161,7 @@ export default function LandingPage() {
             <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-accent">Created with ❤️</span>
           </div>
           
-          <div className="flex flex-col lg:flex-row items-stretch justify-center gap-3 lg:gap-4 w-full max-w-2xl">
+          <div className="flex flex-col sm:flex-row items-stretch justify-center gap-3 sm:gap-4 w-full max-w-2xl">
             {/* Shubh Dixit */}
             <div className="flex-1 group relative p-[1px] rounded-2xl overflow-hidden bg-gradient-to-b from-white/10 to-transparent hover:from-accent/40 transition-colors duration-700">
               <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-700" />
