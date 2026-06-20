@@ -15,7 +15,7 @@ const instrumentSerif = Instrument_Serif({
 })
 
 export const metadata = {
-  title: 'ExamEdge — Your College Exam Companion',
+  title: 'The Backbenchers — Your College Exam Companion',
   description: 'A curated academic platform for mastering college exams. Access past papers, study roadmaps, and comprehensive curriculum guides.',
 }
 

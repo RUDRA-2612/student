@@ -20,6 +20,7 @@ import {
   Target
 } from 'lucide-react'
 import { api } from '@/lib/trpc/react'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 const navItems = [
   { name: 'Dashboard',        href: '/dashboard',   icon: LayoutDashboard },
@@ -146,7 +147,9 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
           </span>
         </Link>
 
-        <div className="relative" ref={dropdownRef}>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition-all"
@@ -200,6 +203,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
               </motion.div>
             )}
           </AnimatePresence>
+          </div>
         </div>
       </header>
 

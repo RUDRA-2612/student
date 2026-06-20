@@ -30,6 +30,7 @@ import {
   Github
 } from 'lucide-react'
 import { Logo } from '@/components/logo'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 const adminNavItems = [
   { name: 'Overview',       href: '/admin',                icon: LayoutDashboard },
@@ -161,6 +162,11 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
 
         <div className="p-3 space-y-2 border-t border-white/[0.04]">
           {!collapsed && (
+            <div className="flex justify-center pb-1">
+              <ThemeToggle />
+            </div>
+          )}
+          {!collapsed && (
             <Link href="/dashboard"
               className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-white/40 hover:text-white/70 bg-white/[0.02] border border-white/[0.04] transition-colors">
               <span>Student</span><ExternalLink size={10} />
@@ -177,12 +183,17 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
         {/* Mobile header */}
         <header className="md:hidden h-14 px-4 flex items-center justify-between shrink-0 z-10 bg-[hsl(20,6%,8%)] border-b border-white/[0.04]">
           <div className="flex items-center gap-2">
-            <Shield size={14} className="text-[hsl(340,82%,62%)]/70" />
-            <span className="font-bold text-sm">Admin</span>
+            <div className="flex items-center gap-2">
+              <Shield size={14} className="text-[hsl(340,82%,62%)]/70" />
+              <span className="font-bold text-sm">Admin</span>
+            </div>
+            <div className="ml-auto flex items-center gap-1">
+              <ThemeToggle />
+              <button onClick={() => setMobileOpen(!mobileOpen)} className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 bg-white/[0.03]">
+                {mobileOpen ? <X size={16} /> : <Menu size={16} />}
+              </button>
+            </div>
           </div>
-          <button onClick={() => setMobileOpen(!mobileOpen)} className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 bg-white/[0.03]">
-            {mobileOpen ? <X size={16} /> : <Menu size={16} />}
-          </button>
         </header>
 
         {/* Mobile drawer */}

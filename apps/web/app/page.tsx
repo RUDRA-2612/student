@@ -57,11 +57,11 @@ export default function LandingPage() {
           <div className="flex items-center justify-between h-20">
             <Link 
               href="/" 
-              className="text-[13px] font-bold text-black dark:text-white pointer-events-auto"
+              className="text-[20px] font-bold pointer-events-auto"
             >
               <Logo />
             </Link>
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-3">
               <Link href="/login" className="text-[11px] font-bold tracking-[0.15em] uppercase text-black dark:text-white hover:opacity-80 transition-opacity">Login</Link>
               <ThemeToggle />
             </div>
@@ -70,26 +70,22 @@ export default function LandingPage() {
       </header>
 
       {/* ━━━ HERO — centered 3D editorial ━━━ */}
-      <section className="relative min-h-[70vh] flex items-center justify-center pt-24 pb-16 lg:pb-20 text-center">
+      <section className="relative flex items-start justify-center pt-[100px] pb-[40px] text-center">
         <div className="max-w-[1600px] mx-auto px-6 lg:px-10 w-full flex flex-col items-center">
           {/* Centered headline with 3D text shadow and padding to prevent cutoffs */}
-          <div className="mb-10 lg:mb-14">
-            <div className="overflow-hidden pb-10">
-              <h1 className="animate-text-reveal text-[clamp(2.5rem,6vw,6rem)] leading-[0.9]"
-                style={{
-                  animationDelay: '0.2s',
-                  textShadow: '1px 1px 0px hsl(var(--accent-hover)), 2px 2px 0px hsl(var(--accent-hover)), 3px 3px 0px hsl(var(--accent-hover)), 4px 4px 0px hsl(var(--accent-hover)), 5px 5px 0px hsl(var(--accent-hover)), 6px 6px 0px hsl(var(--accent-hover))'
-                }}>
+          <div className="mb-4 lg:mb-6">
+            <div className="overflow-hidden pb-6">
+              <h1 className="animate-text-reveal text-[clamp(2.5rem,6vw,6rem)] leading-[0.9]">
                 <Logo />
               </h1>
             </div>
           </div>
 
           {/* Bottom row — tagline + CTA, centered alignment */}
-          <div className="flex flex-col items-center gap-8">
+          <div className="flex flex-col items-center gap-2">
 
 
-            <div className="animate-fade-up flex items-center justify-center gap-4" style={{ animationDelay: '1s' }}>
+            <div className="animate-fade-up flex items-center justify-center gap-4 mt-0" style={{ animationDelay: '1s' }}>
               <Link
                 href="/login"
                 className="group relative px-8 py-4 rounded-full text-[13px] font-semibold text-[hsl(var(--text-primary))] overflow-hidden transition-transform hover:scale-[1.03] active:scale-100"
@@ -112,17 +108,17 @@ export default function LandingPage() {
 
 
       {/* ━━━ SUBJECTS — editorial list, not cards ━━━ */}
-      <section className="py-20 lg:py-32 px-6 lg:px-10 border-t border-white/[0.04]">
+      <section className="pt-0 pb-[50px] px-6 lg:px-10 border-t border-white/[0.04]">
         <div className="max-w-[1600px] mx-auto">
           <R>
             <div className="mb-4">
               <h2 className="text-3xl lg:text-5xl font-bold tracking-[-0.03em]">Subjects</h2>
             </div>
-            <p className="text-sm text-[hsl(var(--text-primary))]/ mb-14 max-w-md">First-year curriculum. More semesters coming soon.</p>
+            <p className="text-sm text-[hsl(var(--text-primary))]/ mb-0 max-w-md">First-year curriculum. More semesters coming soon.</p>
           </R>
 
           {/* Square cards layout */}
-          <div className="flex flex-wrap justify-start gap-4 lg:gap-6 pb-12 pt-6">
+          <div className="flex flex-wrap justify-start gap-4 lg:gap-6 pb-12 pt-[22px]">
             {subjects.map((sub, i) => (
               <R key={sub.code} d={i * 60}>
                 <Link
@@ -154,7 +150,7 @@ export default function LandingPage() {
       </section>
 
       {/* Separator Line */}
-      <div className="w-full max-w-[1600px] mx-auto h-[1px] bg-gradient-to-r from-transparent via-orange-600/60 dark:via-blue-400/60 to-transparent mt-32" />
+      <div className="w-full max-w-[1600px] mx-auto h-[1px] bg-gradient-to-r from-transparent via-orange-600/60 dark:via-blue-400/60 to-transparent" />
 
       {/* ━━━ FOOTER — beautifully crafted credits ━━━ */}
       <footer className="py-4 px-6 lg:px-10 mt-8 relative overflow-hidden">
@@ -199,7 +195,7 @@ export default function LandingPage() {
           
           <div className="mt-6 pt-4 border-t border-white/[0.04] w-full max-w-md flex flex-col items-center">
             <Logo className="text-[12px] opacity-40 mb-2" />
-            <span className="text-[9px] text-[hsl(var(--text-secondary))] font-mono opacity-50 uppercase tracking-[0.1em]">© {new Date().getFullYear()} ExamEdge. All rights reserved.</span>
+            <span className="text-[9px] text-[hsl(var(--text-secondary))] font-mono opacity-50 uppercase tracking-[0.1em]">© {new Date().getFullYear()} The Backbenchers. All rights reserved.</span>
           </div>
         </div>
       </footer>
