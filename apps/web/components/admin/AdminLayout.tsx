@@ -128,29 +128,29 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
   }
 
   return (
-    <div className="min-h-screen text-[#f5ede6] flex overflow-hidden bg-[hsl(20,8%,5%)]">
+    <div className="min-h-screen text-text-primary flex overflow-hidden bg-bg-base">
       {/* Desktop Sidebar */}
       <aside
-        className="hidden md:flex flex-col shrink-0 h-screen transition-all duration-300 relative z-20 bg-[hsl(20,6%,8%)] border-r border-white/[0.04]"
+        className="hidden md:flex flex-col shrink-0 h-screen transition-all duration-300 relative z-20 bg-bg-surface border-r border-border-light"
         style={{ width: collapsed ? 64 : 240 }}
       >
-        <div className="h-14 px-4 flex items-center gap-3 border-b border-white/[0.04]">
+        <div className="h-14 px-4 flex items-center gap-3 border-b border-border-light">
           {collapsed ? (
-            <div className="mx-auto w-7 h-7 rounded-lg bg-[hsl(340,82%,62%)]/10 border border-[hsl(340,82%,62%)]/15 flex items-center justify-center">
-              <Shield size={13} className="text-[hsl(340,82%,62%)]/70" />
+            <div className="mx-auto w-7 h-7 rounded-lg bg-accent/10 border border-accent/15 flex items-center justify-center">
+              <Shield size={13} className="text-accent/70" />
             </div>
           ) : (
             <Link href="/admin" className="flex items-center gap-2 flex-1 overflow-hidden">
-              <div className="w-7 h-7 rounded-lg bg-[hsl(340,82%,62%)]/10 border border-[hsl(340,82%,62%)]/15 flex items-center justify-center shrink-0">
-                <Shield size={13} className="text-[hsl(340,82%,62%)]/70" />
+              <div className="w-7 h-7 rounded-lg bg-accent/10 border border-accent/15 flex items-center justify-center shrink-0">
+                <Shield size={13} className="text-accent/70" />
               </div>
               <div className="overflow-hidden min-w-0">
                 <p className="font-bold text-sm tracking-tight whitespace-nowrap">Admin</p>
-                <Logo className="text-[8px] text-white/20 whitespace-nowrap" />
+                <Logo className="text-[8px] text-text-muted whitespace-nowrap" />
               </div>
             </Link>
           )}
-          <button onClick={() => setCollapsed(v => !v)} className="ml-auto text-white/20 hover:text-white/50 transition shrink-0"
+          <button onClick={() => setCollapsed(v => !v)} className="ml-auto text-text-muted hover:text-text-primary transition shrink-0"
             style={collapsed ? { margin: 'auto' } : {}}>
             {collapsed ? <ChevronRight size={13} /> : <ChevronLeft size={13} />}
           </button>
@@ -160,7 +160,7 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
           {adminNavItems.map(item => <NavLink key={item.href} item={item} />)}
         </nav>
 
-        <div className="p-3 space-y-2 border-t border-white/[0.04]">
+        <div className="p-3 space-y-2 border-t border-border-light">
           {!collapsed && (
             <div className="flex justify-center pb-1">
               <ThemeToggle />
@@ -168,12 +168,12 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
           )}
           {!collapsed && (
             <Link href="/dashboard"
-              className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-white/40 hover:text-white/70 bg-white/[0.02] border border-white/[0.04] transition-colors">
+              className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-text-secondary hover:text-text-primary bg-bg-card border border-border-light transition-colors">
               <span>Student</span><ExternalLink size={10} />
             </Link>
           )}
           <button onClick={() => signOut({ callbackUrl: '/login' })}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-red-400/70 hover:text-red-400 hover:bg-red-500/8 transition-all">
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-red-500 hover:bg-red-500/10 transition-all">
             <LogOut size={13} />{!collapsed && <span>Sign Out</span>}
           </button>
         </div>
@@ -181,15 +181,15 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
 
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Mobile header */}
-        <header className="md:hidden h-14 px-4 flex items-center justify-between shrink-0 z-10 bg-[hsl(20,6%,8%)] border-b border-white/[0.04]">
+        <header className="md:hidden h-14 px-4 flex items-center justify-between shrink-0 z-10 bg-bg-surface border-b border-border-light">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">
-              <Shield size={14} className="text-[hsl(340,82%,62%)]/70" />
+              <Shield size={14} className="text-accent/70" />
               <span className="font-bold text-sm">Admin</span>
             </div>
             <div className="ml-auto flex items-center gap-1">
               <ThemeToggle />
-              <button onClick={() => setMobileOpen(!mobileOpen)} className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 bg-white/[0.03]">
+              <button onClick={() => setMobileOpen(!mobileOpen)} className="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary bg-bg-card">
                 {mobileOpen ? <X size={16} /> : <Menu size={16} />}
               </button>
             </div>
@@ -205,21 +205,21 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
               <motion.div
                 initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
                 transition={{ type: 'spring', bounce: 0.1, duration: 0.35 }}
-                className="fixed top-0 bottom-0 left-0 w-60 flex flex-col z-40 md:hidden bg-[hsl(20,6%,8%)] border-r border-white/[0.04]">
-                <div className="h-14 px-4 flex items-center justify-between border-b border-white/[0.04]">
+                className="fixed top-0 bottom-0 left-0 w-60 flex flex-col z-40 md:hidden bg-bg-surface border-r border-border-light">
+                <div className="h-14 px-4 flex items-center justify-between border-b border-border-light">
                   <span className="font-bold text-sm">Admin</span>
-                  <button onClick={() => setMobileOpen(false)} className="text-white/30 hover:text-white"><X size={16} /></button>
+                  <button onClick={() => setMobileOpen(false)} className="text-text-secondary hover:text-text-primary"><X size={16} /></button>
                 </div>
                 <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
                   {adminNavItems.map(item => <NavLink key={item.href} item={item} onClick={() => setMobileOpen(false)} />)}
                 </nav>
-                <div className="p-3 space-y-2 border-t border-white/[0.04]">
-                  <Link href="/dashboard" className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-white/40 bg-white/[0.02] border border-white/[0.04]"
+                <div className="p-3 space-y-2 border-t border-border-light">
+                  <Link href="/dashboard" className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-text-secondary bg-bg-card border border-border-light"
                     onClick={() => setMobileOpen(false)}>
                     <span>Student</span><ExternalLink size={10} />
                   </Link>
                   <button onClick={() => signOut({ callbackUrl: '/login' })}
-                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-red-400/70 hover:bg-red-500/8 transition-all">
+                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-bg-card border border-border-light hover:bg-bg-surface transition-all text-red-500">
                     <LogOut size={13} /><span>Sign Out</span>
                   </button>
                 </div>
