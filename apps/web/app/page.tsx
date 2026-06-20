@@ -161,52 +161,42 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ━━━ CTA — typographic, not a gradient box ━━━ */}
-      <section className="py-32 lg:py-44 px-6 lg:px-10 border-t border-white/[0.04] text-center">
-        <div className="max-w-[1600px] mx-auto flex flex-col items-center">
-          <R>
-            <div className="pb-4">
-              <h2 className="text-4xl md:text-6xl lg:text-[5.5rem] font-bold tracking-[-0.03em] leading-[0.92] mb-10 max-w-4xl mx-auto"
-                style={{
-                  textShadow: '1px 1px 0px hsl(var(--accent-hover)), 2px 2px 0px hsl(var(--accent-hover)), 3px 3px 0px hsl(var(--accent-hover)), 4px 4px 0px hsl(var(--accent-hover))'
-                }}>
-                Ready to stop<br />
-                <span className="italic text-[hsl(var(--accent))]" style={{ 
-                  fontFamily: 'var(--font-serif)',
-                  textShadow: '1px 1px 0px hsl(var(--accent-muted)), 2px 2px 0px hsl(var(--accent-muted)), 3px 3px 0px hsl(var(--accent-muted)), 4px 4px 0px hsl(var(--accent-muted))'
-                }}>winging it</span>?
-              </h2>
+      {/* ━━━ FOOTER — beautifully crafted credits ━━━ */}
+      <footer className="border-t border-white/[0.04] py-20 px-6 lg:px-10 mt-10 relative overflow-hidden">
+        {/* Subtle glowing orb in footer */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full opacity-[0.03] pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse, hsl(var(--accent)), transparent 60%)' }} />
+          
+        <div className="max-w-[1600px] mx-auto flex flex-col items-center justify-center text-center relative z-10">
+          <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-accent/80 mb-6">Crafted By</span>
+          
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+            <div className="group cursor-default flex flex-col items-center">
+              <h3 className="text-xl md:text-2xl font-medium text-[hsl(var(--text-primary))] group-hover:text-accent transition-colors duration-500" style={{ fontFamily: 'var(--font-serif)' }}>
+                Shubh Dixit
+              </h3>
+              <span className="text-[10px] font-mono tracking-widest text-[hsl(var(--text-secondary))] mt-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                (2ND YEAR)
+              </span>
             </div>
-          </R>
-          <R d={150}>
-            <div className="flex flex-wrap items-center justify-center gap-5">
-              <Link
-                href="/signup"
-                className="group relative px-10 py-5 rounded-full text-sm font-semibold text-[hsl(var(--text-primary))] overflow-hidden transition-transform hover:scale-[1.03] active:scale-100"
-              >
-                <span className="absolute inset-0 bg-[hsl(var(--accent))] rounded-full" />
-                <span className="absolute inset-0 bg-[hsl(var(--accent))] rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
-                <span className="relative flex items-center gap-3">
-                  Create Free Account <ArrowRight size={15} />
-                </span>
-              </Link>
-              <Link href="/login" className="text-sm text-[hsl(var(--text-primary))]/ hover:text-[hsl(var(--text-primary))]/ transition-colors underline underline-offset-4 decoration-[hsl(var(--text-primary))]/ hover:decoration-[hsl(var(--text-primary))]/">
-                or sign in
-              </Link>
-            </div>
-          </R>
-        </div>
-      </section>
 
-      {/* ━━━ FOOTER — minimal ━━━ */}
-      <footer className="border-t border-white/[0.04] py-10 px-6 lg:px-10">
-        <div className="max-w-[1600px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Logo className="text-[11px] text-[hsl(var(--text-primary))]/" />
-          <div className="flex items-center gap-6">
-            <Link href="/login" className="text-[11px] text-[hsl(var(--text-primary))]/ hover:text-[hsl(var(--text-primary))]/ transition-colors">Login</Link>
-            <Link href="/signup" className="text-[11px] text-[hsl(var(--text-primary))]/ hover:text-[hsl(var(--text-primary))]/ transition-colors">Sign Up</Link>
+            <div className="hidden md:block w-px h-10 bg-white/[0.08]" />
+            <div className="md:hidden w-10 h-px bg-white/[0.08]" />
+
+            <div className="group cursor-default flex flex-col items-center">
+              <h3 className="text-xl md:text-2xl font-medium text-[hsl(var(--text-primary))] group-hover:text-accent transition-colors duration-500" style={{ fontFamily: 'var(--font-serif)' }}>
+                Rudrapal Singh Shekhawat
+              </h3>
+              <span className="text-[10px] font-mono tracking-widest text-[hsl(var(--text-secondary))] mt-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                (2ND YEAR)
+              </span>
+            </div>
           </div>
-          <span className="text-[10px] text-[hsl(var(--text-primary))]/ font-mono">© {new Date().getFullYear()}</span>
+          
+          <div className="mt-16 pt-8 border-t border-white/[0.04] w-full max-w-md flex flex-col items-center">
+            <Logo className="text-[12px] opacity-40 mb-4" />
+            <span className="text-[9px] text-[hsl(var(--text-secondary))] font-mono opacity-50 uppercase tracking-[0.1em]">© {new Date().getFullYear()} ExamEdge. All rights reserved.</span>
+          </div>
         </div>
       </footer>
     </div>
