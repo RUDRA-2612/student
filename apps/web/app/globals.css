@@ -99,14 +99,13 @@
     color: hsl(var(--text-primary));
   }
 
-  /* ── Global hover-chip: box appears in text colour on hover ── */
-  /* Uses currentColor so it auto-adapts: dark in day, light in night.   */
-  /* @layer base has lowest specificity, so styled hover:bg-* classes    */
-  /* on cards / buttons always win and are unaffected.                    */
+  /* ── Global hover-chip: box appears only on navigation links ── */
+  /* Only <a> tags get it — buttons (toggle, forms, dropdowns)    */
+  /* are excluded since they don't navigate to another page.      */
   a, button {
     transition: background-color 150ms ease;
   }
-  a:hover, button:hover {
+  a:hover {
     background-color: color-mix(in srgb, currentColor 9%, transparent);
     border-radius: 6px;
   }
