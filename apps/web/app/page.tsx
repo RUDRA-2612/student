@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, ArrowUpRight, Star } from 'lucide-react'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 /* ───── IO Reveal (no framer) ───── */
 function R({ children, className = '', d = 0 }: { children: React.ReactNode; className?: string; d?: number }) {
@@ -61,13 +62,13 @@ const subjects = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[hsl(20,8%,5%)] text-[#f5ede6] overflow-x-hidden selection:bg-[hsl(340,82%,62%)]/30">
+    <div className="min-h-screen bg-bg-base text-[hsl(var(--text-primary))] overflow-x-hidden selection:bg-[hsl(var(--accent))]/30">
 
       {/* ─── Atmosphere ─── */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         {/* Main warm blob — off-center, organic */}
         <div className="absolute -top-[30%] right-[-5%] w-[70vw] h-[70vw] rounded-full opacity-[0.07] animate-drift"
-          style={{ background: 'radial-gradient(circle, hsl(340 82% 62%) 0%, transparent 55%)' }} />
+          style={{ background: 'radial-gradient(circle, hsl(var(--accent)) 0%, transparent 55%)' }} />
         {/* Smaller peach blob — bottom left */}
         <div className="absolute bottom-[-15%] left-[-10%] w-[50vw] h-[50vw] rounded-full opacity-[0.05] animate-drift-slow"
           style={{ background: 'radial-gradient(circle, hsl(20 90% 68%) 0%, transparent 55%)' }} />
@@ -77,10 +78,11 @@ export default function LandingPage() {
       <header className="fixed top-0 w-full z-50 mix-blend-difference">
         <div className="max-w-[1600px] mx-auto px-6 lg:px-10">
           <div className="flex items-center justify-between h-20">
-            <Link href="/" className="text-[13px] font-semibold tracking-[0.25em] uppercase">Exam<span className="text-[hsl(340,82%,62%)]">Edge</span></Link>
+            <Link href="/" className="text-[13px] font-semibold tracking-[0.25em] uppercase">Exam<span className="text-[hsl(var(--accent))]">Edge</span></Link>
             <div className="flex items-center gap-8">
-              <Link href="/dashboard" className="text-[11px] tracking-[0.15em] uppercase text-white/40 hover:text-white transition-colors hidden md:block">Browse</Link>
-              <Link href="/login" className="text-[11px] tracking-[0.15em] uppercase text-white/50 hover:text-white transition-colors">Enter →</Link>
+              <Link href="/dashboard" className="text-[11px] tracking-[0.15em] uppercase text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] transition-colors hidden md:block">Browse</Link>
+              <Link href="/login" className="text-[11px] tracking-[0.15em] uppercase text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] transition-colors">Enter →</Link>
+              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -95,17 +97,17 @@ export default function LandingPage() {
               <h1 className="animate-text-reveal text-[clamp(3.5rem,10vw,9.5rem)] font-bold leading-[0.9] tracking-[-0.04em]"
                 style={{
                   animationDelay: '0.2s',
-                  textShadow: '1px 1px 0px hsl(340 82% 40%), 2px 2px 0px hsl(340 82% 40%), 3px 3px 0px hsl(340 82% 40%), 4px 4px 0px hsl(340 82% 40%), 5px 5px 0px hsl(340 82% 40%), 6px 6px 0px hsl(340 82% 40%)'
+                  textShadow: '1px 1px 0px hsl(var(--accent-hover)), 2px 2px 0px hsl(var(--accent-hover)), 3px 3px 0px hsl(var(--accent-hover)), 4px 4px 0px hsl(var(--accent-hover)), 5px 5px 0px hsl(var(--accent-hover)), 6px 6px 0px hsl(var(--accent-hover))'
                 }}>
                 Stop guessing.
               </h1>
             </div>
             <div className="overflow-hidden mt-2 pb-10">
-              <p className="animate-text-reveal text-[clamp(3.5rem,10vw,9.5rem)] leading-[0.9] tracking-[-0.04em] italic text-[hsl(340,82%,62%)]"
+              <p className="animate-text-reveal text-[clamp(3.5rem,10vw,9.5rem)] leading-[0.9] tracking-[-0.04em] italic text-[hsl(var(--accent))]"
                 style={{
                   fontFamily: 'var(--font-serif), Georgia, serif',
                   animationDelay: '0.5s',
-                  textShadow: '1px 1px 0px hsl(340 82% 30%), 2px 2px 0px hsl(340 82% 30%), 3px 3px 0px hsl(340 82% 30%), 4px 4px 0px hsl(340 82% 30%), 5px 5px 0px hsl(340 82% 30%), 6px 6px 0px hsl(340 82% 30%)'
+                  textShadow: '1px 1px 0px hsl(var(--accent-muted)), 2px 2px 0px hsl(var(--accent-muted)), 3px 3px 0px hsl(var(--accent-muted)), 4px 4px 0px hsl(var(--accent-muted)), 5px 5px 0px hsl(var(--accent-muted)), 6px 6px 0px hsl(var(--accent-muted))'
                 }}>
                 Start knowing.
               </p>
@@ -115,25 +117,25 @@ export default function LandingPage() {
           {/* Bottom row — tagline + CTA, centered alignment */}
           <div className="flex flex-col items-center gap-8">
             <div className="animate-fade-up max-w-xl text-center" style={{ animationDelay: '0.8s' }}>
-              <p className="text-base lg:text-xl text-white/30 leading-relaxed font-light">
+              <p className="text-base lg:text-xl text-[hsl(var(--text-primary))]/ leading-relaxed font-light">
                 We analyzed thousands of past papers so you don't have to.
                 <br className="hidden md:block" />
-                <span className="text-white/50"> Know exactly what's coming.</span>
+                <span className="text-[hsl(var(--text-primary))]/"> Know exactly what's coming.</span>
               </p>
             </div>
 
             <div className="animate-fade-up flex items-center justify-center gap-5" style={{ animationDelay: '1s' }}>
               <Link
                 href="/login"
-                className="group relative px-10 py-5 rounded-full text-sm font-semibold text-white overflow-hidden transition-transform hover:scale-[1.03] active:scale-100"
+                className="group relative px-10 py-5 rounded-full text-sm font-semibold text-[hsl(var(--text-primary))] overflow-hidden transition-transform hover:scale-[1.03] active:scale-100"
               >
-                <span className="absolute inset-0 bg-[hsl(340,82%,62%)] rounded-full" />
-                <span className="absolute inset-0 bg-[hsl(340,82%,62%)] rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity" />
+                <span className="absolute inset-0 bg-[hsl(var(--accent))] rounded-full" />
+                <span className="absolute inset-0 bg-[hsl(var(--accent))] rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity" />
                 <span className="relative flex items-center gap-3">
                   Start Free <ArrowRight size={15} />
                 </span>
               </Link>
-              <Link href="/dashboard" className="group text-[13px] font-medium tracking-wide text-white/40 hover:text-white transition-colors flex items-center gap-1.5 px-4 py-2">
+              <Link href="/dashboard" className="group text-[13px] font-medium tracking-wide text-[hsl(var(--text-primary))]/ hover:text-[hsl(var(--text-primary))] transition-colors flex items-center gap-1.5 px-4 py-2">
                 Preview <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
             </div>
@@ -142,8 +144,8 @@ export default function LandingPage() {
 
         {/* Scroll line */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-fade-in" style={{ animationDelay: '2.5s' }}>
-          <span className="text-[8px] tracking-[0.3em] uppercase text-white/20">Scroll</span>
-          <div className="w-px h-10 bg-gradient-to-b from-[hsl(340,82%,62%)]/30 to-transparent animate-float" />
+          <span className="text-[8px] tracking-[0.3em] uppercase text-[hsl(var(--text-primary))]/">Scroll</span>
+          <div className="w-px h-10 bg-gradient-to-b from-[hsl(var(--accent))]/30 to-transparent animate-float" />
         </div>
       </section>
 
@@ -159,10 +161,10 @@ export default function LandingPage() {
             ].map((s, i) => (
               <R key={s.l} d={i * 80}>
                 <div className={`py-8 px-6 lg:px-10 ${i > 0 ? 'border-l border-white/[0.04]' : ''}`}>
-                  <div className="text-3xl lg:text-4xl font-bold tracking-tight text-white/80 mb-1" style={{ fontFamily: 'var(--font-serif)' }}>
+                  <div className="text-3xl lg:text-4xl font-bold tracking-tight text-[hsl(var(--text-primary))]/ mb-1" style={{ fontFamily: 'var(--font-serif)' }}>
                     <CountUp target={s.n} suffix={s.s} />
                   </div>
-                  <div className="text-[10px] font-medium tracking-[0.2em] uppercase text-white/25">{s.l}</div>
+                  <div className="text-[10px] font-medium tracking-[0.2em] uppercase text-[hsl(var(--text-primary))]/">{s.l}</div>
                 </div>
               </R>
             ))}
@@ -175,7 +177,7 @@ export default function LandingPage() {
         <div className="max-w-[1600px] mx-auto">
           <R>
             <div className="flex items-baseline gap-4 mb-20">
-              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[hsl(340,82%,62%)]/60">01</span>
+              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[hsl(var(--accent))]/60">01</span>
               <h2 className="text-3xl lg:text-5xl font-bold tracking-[-0.03em]">
                 How it actually works
               </h2>
@@ -188,10 +190,10 @@ export default function LandingPage() {
             <R className="lg:col-span-5" d={100}>
               <div className="group h-full p-8 lg:p-10 rounded-[28px] border border-white/[0.05] bg-white/[0.015] hover:bg-white/[0.03] transition-all duration-500 relative overflow-hidden">
                 <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-0 group-hover:opacity-[0.06] transition-opacity duration-700"
-                  style={{ background: 'radial-gradient(circle, hsl(340 82% 62%), transparent 60%)' }} />
-                <div className="text-[80px] lg:text-[100px] font-bold leading-none text-white/[0.03] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>01</div>
+                  style={{ background: 'radial-gradient(circle, hsl(var(--accent)), transparent 60%)' }} />
+                <div className="text-[80px] lg:text-[100px] font-bold leading-none text-[hsl(var(--text-primary))]/[0.03] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>01</div>
                 <h3 className="text-lg font-semibold mb-3 -mt-8">Browse past papers</h3>
-                <p className="text-sm text-white/30 leading-relaxed">Organized by subject, semester, and year. Every paper tagged and searchable.</p>
+                <p className="text-sm text-[hsl(var(--text-primary))]/ leading-relaxed">Organized by subject, semester, and year. Every paper tagged and searchable.</p>
               </div>
             </R>
 
@@ -200,9 +202,9 @@ export default function LandingPage() {
               <div className="group h-full p-8 lg:p-10 rounded-[28px] border border-white/[0.05] bg-white/[0.015] hover:bg-white/[0.03] transition-all duration-500 relative overflow-hidden">
                 <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-0 group-hover:opacity-[0.06] transition-opacity duration-700"
                   style={{ background: 'radial-gradient(circle, hsl(20 90% 68%), transparent 60%)' }} />
-                <div className="text-[80px] lg:text-[100px] font-bold leading-none text-white/[0.03] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>02</div>
+                <div className="text-[80px] lg:text-[100px] font-bold leading-none text-[hsl(var(--text-primary))]/[0.03] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>02</div>
                 <h3 className="text-lg font-semibold mb-3 -mt-8">Spot the patterns</h3>
-                <p className="text-sm text-white/30 leading-relaxed">Our AI highlights recurring topics. See what keeps coming back, year after year.</p>
+                <p className="text-sm text-[hsl(var(--text-primary))]/ leading-relaxed">Our AI highlights recurring topics. See what keeps coming back, year after year.</p>
               </div>
             </R>
 
@@ -211,9 +213,9 @@ export default function LandingPage() {
               <div className="group h-full p-8 lg:p-10 rounded-[28px] border border-white/[0.05] bg-white/[0.015] hover:bg-white/[0.03] transition-all duration-500 relative overflow-hidden">
                 <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-0 group-hover:opacity-[0.06] transition-opacity duration-700"
                   style={{ background: 'radial-gradient(circle, hsl(160 25% 50%), transparent 60%)' }} />
-                <div className="text-[80px] lg:text-[100px] font-bold leading-none text-white/[0.03] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>03</div>
+                <div className="text-[80px] lg:text-[100px] font-bold leading-none text-[hsl(var(--text-primary))]/[0.03] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>03</div>
                 <h3 className="text-lg font-semibold mb-3 -mt-8">Study smart</h3>
-                <p className="text-sm text-white/30 leading-relaxed">Focus on what matters. Skip what doesn't.</p>
+                <p className="text-sm text-[hsl(var(--text-primary))]/ leading-relaxed">Focus on what matters. Skip what doesn't.</p>
               </div>
             </R>
           </div>
@@ -225,10 +227,10 @@ export default function LandingPage() {
         <div className="max-w-[1600px] mx-auto">
           <R>
             <div className="flex items-baseline gap-4 mb-4">
-              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[hsl(340,82%,62%)]/60">02</span>
+              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[hsl(var(--accent))]/60">02</span>
               <h2 className="text-3xl lg:text-5xl font-bold tracking-[-0.03em]">Subjects</h2>
             </div>
-            <p className="text-sm text-white/25 mb-14 max-w-md">First-year curriculum. More semesters coming soon.</p>
+            <p className="text-sm text-[hsl(var(--text-primary))]/ mb-14 max-w-md">First-year curriculum. More semesters coming soon.</p>
           </R>
 
           {/* List-style subject rows — way more editorial than card grids */}
@@ -237,19 +239,19 @@ export default function LandingPage() {
               <R key={sub.code} d={i * 60}>
                 <Link
                   href={`/papers?subjectId=${sub.code}`}
-                  className="group flex items-center justify-between py-5 lg:py-6 border-b border-white/[0.04] hover:border-[hsl(340,82%,62%)]/15 transition-colors duration-500 px-1"
+                  className="group flex items-center justify-between py-5 lg:py-6 border-b border-white/[0.04] hover:border-[hsl(var(--accent))]/15 transition-colors duration-500 px-1"
                 >
                   <div className="flex items-center gap-6 lg:gap-10">
-                    <span className="text-[10px] font-mono text-white/15 w-8">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="text-[10px] font-mono text-[hsl(var(--text-primary))]/ w-8">{String(i + 1).padStart(2, '0')}</span>
                     <div>
-                      <h3 className="text-base lg:text-lg font-medium text-white/75 group-hover:text-white transition-colors duration-300">{sub.name}</h3>
-                      <span className="text-[10px] text-white/20 mt-0.5 block">{sub.code}</span>
+                      <h3 className="text-base lg:text-lg font-medium text-[hsl(var(--text-primary))]/ group-hover:text-[hsl(var(--text-primary))] transition-colors duration-300">{sub.name}</h3>
+                      <span className="text-[10px] text-[hsl(var(--text-primary))]/ mt-0.5 block">{sub.code}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-[9px] font-medium tracking-[0.2em] uppercase text-white/15 hidden md:block">{sub.tag}</span>
-                    <div className="w-8 h-8 rounded-full border border-white/[0.06] flex items-center justify-center group-hover:border-[hsl(340,82%,62%)]/30 group-hover:bg-[hsl(340,82%,62%)]/5 transition-all duration-300">
-                      <ArrowUpRight size={12} className="text-white/20 group-hover:text-[hsl(340,82%,62%)] transition-colors duration-300" />
+                    <span className="text-[9px] font-medium tracking-[0.2em] uppercase text-[hsl(var(--text-primary))]/ hidden md:block">{sub.tag}</span>
+                    <div className="w-8 h-8 rounded-full border border-white/[0.06] flex items-center justify-center group-hover:border-[hsl(var(--accent))]/30 group-hover:bg-[hsl(var(--accent))]/5 transition-all duration-300">
+                      <ArrowUpRight size={12} className="text-[hsl(var(--text-primary))]/ group-hover:text-[hsl(var(--accent))] transition-colors duration-300" />
                     </div>
                   </div>
                 </Link>
@@ -263,20 +265,20 @@ export default function LandingPage() {
       <section className="py-24 lg:py-36 px-6 lg:px-10 relative overflow-hidden">
         {/* Subtle rose blob */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.04] pointer-events-none"
-          style={{ background: 'radial-gradient(circle, hsl(340 82% 62%), transparent 50%)' }} />
+          style={{ background: 'radial-gradient(circle, hsl(var(--accent)), transparent 50%)' }} />
         
         <div className="max-w-[1600px] mx-auto relative z-10">
           <R>
             <div className="max-w-3xl mx-auto text-center">
               <div className="flex justify-center gap-1 mb-8">
-                {[1,2,3,4,5].map(i => <Star key={i} size={14} className="text-[hsl(340,82%,62%)]/60 fill-[hsl(340,82%,62%)]/60" />)}
+                {[1,2,3,4,5].map(i => <Star key={i} size={14} className="text-[hsl(var(--accent))]/60 fill-[hsl(var(--accent))]/60" />)}
               </div>
-              <blockquote className="text-2xl lg:text-4xl font-light leading-snug tracking-tight mb-8 text-white/70">
-                &ldquo;I used to spend <span className="italic text-white/90" style={{ fontFamily: 'var(--font-serif)' }}>weeks</span> hunting for past papers. ExamEdge gave me everything in <span className="italic text-white/90" style={{ fontFamily: 'var(--font-serif)' }}>minutes</span>.&rdquo;
+              <blockquote className="text-2xl lg:text-4xl font-light leading-snug tracking-tight mb-8 text-[hsl(var(--text-primary))]/">
+                &ldquo;I used to spend <span className="italic text-[hsl(var(--text-primary))]/" style={{ fontFamily: 'var(--font-serif)' }}>weeks</span> hunting for past papers. ExamEdge gave me everything in <span className="italic text-[hsl(var(--text-primary))]/" style={{ fontFamily: 'var(--font-serif)' }}>minutes</span>.&rdquo;
               </blockquote>
               <div>
-                <p className="text-sm font-medium text-white/50">— Third-year CS Student</p>
-                <p className="text-[10px] text-white/20 mt-1">IIITD, Batch of 2026</p>
+                <p className="text-sm font-medium text-[hsl(var(--text-primary))]/">— Third-year CS Student</p>
+                <p className="text-[10px] text-[hsl(var(--text-primary))]/ mt-1">IIITD, Batch of 2026</p>
               </div>
             </div>
           </R>
@@ -290,12 +292,12 @@ export default function LandingPage() {
             <div className="pb-4">
               <h2 className="text-4xl md:text-6xl lg:text-[5.5rem] font-bold tracking-[-0.03em] leading-[0.92] mb-10 max-w-4xl mx-auto"
                 style={{
-                  textShadow: '1px 1px 0px hsl(340 82% 40%), 2px 2px 0px hsl(340 82% 40%), 3px 3px 0px hsl(340 82% 40%), 4px 4px 0px hsl(340 82% 40%)'
+                  textShadow: '1px 1px 0px hsl(var(--accent-hover)), 2px 2px 0px hsl(var(--accent-hover)), 3px 3px 0px hsl(var(--accent-hover)), 4px 4px 0px hsl(var(--accent-hover))'
                 }}>
                 Ready to stop<br />
-                <span className="italic text-[hsl(340,82%,62%)]" style={{ 
+                <span className="italic text-[hsl(var(--accent))]" style={{ 
                   fontFamily: 'var(--font-serif)',
-                  textShadow: '1px 1px 0px hsl(340 82% 30%), 2px 2px 0px hsl(340 82% 30%), 3px 3px 0px hsl(340 82% 30%), 4px 4px 0px hsl(340 82% 30%)'
+                  textShadow: '1px 1px 0px hsl(var(--accent-muted)), 2px 2px 0px hsl(var(--accent-muted)), 3px 3px 0px hsl(var(--accent-muted)), 4px 4px 0px hsl(var(--accent-muted))'
                 }}>winging it</span>?
               </h2>
             </div>
@@ -304,15 +306,15 @@ export default function LandingPage() {
             <div className="flex flex-wrap items-center justify-center gap-5">
               <Link
                 href="/signup"
-                className="group relative px-10 py-5 rounded-full text-sm font-semibold text-white overflow-hidden transition-transform hover:scale-[1.03] active:scale-100"
+                className="group relative px-10 py-5 rounded-full text-sm font-semibold text-[hsl(var(--text-primary))] overflow-hidden transition-transform hover:scale-[1.03] active:scale-100"
               >
-                <span className="absolute inset-0 bg-[hsl(340,82%,62%)] rounded-full" />
-                <span className="absolute inset-0 bg-[hsl(340,82%,62%)] rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
+                <span className="absolute inset-0 bg-[hsl(var(--accent))] rounded-full" />
+                <span className="absolute inset-0 bg-[hsl(var(--accent))] rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
                 <span className="relative flex items-center gap-3">
                   Create Free Account <ArrowRight size={15} />
                 </span>
               </Link>
-              <Link href="/login" className="text-sm text-white/30 hover:text-white/60 transition-colors underline underline-offset-4 decoration-white/10 hover:decoration-white/30">
+              <Link href="/login" className="text-sm text-[hsl(var(--text-primary))]/ hover:text-[hsl(var(--text-primary))]/ transition-colors underline underline-offset-4 decoration-[hsl(var(--text-primary))]/ hover:decoration-[hsl(var(--text-primary))]/">
                 or sign in
               </Link>
             </div>
@@ -323,12 +325,12 @@ export default function LandingPage() {
       {/* ━━━ FOOTER — minimal ━━━ */}
       <footer className="border-t border-white/[0.04] py-10 px-6 lg:px-10">
         <div className="max-w-[1600px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-[11px] tracking-[0.2em] uppercase text-white/20">Exam<span className="text-[hsl(340,82%,62%)]/40">Edge</span></span>
+          <span className="text-[11px] tracking-[0.2em] uppercase text-[hsl(var(--text-primary))]/">Exam<span className="text-[hsl(var(--accent))]/40">Edge</span></span>
           <div className="flex items-center gap-6">
-            <Link href="/login" className="text-[11px] text-white/20 hover:text-white/50 transition-colors">Login</Link>
-            <Link href="/signup" className="text-[11px] text-white/20 hover:text-white/50 transition-colors">Sign Up</Link>
+            <Link href="/login" className="text-[11px] text-[hsl(var(--text-primary))]/ hover:text-[hsl(var(--text-primary))]/ transition-colors">Login</Link>
+            <Link href="/signup" className="text-[11px] text-[hsl(var(--text-primary))]/ hover:text-[hsl(var(--text-primary))]/ transition-colors">Sign Up</Link>
           </div>
-          <span className="text-[10px] text-white/10 font-mono">© {new Date().getFullYear()}</span>
+          <span className="text-[10px] text-[hsl(var(--text-primary))]/ font-mono">© {new Date().getFullYear()}</span>
         </div>
       </footer>
     </div>
