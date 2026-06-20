@@ -162,22 +162,22 @@ export default function LandingPage() {
       </section>
 
       {/* ━━━ FOOTER — beautifully crafted credits ━━━ */}
-      <footer className="border-t border-white/[0.04] py-20 px-6 lg:px-10 mt-10 relative overflow-hidden">
+      <footer className="border-t border-white/[0.04] py-12 px-6 lg:px-10 mt-4 relative overflow-hidden">
         {/* Subtle glowing orb in footer */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full opacity-[0.03] pointer-events-none"
           style={{ background: 'radial-gradient(ellipse, hsl(var(--accent)), transparent 60%)' }} />
           
         <div className="max-w-[1600px] mx-auto flex flex-col items-center justify-center text-center relative z-10">
-          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-accent/20 bg-accent/5 mb-10">
-            <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-accent">Crafted With Precision</span>
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-accent/20 bg-accent/5 mb-6">
+            <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-accent">Created with ❤️</span>
           </div>
           
-          <div className="flex flex-col lg:flex-row items-stretch justify-center gap-6 lg:gap-8 w-full max-w-4xl">
+          <div className="flex flex-col lg:flex-row items-stretch justify-center gap-4 lg:gap-6 w-full max-w-3xl">
             {/* Shubh Dixit */}
             <div className="flex-1 group relative p-[1px] rounded-3xl overflow-hidden bg-gradient-to-b from-white/10 to-transparent hover:from-accent/40 transition-colors duration-700">
               <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-700" />
-              <div className="relative flex flex-col items-center justify-center h-full px-8 py-10 rounded-[23px] bg-bg-surface/80 backdrop-blur-xl border border-white/[0.02] shadow-xl">
-                <h3 className="text-3xl md:text-4xl font-medium text-[hsl(var(--text-primary))] group-hover:text-accent transition-colors duration-500" style={{ fontFamily: 'var(--font-serif)' }}>
+              <div className="relative flex flex-col items-center justify-center h-full px-6 py-8 rounded-[23px] bg-bg-surface/80 backdrop-blur-xl border border-white/[0.02] shadow-xl">
+                <h3 className="text-2xl md:text-3xl font-medium text-[hsl(var(--text-primary))] group-hover:text-accent transition-colors duration-500" style={{ fontFamily: 'var(--font-serif)' }}>
                   Shubh Dixit
                 </h3>
                 <div className="mt-4 flex items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
@@ -190,8 +190,8 @@ export default function LandingPage() {
             {/* Rudrapal Singh Shekhawat */}
             <div className="flex-1 group relative p-[1px] rounded-3xl overflow-hidden bg-gradient-to-b from-white/10 to-transparent hover:from-accent/40 transition-colors duration-700">
               <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-700" />
-              <div className="relative flex flex-col items-center justify-center h-full px-8 py-10 rounded-[23px] bg-bg-surface/80 backdrop-blur-xl border border-white/[0.02] shadow-xl">
-                <h3 className="text-3xl md:text-4xl font-medium text-[hsl(var(--text-primary))] group-hover:text-accent transition-colors duration-500 text-center leading-tight" style={{ fontFamily: 'var(--font-serif)' }}>
+              <div className="relative flex flex-col items-center justify-center h-full px-6 py-8 rounded-[23px] bg-bg-surface/80 backdrop-blur-xl border border-white/[0.02] shadow-xl">
+                <h3 className="text-2xl md:text-3xl font-medium text-[hsl(var(--text-primary))] group-hover:text-accent transition-colors duration-500 text-center leading-tight" style={{ fontFamily: 'var(--font-serif)' }}>
                   Rudrapal Singh Shekhawat
                 </h3>
                 <div className="mt-4 flex items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
@@ -202,7 +202,7 @@ export default function LandingPage() {
             </div>
           </div>
           
-          <div className="mt-16 pt-8 border-t border-white/[0.04] w-full max-w-md flex flex-col items-center">
+          <div className="mt-10 pt-8 border-t border-white/[0.04] w-full max-w-md flex flex-col items-center">
             <Logo className="text-[12px] opacity-40 mb-4" />
             <span className="text-[9px] text-[hsl(var(--text-secondary))] font-mono opacity-50 uppercase tracking-[0.1em]">© {new Date().getFullYear()} ExamEdge. All rights reserved.</span>
           </div>
