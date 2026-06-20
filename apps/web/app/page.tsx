@@ -157,8 +157,11 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Dark Orange Separator Line */}
+      <div className="w-full max-w-[1600px] mx-auto h-[1px] bg-gradient-to-r from-transparent via-orange-600/60 to-transparent mt-32" />
+
       {/* ━━━ FOOTER — beautifully crafted credits ━━━ */}
-      <footer className="border-t border-white/[0.04] py-8 px-6 lg:px-10 mt-0 relative overflow-hidden">
+      <footer className="py-8 px-6 lg:px-10 mt-8 relative overflow-hidden">
         {/* Subtle glowing orb in footer */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full opacity-[0.03] pointer-events-none"
           style={{ background: 'radial-gradient(ellipse, hsl(var(--accent)), transparent 60%)' }} />
