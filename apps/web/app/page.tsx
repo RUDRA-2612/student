@@ -153,8 +153,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Dark Orange Separator Line */}
-      <div className="w-full max-w-[1600px] mx-auto h-[1px] bg-gradient-to-r from-transparent via-orange-600/60 to-transparent mt-32" />
+      {/* Separator Line */}
+      <div className="w-full max-w-[1600px] mx-auto h-[1px] bg-gradient-to-r from-transparent via-orange-600/60 dark:via-blue-400/60 to-transparent mt-32" />
 
       {/* ━━━ FOOTER — beautifully crafted credits ━━━ */}
       <footer className="py-4 px-6 lg:px-10 mt-8 relative overflow-hidden">
