@@ -107,11 +107,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Scroll line */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-fade-in" style={{ animationDelay: '2.5s' }}>
-          <span className="text-[7px] tracking-[0.3em] uppercase text-[hsl(var(--text-primary))]/">Scroll</span>
-          <div className="w-px h-8 bg-gradient-to-b from-[hsl(var(--accent))]/30 to-transparent animate-float" />
-        </div>
+
       </section>
 
 
@@ -161,13 +157,13 @@ export default function LandingPage() {
       <div className="w-full max-w-[1600px] mx-auto h-[1px] bg-gradient-to-r from-transparent via-orange-600/60 to-transparent mt-32" />
 
       {/* ━━━ FOOTER — beautifully crafted credits ━━━ */}
-      <footer className="py-8 px-6 lg:px-10 mt-8 relative overflow-hidden">
+      <footer className="py-4 px-6 lg:px-10 mt-8 relative overflow-hidden">
         {/* Subtle glowing orb in footer */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full opacity-[0.03] pointer-events-none"
           style={{ background: 'radial-gradient(ellipse, hsl(var(--accent)), transparent 60%)' }} />
           
         <div className="max-w-[1600px] mx-auto flex flex-col items-center justify-center text-center relative z-10">
-          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-accent/20 bg-accent/5 mb-4">
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-accent/20 bg-accent/5 mb-2">
             <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-accent">Created with ❤️</span>
           </div>
           
@@ -201,8 +197,8 @@ export default function LandingPage() {
             </div>
           </div>
           
-          <div className="mt-8 pt-6 border-t border-white/[0.04] w-full max-w-md flex flex-col items-center">
-            <Logo className="text-[12px] opacity-40 mb-4" />
+          <div className="mt-6 pt-4 border-t border-white/[0.04] w-full max-w-md flex flex-col items-center">
+            <Logo className="text-[12px] opacity-40 mb-2" />
             <span className="text-[9px] text-[hsl(var(--text-secondary))] font-mono opacity-50 uppercase tracking-[0.1em]">© {new Date().getFullYear()} ExamEdge. All rights reserved.</span>
           </div>
         </div>
