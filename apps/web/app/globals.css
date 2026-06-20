@@ -99,13 +99,12 @@
     color: hsl(var(--text-primary));
   }
 
-  /* ── Global hover-chip: box appears only on navigation links ── */
-  /* Only <a> tags get it — buttons (toggle, forms, dropdowns)    */
-  /* are excluded since they don't navigate to another page.      */
+  /* ── Global hover-chip: all clickable elements (links + action buttons) ── */
+  /* Excludes .no-hover-chip class for decorative/branding elements.           */
   a, button {
     transition: background-color 150ms ease;
   }
-  a:hover {
+  a:not(.no-hover-chip):hover, button:hover {
     background-color: color-mix(in srgb, currentColor 9%, transparent);
     border-radius: 6px;
   }

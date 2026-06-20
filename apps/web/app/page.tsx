@@ -57,7 +57,7 @@ export default function LandingPage() {
           <div className="flex items-center justify-between h-20">
             <Link 
               href="/" 
-              className="text-[20px] font-bold pointer-events-auto"
+              className="text-[20px] font-bold pointer-events-auto no-hover-chip"
             >
               <Logo />
             </Link>
