@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import { api } from '@/lib/trpc/react'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { Logo } from '@/components/logo'
 
 const navItems = [
   { name: 'Dashboard',        href: '/dashboard',   icon: LayoutDashboard },
