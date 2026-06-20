@@ -121,7 +121,7 @@ export default function LandingPage() {
               <R key={sub.code} d={i * 60}>
                 <Link
                   href={`/papers?subjectId=${sub.code}`}
-                  className="group flex flex-col w-full aspect-square p-4 sm:p-5 rounded-[1.5rem] sm:rounded-[2rem] bg-bg-surface border border-white/[0.04] hover:border-accent/30 hover:shadow-glow-sm transition-all duration-500"
+                  className="group flex flex-col w-full p-4 sm:p-5 rounded-[1.5rem] sm:rounded-[2rem] bg-bg-surface border border-white/[0.04] hover:border-accent/30 hover:shadow-glow-sm transition-all duration-500"
                 >
                   {/* TOP: Name and Tag */}
                   <div>
