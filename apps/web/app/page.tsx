@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, ArrowUpRight, Star } from 'lucide-react'
+import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Logo } from '@/components/logo'
 
@@ -24,32 +24,7 @@ function R({ children, className = '', d = 0 }: { children: React.ReactNode; cla
   )
 }
 
-/* ───── CountUp ───── */
-function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const [v, setV] = useState(0)
-  const [go, setGo] = useState(false)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setGo(true); obs.disconnect() } }, { threshold: 0.5 })
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
-  useEffect(() => {
-    if (!go) return
-    let f: number
-    const dur = 1800, start = performance.now()
-    const tick = (now: number) => {
-      const p = Math.min((now - start) / dur, 1)
-      setV(Math.round((1 - Math.pow(1 - p, 4)) * target))
-      if (p < 1) f = requestAnimationFrame(tick)
-    }
-    f = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(f)
-  }, [go, target])
-  return <span ref={ref}>{v.toLocaleString()}{suffix}</span>
-}
+
 
 /* ───── Data ───── */
 const subjects = [
@@ -62,16 +37,6 @@ const subjects = [
 ]
 
 export default function LandingPage() {
-  const [isScrolled, setIsScrolled] = useState(false)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 150)
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
 
   return (
     <div className="min-h-screen bg-bg-base text-[hsl(var(--text-primary))] overflow-x-hidden selection:bg-[hsl(var(--accent))]/30">
