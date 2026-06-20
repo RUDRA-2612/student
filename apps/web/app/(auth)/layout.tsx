@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { Logo } from '@/components/logo'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,7 +17,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {/* Big editorial type — feels human-crafted */}
         <div className="relative z-10 px-16 max-w-lg">
           <div className="mb-10">
-            <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[hsl(340,82%,62%)]/40 mb-6 block">ExamEdge</span>
+            <Logo className="text-[10px] text-[hsl(340,82%,62%)]/40 mb-6 block" />
             <h2 className="text-5xl xl:text-6xl font-bold tracking-[-0.03em] leading-[1.05] text-white/80 mb-4">
               Know what's<br />
               <span className="italic text-[hsl(340,82%,62%)]/50" style={{ fontFamily: 'var(--font-serif), Georgia, serif' }}>coming.</span>
@@ -36,7 +37,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 </div>
               ))}
             </div>
-            <span className="text-[10px]">10,000+ students trust ExamEdge</span>
+            <span className="text-[10px]">10,000+ students trust <Logo className="inline-block" /></span>
           </div>
         </div>
 

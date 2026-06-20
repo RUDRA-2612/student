@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, ArrowUpRight, Star } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { Logo } from '@/components/logo'
 
 /* ───── IO Reveal (no framer) ───── */
 function R({ children, className = '', d = 0 }: { children: React.ReactNode; className?: string; d?: number }) {
@@ -78,10 +79,9 @@ export default function LandingPage() {
       <header className="fixed top-0 w-full z-50 mix-blend-difference">
         <div className="max-w-[1600px] mx-auto px-6 lg:px-10">
           <div className="flex items-center justify-between h-20">
-            <Link href="/" className="text-[13px] font-semibold tracking-[0.25em] uppercase">Exam<span className="text-[hsl(var(--accent))]">Edge</span></Link>
+            <Link href="/" className="text-[13px]"><Logo /></Link>
             <div className="flex items-center gap-8">
-              <Link href="/dashboard" className="text-[11px] tracking-[0.15em] uppercase text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] transition-colors hidden md:block">Browse</Link>
-              <Link href="/login" className="text-[11px] tracking-[0.15em] uppercase text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] transition-colors">Enter →</Link>
+              <Link href="/login" className="text-[11px] tracking-[0.15em] uppercase text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] transition-colors">Login</Link>
               <ThemeToggle />
             </div>
           </div>
@@ -94,35 +94,19 @@ export default function LandingPage() {
           {/* Centered headline with 3D text shadow and padding to prevent cutoffs */}
           <div className="mb-10 lg:mb-14">
             <div className="overflow-hidden pb-10">
-              <h1 className="animate-text-reveal text-[clamp(3.5rem,10vw,9.5rem)] font-bold leading-[0.9] tracking-[-0.04em]"
+              <h1 className="animate-text-reveal text-[clamp(3.5rem,8vw,8rem)] leading-[0.9]"
                 style={{
                   animationDelay: '0.2s',
                   textShadow: '1px 1px 0px hsl(var(--accent-hover)), 2px 2px 0px hsl(var(--accent-hover)), 3px 3px 0px hsl(var(--accent-hover)), 4px 4px 0px hsl(var(--accent-hover)), 5px 5px 0px hsl(var(--accent-hover)), 6px 6px 0px hsl(var(--accent-hover))'
                 }}>
-                Stop guessing.
+                <Logo />
               </h1>
-            </div>
-            <div className="overflow-hidden mt-2 pb-10">
-              <p className="animate-text-reveal text-[clamp(3.5rem,10vw,9.5rem)] leading-[0.9] tracking-[-0.04em] italic text-[hsl(var(--accent))]"
-                style={{
-                  fontFamily: 'var(--font-serif), Georgia, serif',
-                  animationDelay: '0.5s',
-                  textShadow: '1px 1px 0px hsl(var(--accent-muted)), 2px 2px 0px hsl(var(--accent-muted)), 3px 3px 0px hsl(var(--accent-muted)), 4px 4px 0px hsl(var(--accent-muted)), 5px 5px 0px hsl(var(--accent-muted)), 6px 6px 0px hsl(var(--accent-muted))'
-                }}>
-                Start knowing.
-              </p>
             </div>
           </div>
 
           {/* Bottom row — tagline + CTA, centered alignment */}
           <div className="flex flex-col items-center gap-8">
-            <div className="animate-fade-up max-w-xl text-center" style={{ animationDelay: '0.8s' }}>
-              <p className="text-base lg:text-xl text-[hsl(var(--text-primary))]/ leading-relaxed font-light">
-                We analyzed thousands of past papers so you don't have to.
-                <br className="hidden md:block" />
-                <span className="text-[hsl(var(--text-primary))]/"> Know exactly what's coming.</span>
-              </p>
-            </div>
+
 
             <div className="animate-fade-up flex items-center justify-center gap-5" style={{ animationDelay: '1s' }}>
               <Link
@@ -172,62 +156,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ━━━ HOW IT WORKS — staggered, not a uniform grid ━━━ */}
-      <section className="py-28 lg:py-40 px-6 lg:px-10">
-        <div className="max-w-[1600px] mx-auto">
-          <R>
-            <div className="flex items-baseline gap-4 mb-20">
-              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[hsl(var(--accent))]/60">01</span>
-              <h2 className="text-3xl lg:text-5xl font-bold tracking-[-0.03em]">
-                How it actually works
-              </h2>
-            </div>
-          </R>
-
-          {/* 3 steps — NOT a uniform grid. Varied sizes, overlap. */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-4">
-            {/* Step 1: Big card */}
-            <R className="lg:col-span-5" d={100}>
-              <div className="group h-full p-8 lg:p-10 rounded-[28px] border border-white/[0.05] bg-white/[0.015] hover:bg-white/[0.03] transition-all duration-500 relative overflow-hidden">
-                <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-0 group-hover:opacity-[0.06] transition-opacity duration-700"
-                  style={{ background: 'radial-gradient(circle, hsl(var(--accent)), transparent 60%)' }} />
-                <div className="text-[80px] lg:text-[100px] font-bold leading-none text-[hsl(var(--text-primary))]/[0.03] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>01</div>
-                <h3 className="text-lg font-semibold mb-3 -mt-8">Browse past papers</h3>
-                <p className="text-sm text-[hsl(var(--text-primary))]/ leading-relaxed">Organized by subject, semester, and year. Every paper tagged and searchable.</p>
-              </div>
-            </R>
-
-            {/* Step 2: Medium card, offset down */}
-            <R className="lg:col-span-4 lg:mt-12" d={200}>
-              <div className="group h-full p-8 lg:p-10 rounded-[28px] border border-white/[0.05] bg-white/[0.015] hover:bg-white/[0.03] transition-all duration-500 relative overflow-hidden">
-                <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-0 group-hover:opacity-[0.06] transition-opacity duration-700"
-                  style={{ background: 'radial-gradient(circle, hsl(20 90% 68%), transparent 60%)' }} />
-                <div className="text-[80px] lg:text-[100px] font-bold leading-none text-[hsl(var(--text-primary))]/[0.03] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>02</div>
-                <h3 className="text-lg font-semibold mb-3 -mt-8">Spot the patterns</h3>
-                <p className="text-sm text-[hsl(var(--text-primary))]/ leading-relaxed">Our AI highlights recurring topics. See what keeps coming back, year after year.</p>
-              </div>
-            </R>
-
-            {/* Step 3: Narrow card, offset more */}
-            <R className="lg:col-span-3 lg:mt-24" d={300}>
-              <div className="group h-full p-8 lg:p-10 rounded-[28px] border border-white/[0.05] bg-white/[0.015] hover:bg-white/[0.03] transition-all duration-500 relative overflow-hidden">
-                <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-0 group-hover:opacity-[0.06] transition-opacity duration-700"
-                  style={{ background: 'radial-gradient(circle, hsl(160 25% 50%), transparent 60%)' }} />
-                <div className="text-[80px] lg:text-[100px] font-bold leading-none text-[hsl(var(--text-primary))]/[0.03] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>03</div>
-                <h3 className="text-lg font-semibold mb-3 -mt-8">Study smart</h3>
-                <p className="text-sm text-[hsl(var(--text-primary))]/ leading-relaxed">Focus on what matters. Skip what doesn't.</p>
-              </div>
-            </R>
-          </div>
-        </div>
-      </section>
-
       {/* ━━━ SUBJECTS — editorial list, not cards ━━━ */}
       <section className="py-20 lg:py-32 px-6 lg:px-10 border-t border-white/[0.04]">
         <div className="max-w-[1600px] mx-auto">
           <R>
             <div className="flex items-baseline gap-4 mb-4">
-              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[hsl(var(--accent))]/60">02</span>
+              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[hsl(var(--accent))]/60">01</span>
               <h2 className="text-3xl lg:text-5xl font-bold tracking-[-0.03em]">Subjects</h2>
             </div>
             <p className="text-sm text-[hsl(var(--text-primary))]/ mb-14 max-w-md">First-year curriculum. More semesters coming soon.</p>
@@ -274,7 +208,7 @@ export default function LandingPage() {
                 {[1,2,3,4,5].map(i => <Star key={i} size={14} className="text-[hsl(var(--accent))]/60 fill-[hsl(var(--accent))]/60" />)}
               </div>
               <blockquote className="text-2xl lg:text-4xl font-light leading-snug tracking-tight mb-8 text-[hsl(var(--text-primary))]/">
-                &ldquo;I used to spend <span className="italic text-[hsl(var(--text-primary))]/" style={{ fontFamily: 'var(--font-serif)' }}>weeks</span> hunting for past papers. ExamEdge gave me everything in <span className="italic text-[hsl(var(--text-primary))]/" style={{ fontFamily: 'var(--font-serif)' }}>minutes</span>.&rdquo;
+                &ldquo;I used to spend <span className="italic text-[hsl(var(--text-primary))]/" style={{ fontFamily: 'var(--font-serif)' }}>weeks</span> hunting for past papers. <Logo className="inline-block text-[14px] lg:text-[18px]" /> gave me everything in <span className="italic text-[hsl(var(--text-primary))]/" style={{ fontFamily: 'var(--font-serif)' }}>minutes</span>.&rdquo;
               </blockquote>
               <div>
                 <p className="text-sm font-medium text-[hsl(var(--text-primary))]/">— Third-year CS Student</p>
@@ -325,7 +259,7 @@ export default function LandingPage() {
       {/* ━━━ FOOTER — minimal ━━━ */}
       <footer className="border-t border-white/[0.04] py-10 px-6 lg:px-10">
         <div className="max-w-[1600px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-[11px] tracking-[0.2em] uppercase text-[hsl(var(--text-primary))]/">Exam<span className="text-[hsl(var(--accent))]/40">Edge</span></span>
+          <Logo className="text-[11px] text-[hsl(var(--text-primary))]/" />
           <div className="flex items-center gap-6">
             <Link href="/login" className="text-[11px] text-[hsl(var(--text-primary))]/ hover:text-[hsl(var(--text-primary))]/ transition-colors">Login</Link>
             <Link href="/signup" className="text-[11px] text-[hsl(var(--text-primary))]/ hover:text-[hsl(var(--text-primary))]/ transition-colors">Sign Up</Link>

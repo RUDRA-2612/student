@@ -29,6 +29,7 @@ import {
   GraduationCap,
   Github
 } from 'lucide-react'
+import { Logo } from '@/components/logo'
 
 const adminNavItems = [
   { name: 'Overview',       href: '/admin',                icon: LayoutDashboard },
@@ -65,7 +66,7 @@ function AdminLoadingScreen({ message = 'Loading Admin' }: { message?: string })
         </div>
         <div className="text-center space-y-1">
           <p className="text-xs font-mono tracking-wider uppercase text-white/25">{message}</p>
-          <p className="text-[10px] text-white/15">Exam<span className="text-[hsl(340,82%,62%)]/40">Edge</span> — Admin</p>
+          <p className="text-[10px] text-white/15"><Logo /> — Admin</p>
         </div>
       </div>
     </div>
@@ -144,7 +145,7 @@ export default function AdminLayoutComponent({ children }: { children: React.Rea
               </div>
               <div className="overflow-hidden min-w-0">
                 <p className="font-bold text-sm tracking-tight whitespace-nowrap">Admin</p>
-                <p className="text-[8px] text-white/20 whitespace-nowrap">ExamEdge</p>
+                <Logo className="text-[8px] text-white/20 whitespace-nowrap" />
               </div>
             </Link>
           )}
