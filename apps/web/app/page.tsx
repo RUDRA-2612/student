@@ -75,7 +75,7 @@ export default function LandingPage() {
           {/* Centered headline with 3D text shadow and padding to prevent cutoffs */}
           <div className="mb-10 lg:mb-14">
             <div className="overflow-hidden pb-10">
-              <h1 className="animate-text-reveal text-[clamp(3.5rem,8vw,8rem)] leading-[0.9]"
+              <h1 className="animate-text-reveal text-[clamp(2.5rem,6vw,6rem)] leading-[0.9]"
                 style={{
                   animationDelay: '0.2s',
                   textShadow: '1px 1px 0px hsl(var(--accent-hover)), 2px 2px 0px hsl(var(--accent-hover)), 3px 3px 0px hsl(var(--accent-hover)), 4px 4px 0px hsl(var(--accent-hover)), 5px 5px 0px hsl(var(--accent-hover)), 6px 6px 0px hsl(var(--accent-hover))'
@@ -89,19 +89,19 @@ export default function LandingPage() {
           <div className="flex flex-col items-center gap-8">
 
 
-            <div className="animate-fade-up flex items-center justify-center gap-5" style={{ animationDelay: '1s' }}>
+            <div className="animate-fade-up flex items-center justify-center gap-4" style={{ animationDelay: '1s' }}>
               <Link
                 href="/login"
-                className="group relative px-10 py-5 rounded-full text-sm font-semibold text-[hsl(var(--text-primary))] overflow-hidden transition-transform hover:scale-[1.03] active:scale-100"
+                className="group relative px-8 py-4 rounded-full text-[13px] font-semibold text-[hsl(var(--text-primary))] overflow-hidden transition-transform hover:scale-[1.03] active:scale-100"
               >
                 <span className="absolute inset-0 bg-[hsl(var(--accent))] rounded-full" />
                 <span className="absolute inset-0 bg-[hsl(var(--accent))] rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity" />
-                <span className="relative flex items-center gap-3">
-                  Start Free <ArrowRight size={15} />
+                <span className="relative flex items-center gap-2">
+                  Start Free <ArrowRight size={14} />
                 </span>
               </Link>
-              <Link href="/dashboard" className="group text-[13px] font-medium tracking-wide text-[hsl(var(--text-primary))]/ hover:text-[hsl(var(--text-primary))] transition-colors flex items-center gap-1.5 px-4 py-2">
-                Preview <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <Link href="/dashboard" className="group text-[12px] font-medium tracking-wide text-[hsl(var(--text-primary))]/ hover:text-[hsl(var(--text-primary))] transition-colors flex items-center gap-1 px-3 py-1.5">
+                Preview <ArrowUpRight size={11} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
             </div>
           </div>
@@ -109,8 +109,8 @@ export default function LandingPage() {
 
         {/* Scroll line */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-fade-in" style={{ animationDelay: '2.5s' }}>
-          <span className="text-[8px] tracking-[0.3em] uppercase text-[hsl(var(--text-primary))]/">Scroll</span>
-          <div className="w-px h-10 bg-gradient-to-b from-[hsl(var(--accent))]/30 to-transparent animate-float" />
+          <span className="text-[7px] tracking-[0.3em] uppercase text-[hsl(var(--text-primary))]/">Scroll</span>
+          <div className="w-px h-8 bg-gradient-to-b from-[hsl(var(--accent))]/30 to-transparent animate-float" />
         </div>
       </section>
 
