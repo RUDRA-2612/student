@@ -98,6 +98,18 @@
     background: hsl(var(--bg-input));
     color: hsl(var(--text-primary));
   }
+
+  /* ── Global hover-chip: box appears in text colour on hover ── */
+  /* Uses currentColor so it auto-adapts: dark in day, light in night.   */
+  /* @layer base has lowest specificity, so styled hover:bg-* classes    */
+  /* on cards / buttons always win and are unaffected.                    */
+  a, button {
+    transition: background-color 150ms ease;
+  }
+  a:hover, button:hover {
+    background-color: color-mix(in srgb, currentColor 9%, transparent);
+    border-radius: 6px;
+  }
 }
 
 /* ─── Utility Classes ────────────────────────────────────────────────────── */
