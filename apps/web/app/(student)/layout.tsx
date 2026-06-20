@@ -131,7 +131,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   const isAdmin = ['ADMIN', 'SUPERADMIN'].includes(userRole)
 
   return (
-    <div className="min-h-screen text-[#f5ede6] bg-[hsl(20,8%,5%)] relative overflow-x-hidden">
+    <div className="min-h-screen text-text-primary bg-bg-base relative overflow-x-hidden">
 
       {/* Single subtle ambient blob */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -140,10 +140,10 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       </div>
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 h-14 bg-[hsl(20,6%,8%)]/85 backdrop-blur-md border-b border-white/[0.04] z-40 px-3 sm:px-5 flex items-center justify-between">
+      <header className="fixed top-0 left-0 right-0 h-14 bg-bg-surface/85 backdrop-blur-md border-b border-border-light z-40 px-3 sm:px-5 flex items-center justify-between">
         <Link href="/dashboard" className="flex items-center gap-2 group no-hover-chip">
           <span className="text-sm font-semibold"><Logo className="text-[11px]" /></span>
-          <span className="hidden sm:flex text-[7px] font-mono text-white/20 items-center gap-1 mt-0.5">
+          <span className="hidden sm:flex text-[7px] font-mono text-text-secondary items-center gap-1 mt-0.5">
             <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" /> live
           </span>
         </Link>
@@ -153,15 +153,20 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
           <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition-all"
+            className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-bg-card border border-border-light hover:bg-bg-surface transition-all"
           >
-            <div className="w-6 h-6 rounded-md bg-[hsl(340,82%,62%)]/10 flex items-center justify-center">
-              <User size={11} className="text-[hsl(340,82%,62%)]/70" />
+            <div className="w-6 h-6 rounded-md bg-accent/10 flex items-center justify-center">
+              <User size={11} className="text-accent/70" />
             </div>
-            <span className="text-xs text-white/60 max-w-[80px] truncate hidden sm:block">
-              {session.user?.name || 'User'}
-            </span>
-            <ChevronDown size={11} className={`text-white/30 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+            <div className="flex flex-col items-start pr-1 hidden sm:flex">
+              <span className="text-[10px] font-semibold text-text-primary leading-none mb-0.5">
+                {session?.user?.name || 'Guest'}
+              </span>
+              <span className="text-[8px] text-text-secondary leading-none capitalize">
+                {userRole.toLowerCase()}
+              </span>
+            </div>
+            <ChevronDown size={11} className={`text-text-secondary transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
           <AnimatePresence>
@@ -171,33 +176,33 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
                 transition={{ duration: 0.12 }}
-                className="absolute right-0 mt-2 w-52 rounded-xl bg-[hsl(20,6%,10%)]/95 backdrop-blur-xl border border-white/[0.06] shadow-2xl p-1.5 z-50"
+                className="absolute right-0 mt-2 w-52 rounded-xl bg-bg-surface backdrop-blur-xl border border-border-light shadow-2xl p-1.5 z-50"
               >
-                <div className="px-3 py-2 border-b border-white/[0.04] mb-1">
+                <div className="px-3 py-2 border-b border-border-light mb-1">
                   <p className="text-xs font-semibold truncate">{session.user?.name || 'Account'}</p>
-                  <p className="text-[10px] text-white/30 truncate">{session.user?.email}</p>
+                  <p className="text-[10px] text-text-secondary truncate">{session.user?.email}</p>
                 </div>
 
                 <Link href="/dashboard" onClick={() => setDropdownOpen(false)}>
-                  <span className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors">
+                  <span className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-text-secondary hover:text-text-primary hover:bg-bg-card transition-colors">
                     <LayoutDashboard size={12} /> Dashboard
                   </span>
                 </Link>
 
                 {isAdmin && (
                   <Link href="/admin" onClick={() => setDropdownOpen(false)}>
-                    <span className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors">
-                      <Shield size={12} className="text-[hsl(340,82%,62%)]/60" /> Admin Panel
+                    <span className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-text-secondary hover:text-text-primary hover:bg-bg-card transition-colors">
+                      <Shield size={12} className="text-accent/60" /> Admin Panel
                       <ExternalLink size={9} className="ml-auto opacity-30" />
                     </span>
                   </Link>
                 )}
 
-                <div className="h-px bg-white/[0.04] my-1" />
+                <div className="h-px bg-border-light my-1" />
 
                 <button
                   onClick={() => signOut({ callbackUrl: '/login' })}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-red-400/80 hover:text-red-400 hover:bg-red-500/8 transition-colors text-left"
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-red-400/80 hover:text-red-400 hover:bg-red-500/10 transition-colors text-left"
                 >
                   <LogOut size={12} /> Sign Out
                 </button>
@@ -222,7 +227,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
       {/* Desktop Dock */}
       <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 hidden md:block">
-        <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[hsl(20,6%,8%)]/85 backdrop-blur-xl border border-white/[0.05] shadow-2xl">
+        <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-bg-surface/85 backdrop-blur-xl border border-border-light shadow-2xl">
           {navItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
             return (
@@ -240,21 +245,21 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       </div>
 
       {/* Mobile Nav */}
-      <div className="fixed bottom-0 left-0 right-0 h-14 bg-[hsl(20,6%,8%)]/90 backdrop-blur-xl border-t border-white/[0.04] z-40 md:hidden flex items-center justify-around px-2">
+      <div className="fixed bottom-0 left-0 right-0 h-14 bg-bg-surface/90 backdrop-blur-xl border-t border-border-light z-40 md:hidden flex items-center justify-around px-2">
         {navItems.slice(0, 5).map((item) => {
           const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
           return (
             <Link key={item.href} href={item.href} className="flex flex-col items-center gap-0.5 flex-1 py-1 relative">
-              <div className={`p-1 transition-colors duration-300 ${isActive ? 'text-[hsl(340,82%,62%)]' : 'text-white/30'}`}>
+              <div className={`p-1 transition-colors duration-300 ${isActive ? 'text-accent' : 'text-text-secondary'}`}>
                 <item.icon size={17} />
               </div>
-              <span className={`text-[8px] font-medium tracking-wider uppercase transition-colors duration-300 ${isActive ? 'text-[hsl(340,82%,62%)]/70' : 'text-white/20'}`}>
+              <span className={`text-[8px] font-medium tracking-wider uppercase transition-colors duration-300 ${isActive ? 'text-accent' : 'text-text-secondary'}`}>
                 {item.name}
               </span>
               {isActive && (
                 <motion.div
                   layoutId="mobileActiveBar"
-                  className="absolute bottom-0 left-1/4 right-1/4 h-[2px] rounded-t-full bg-[hsl(340,82%,62%)]"
+                  className="absolute bottom-0 left-1/4 right-1/4 h-[2px] rounded-t-full bg-accent"
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 />
               )}
