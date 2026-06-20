@@ -4,24 +4,24 @@ module.exports = {
     extend: {
       colors: {
         bg: {
-          base:    'hsl(var(--bg-base))',
-          surface: 'hsl(var(--bg-surface))',
-          card:    'hsl(var(--bg-card))',
-          input:   'hsl(var(--bg-input))',
+          base:    'hsl(var(--bg-base) / <alpha-value>)',
+          surface: 'hsl(var(--bg-surface) / <alpha-value>)',
+          card:    'hsl(var(--bg-card) / <alpha-value>)',
+          input:   'hsl(var(--bg-input) / <alpha-value>)',
         },
         text: {
-          primary: 'hsl(var(--text-primary))',
-          secondary: 'hsl(var(--text-secondary))',
+          primary: 'hsl(var(--text-primary) / <alpha-value>)',
+          secondary: 'hsl(var(--text-secondary) / <alpha-value>)',
           muted: 'hsl(var(--text-secondary) / 0.5)',
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          hover:   'hsl(var(--accent-hover))',
-          muted:   'hsl(var(--accent-muted))',
+          DEFAULT: 'hsl(var(--accent) / <alpha-value>)',
+          hover:   'hsl(var(--accent-hover) / <alpha-value>)',
+          muted:   'hsl(var(--accent-muted) / <alpha-value>)',
         },
         border: {
-          DEFAULT: 'hsl(var(--border-subtle))',
-          light:   'hsl(var(--border-light))',
+          DEFAULT: 'var(--border-subtle)',
+          light:   'var(--border-light)',
         }
       },
       fontFamily: {
