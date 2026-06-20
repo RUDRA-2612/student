@@ -119,8 +119,7 @@ export default function LandingPage() {
       <section className="py-20 lg:py-32 px-6 lg:px-10 border-t border-white/[0.04]">
         <div className="max-w-[1600px] mx-auto">
           <R>
-            <div className="flex items-baseline gap-4 mb-4">
-              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[hsl(var(--accent))]/60">01</span>
+            <div className="mb-4">
               <h2 className="text-3xl lg:text-5xl font-bold tracking-[-0.03em]">Subjects</h2>
             </div>
             <p className="text-sm text-[hsl(var(--text-primary))]/ mb-14 max-w-md">First-year curriculum. More semesters coming soon.</p>
