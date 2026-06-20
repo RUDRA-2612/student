@@ -146,12 +146,9 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  {/* BOTTOM: Code and Number */}
-                  <div className="mt-auto flex justify-between items-end">
-                    <span className="text-[10px] text-[hsl(var(--text-secondary))]">{sub.code}</span>
-                    <div className="w-8 h-8 rounded-full border border-white/[0.06] flex items-center justify-center font-mono text-[10px] text-[hsl(var(--text-secondary))] group-hover:border-accent/30 group-hover:text-accent transition-colors duration-300">
-                      {String(i + 1).padStart(2, '0')}
-                    </div>
+                  {/* BOTTOM: Code */}
+                  <div className="mt-auto flex items-end justify-between">
+                    <span className="text-[11px] font-mono font-bold tracking-[0.1em] text-[hsl(var(--text-primary))]">{sub.code}</span>
                   </div>
                 </Link>
               </R>
