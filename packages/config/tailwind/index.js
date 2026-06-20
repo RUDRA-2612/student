@@ -4,23 +4,24 @@ module.exports = {
     extend: {
       colors: {
         bg: {
-          base:    'hsl(220 16% 6%)',
-          surface: 'hsl(220 14% 9%)',
-          card:    'hsl(220 14% 11%)',
-          input:   'hsl(220 14% 14%)',
+          base:    'hsl(var(--bg-base))',
+          surface: 'hsl(var(--bg-surface))',
+          card:    'hsl(var(--bg-card))',
+          input:   'hsl(var(--bg-input))',
+        },
+        text: {
+          primary: 'hsl(var(--text-primary))',
+          secondary: 'hsl(var(--text-secondary))',
+          muted: 'hsl(var(--text-secondary) / 0.5)',
         },
         accent: {
-          DEFAULT: 'hsl(327 100% 62%)',
-          hover:   'hsl(327 100% 70%)',
-          muted:   'hsl(327 40% 20%)',
-        },
-        brand: {
-          coral: '#FF5F6D',
-          mint:  '#00D4A0',
-          amber: '#FFAA4C',
+          DEFAULT: 'hsl(var(--accent))',
+          hover:   'hsl(var(--accent-hover))',
+          muted:   'hsl(var(--accent-muted))',
         },
         border: {
-          DEFAULT: 'hsl(220 10% 16%)',
+          DEFAULT: 'hsl(var(--border-subtle))',
+          light:   'hsl(var(--border-light))',
         }
       },
       fontFamily: {
