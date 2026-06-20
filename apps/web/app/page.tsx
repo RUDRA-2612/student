@@ -55,13 +55,24 @@ function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
 const subjects = [
   { code: 'CSE101', name: 'Programming-I', tag: 'Core' },
   { code: 'EEE101', name: 'Electrical & Electronics', tag: 'Engineering' },
-  { code: 'DES101', name: 'Design Creativity', tag: 'Design' },
   { code: 'MTH101', name: 'Calculus', tag: 'Math' },
   { code: 'ENV101', name: 'Environment & Sustainability', tag: 'Humanities' },
   { code: 'COM101', name: 'Communication', tag: 'Skills' },
+  { code: 'DES101', name: 'Design Creativity', tag: 'Design' },
 ]
 
 export default function LandingPage() {
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 150)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
     <div className="min-h-screen bg-bg-base text-[hsl(var(--text-primary))] overflow-x-hidden selection:bg-[hsl(var(--accent))]/30">
 
@@ -76,12 +87,17 @@ export default function LandingPage() {
       </div>
 
       {/* ─── Nav ─── */}
-      <header className="fixed top-0 w-full z-50 mix-blend-difference">
+      <header className="absolute top-0 w-full z-50">
         <div className="max-w-[1600px] mx-auto px-6 lg:px-10">
           <div className="flex items-center justify-between h-20">
-            <Link href="/" className="text-[13px]"><Logo /></Link>
+            <Link 
+              href="/" 
+              className="text-[13px] font-bold text-black dark:text-white pointer-events-auto"
+            >
+              <Logo />
+            </Link>
             <div className="flex items-center gap-8">
-              <Link href="/login" className="text-[11px] tracking-[0.15em] uppercase text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] transition-colors">Login</Link>
+              <Link href="/login" className="text-[11px] font-bold tracking-[0.15em] uppercase text-black dark:text-white hover:opacity-80 transition-opacity">Login</Link>
               <ThemeToggle />
             </div>
           </div>
@@ -89,7 +105,7 @@ export default function LandingPage() {
       </header>
 
       {/* ━━━ HERO — centered 3D editorial ━━━ */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 pb-16 lg:pb-20 text-center">
+      <section className="relative min-h-[70vh] flex items-center justify-center pt-24 pb-16 lg:pb-20 text-center">
         <div className="max-w-[1600px] mx-auto px-6 lg:px-10 w-full flex flex-col items-center">
           {/* Centered headline with 3D text shadow and padding to prevent cutoffs */}
           <div className="mb-10 lg:mb-14">
@@ -133,28 +149,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ━━━ PROOF BAR — horizontal stats strip ━━━ */}
-      <section className="border-y border-white/[0.04]">
-        <div className="max-w-[1600px] mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4">
-            {[
-              { n: 10000, s: '+', l: 'Students' },
-              { n: 500, s: '+', l: 'Papers' },
-              { n: 12, s: '', l: 'Subjects' },
-              { n: 98, s: '%', l: 'Pass Rate' },
-            ].map((s, i) => (
-              <R key={s.l} d={i * 80}>
-                <div className={`py-8 px-6 lg:px-10 ${i > 0 ? 'border-l border-white/[0.04]' : ''}`}>
-                  <div className="text-3xl lg:text-4xl font-bold tracking-tight text-[hsl(var(--text-primary))]/ mb-1" style={{ fontFamily: 'var(--font-serif)' }}>
-                    <CountUp target={s.n} suffix={s.s} />
-                  </div>
-                  <div className="text-[10px] font-medium tracking-[0.2em] uppercase text-[hsl(var(--text-primary))]/">{s.l}</div>
-                </div>
-              </R>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ━━━ SUBJECTS — editorial list, not cards ━━━ */}
       <section className="py-20 lg:py-32 px-6 lg:px-10 border-t border-white/[0.04]">
@@ -167,55 +161,38 @@ export default function LandingPage() {
             <p className="text-sm text-[hsl(var(--text-primary))]/ mb-14 max-w-md">First-year curriculum. More semesters coming soon.</p>
           </R>
 
-          {/* List-style subject rows — way more editorial than card grids */}
-          <div className="border-t border-white/[0.04]">
+          {/* Square cards layout */}
+          <div className="flex flex-wrap justify-start gap-4 lg:gap-6 pb-12 pt-6">
             {subjects.map((sub, i) => (
               <R key={sub.code} d={i * 60}>
                 <Link
                   href={`/papers?subjectId=${sub.code}`}
-                  className="group flex items-center justify-between py-5 lg:py-6 border-b border-white/[0.04] hover:border-[hsl(var(--accent))]/15 transition-colors duration-500 px-1"
+                  className="group flex flex-col w-52 h-52 lg:w-60 lg:h-60 p-5 pt-5 rounded-[2rem] bg-bg-surface border border-white/[0.04] hover:border-accent/30 hover:shadow-glow-sm transition-all duration-500"
                 >
-                  <div className="flex items-center gap-6 lg:gap-10">
-                    <span className="text-[10px] font-mono text-[hsl(var(--text-primary))]/ w-8">{String(i + 1).padStart(2, '0')}</span>
-                    <div>
-                      <h3 className="text-base lg:text-lg font-medium text-[hsl(var(--text-primary))]/ group-hover:text-[hsl(var(--text-primary))] transition-colors duration-300">{sub.name}</h3>
-                      <span className="text-[10px] text-[hsl(var(--text-primary))]/ mt-0.5 block">{sub.code}</span>
+                  {/* TOP: Name and Tag */}
+                  <div>
+                    <h3 className="text-lg lg:text-xl font-medium text-[hsl(var(--text-primary))] leading-tight group-hover:text-accent transition-colors duration-300 mb-1">{sub.name}</h3>
+                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-accent/80">{sub.tag}</span>
+                  </div>
+
+                  {/* MIDDLE: Option to go further */}
+                  <div className="mt-4">
+                    <div className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[hsl(var(--text-secondary))] group-hover:text-[hsl(var(--text-primary))] transition-colors bg-white/[0.03] px-3 py-1.5 rounded-full border border-white/[0.05] group-hover:border-accent/30">
+                      Explore Subject <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-[9px] font-medium tracking-[0.2em] uppercase text-[hsl(var(--text-primary))]/ hidden md:block">{sub.tag}</span>
-                    <div className="w-8 h-8 rounded-full border border-white/[0.06] flex items-center justify-center group-hover:border-[hsl(var(--accent))]/30 group-hover:bg-[hsl(var(--accent))]/5 transition-all duration-300">
-                      <ArrowUpRight size={12} className="text-[hsl(var(--text-primary))]/ group-hover:text-[hsl(var(--accent))] transition-colors duration-300" />
+
+                  {/* BOTTOM: Code and Number */}
+                  <div className="mt-auto flex justify-between items-end">
+                    <span className="text-[10px] text-[hsl(var(--text-secondary))]">{sub.code}</span>
+                    <div className="w-8 h-8 rounded-full border border-white/[0.06] flex items-center justify-center font-mono text-[10px] text-[hsl(var(--text-secondary))] group-hover:border-accent/30 group-hover:text-accent transition-colors duration-300">
+                      {String(i + 1).padStart(2, '0')}
                     </div>
                   </div>
                 </Link>
               </R>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ━━━ TESTIMONIAL — single big quote for personality ━━━ */}
-      <section className="py-24 lg:py-36 px-6 lg:px-10 relative overflow-hidden">
-        {/* Subtle rose blob */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.04] pointer-events-none"
-          style={{ background: 'radial-gradient(circle, hsl(var(--accent)), transparent 50%)' }} />
-        
-        <div className="max-w-[1600px] mx-auto relative z-10">
-          <R>
-            <div className="max-w-3xl mx-auto text-center">
-              <div className="flex justify-center gap-1 mb-8">
-                {[1,2,3,4,5].map(i => <Star key={i} size={14} className="text-[hsl(var(--accent))]/60 fill-[hsl(var(--accent))]/60" />)}
-              </div>
-              <blockquote className="text-2xl lg:text-4xl font-light leading-snug tracking-tight mb-8 text-[hsl(var(--text-primary))]/">
-                &ldquo;I used to spend <span className="italic text-[hsl(var(--text-primary))]/" style={{ fontFamily: 'var(--font-serif)' }}>weeks</span> hunting for past papers. <Logo className="inline-block text-[14px] lg:text-[18px]" /> gave me everything in <span className="italic text-[hsl(var(--text-primary))]/" style={{ fontFamily: 'var(--font-serif)' }}>minutes</span>.&rdquo;
-              </blockquote>
-              <div>
-                <p className="text-sm font-medium text-[hsl(var(--text-primary))]/">— Third-year CS Student</p>
-                <p className="text-[10px] text-[hsl(var(--text-primary))]/ mt-1">IIITD, Batch of 2026</p>
-              </div>
-            </div>
-          </R>
         </div>
       </section>
 
